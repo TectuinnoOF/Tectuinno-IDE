@@ -1,0 +1,43 @@
+# Eclipse y Java
+.classpath
+.project
+.settings/
+bin/
+target/
+
+# Archivos generados por WindowBuilder
+*.wbp-component.xml
+*.wbp-meta.xml
+
+# Archivos temporales del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de compilación
+*.class
+*.o
+*.out
+*.exe
+*.dll
+*.so
+
+# Logs y temporales
+*.log
+*.tmp
+
+# Archivos del traductor externo
+translator/build/
+translator/*.o
+translator/*.out
+translator/*.exe
+
+# Archivos de usuario
+*.swp
+*~
+
+# IDEs adicionales (por si se usa IntelliJ en algún punto)
+.idea/
+*.iml
+
+# Librerías externas (mejor agregarlas vía README)
+lib/
