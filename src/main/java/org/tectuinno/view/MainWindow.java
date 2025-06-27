@@ -32,14 +32,28 @@ package org.tectuinno.view;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import org.tectuinno.utils.DialogResult;
+
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.BorderLayout;
 import javax.swing.JSplitPane;
 import java.awt.Cursor;
+import java.awt.Dialog.ModalityType;
+
 import javax.swing.DebugGraphics;
 import java.awt.Color;
+import java.awt.FlowLayout;
+import javax.swing.JToolBar;
+import javax.swing.JDesktopPane;
+import javax.swing.JDialog;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainWindow extends JFrame {
 
@@ -54,6 +68,8 @@ public class MainWindow extends JFrame {
 	private JSplitPane SplitPanePrincipal;
 	private JSplitPane splitPaneEditorAndConsole;
 	private JPanel panelToolBar;
+	private JToolBar compilerToolBar;
+	private JDesktopPane desktopPane;
 
 	/**
 	 * Launch the application.
@@ -80,6 +96,11 @@ public class MainWindow extends JFrame {
 		JMenuArchivo.add(JMenuArchivoNuevo);
 		
 		MenuItemNvoAsm = new JMenuItem("Fichero ASM Risc-V");
+		MenuItemNvoAsm.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openNewAsmEditor();
+			}
+		});
 		JMenuArchivoNuevo.add(MenuItemNvoAsm);
 		
 		MenuItemFicheroTexto = new JMenuItem("Texto");
@@ -103,11 +124,56 @@ public class MainWindow extends JFrame {
 		splitPaneEditorAndConsole.setContinuousLayout(false);
 		splitPaneEditorAndConsole.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		SplitPanePrincipal.setRightComponent(splitPaneEditorAndConsole);
+		
+		desktopPane = new JDesktopPane();
+		splitPaneEditorAndConsole.setLeftComponent(desktopPane);
 		splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 130);
 		
 		panelToolBar = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panelToolBar.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
 		contentPane.add(panelToolBar, BorderLayout.NORTH);
+		
+		compilerToolBar = new JToolBar();
+		panelToolBar.add(compilerToolBar);
 
 	}
+	
+	
+	
+	public void openNewAsmEditor() {
+		
+		try {
+									
+			NewEditorWizardDialog dialog = this.openEditorWizard();
+			
+			if(dialog.getDialogResult() != DialogResult.OK) {
+				JOptionPane.showMessageDialog(this, "Result: " + dialog.getDialogResult());
+				return;
+			}
+			
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
+	private NewEditorWizardDialog openEditorWizard() throws Exception{
+		
+		NewEditorWizardDialog newEditorWizard = new NewEditorWizardDialog();
+		newEditorWizard.setModal(true);
+		newEditorWizard.setModalityType(ModalityType.APPLICATION_MODAL);
+		newEditorWizard.setLocationRelativeTo(this);
+		newEditorWizard.setVisible(true);
+		return newEditorWizard;
+		
+	}
+	
+	
+	
 
 }

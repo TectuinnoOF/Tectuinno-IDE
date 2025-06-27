@@ -26,43 +26,47 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
-package org.tectuinno.view;
+package org.tectuinno.utils;
 
-import java.awt.EventQueue;
-
-import javax.swing.JInternalFrame;
-
-public class AsmEditoInternalFrame extends JInternalFrame {
-
-	private static final long serialVersionUID = 1L;
+/**
+ * Represents the result of an operation, following a pattern similar to DialogResult in C#.
+ * 
+ * This enum allows consistent handling of operation outcomes such as success, cancellation,
+ * or unexpected/invalid states. It is commonly used to simplify flow control in response to user actions
+ * or system events throughout the IDE.
+ *
+ * Usage examples:
+ * <pre>
+ * DialogResult result = saveFile();
+ * if (result == DialogResult.OK) {
+ *     // proceed
+ * } else if (result == DialogResult.ABORT) {
+ *     // handle cancellation
+ * }
+ * </pre>
+ * 
+ * Enum values:
+ * - {@code OK}: The operation completed successfully.
+ * - {@code NULL}: The result is undefined or invalid; must be handled properly to avoid null behavior.
+ * - {@code ABORT}: The operation was canceled intentionally (e.g., by the user).
+ */
+public enum DialogResult {
 
 	/**
-	 * Launch the application.
-	 *
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AsmEditoInternalFrame frame = new AsmEditoInternalFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
-
-	/**
-	 * Create the frame.
+	 * used to retunr an ok state after operations
 	 */
-	public AsmEditoInternalFrame() {
-		setTitle("Editor de Texto:");
-		setResizable(true);
-		setMaximizable(true);
-		setIconifiable(true);
-		setClosable(true);
-		setBounds(100, 100, 450, 300);
+	OK,
+	
+	/**
+	 *using to return a null value, you shoould handle te error result after implements 
+	 * */
+	NULL,
+	
+	/**
+	 * To specify that the operation has been canceled
+	 */
+	ABORT,
 
-	}
-
+	
+	
 }
