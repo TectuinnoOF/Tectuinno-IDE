@@ -8,7 +8,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.tectuinno.model.FileModel;
 import org.tectuinno.utils.DialogResult;
+import org.tectuinno.utils.FileType;
 
 import javax.swing.BoxLayout;
 import javax.swing.Box;
@@ -27,6 +29,20 @@ public class NewEditorWizardDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private DialogResult dialogResult;
 	private JTextField txfFileName;
+	private FileModel fileModel;
+	private Box verticalBox;
+	private JPanel panelTittleHeader;
+	private Component verticalStrut;
+	private Box horizontalBox;
+	private JPanel panel;
+	private FlowLayout flowLayout;
+	private JLabel lblNewLabel;
+	private Component horizontalStrut;
+	private JPanel buttonPane;
+	private JButton okButton;
+	private JButton cancelButton;
+	private JLabel headerLabel;
+	private FileType fileType;
 
 	/**
 	 * Launch the application.
@@ -44,7 +60,10 @@ public class NewEditorWizardDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public NewEditorWizardDialog() {
+	public NewEditorWizardDialog(FileType fileType) {
+		
+		this.fileType = fileType;
+		
 		setResizable(false);
 		
 		setBounds(100, 100, 534, 244);
@@ -53,35 +72,35 @@ public class NewEditorWizardDialog extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
-			Box verticalBox = Box.createVerticalBox();
+			verticalBox = Box.createVerticalBox();
 			contentPanel.add(verticalBox, BorderLayout.NORTH);
 			{
-				JPanel panelTittleHeader = new JPanel();
+				panelTittleHeader = new JPanel();
 				verticalBox.add(panelTittleHeader);
 				{
-					JLabel lblNewLabel_1 = new JLabel("Risc-V Assembly");
-					lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 16));
-					panelTittleHeader.add(lblNewLabel_1);
+					headerLabel = new JLabel("Risc-V Assembly");
+					headerLabel.setFont(new Font("Tahoma", Font.BOLD, 16));
+					panelTittleHeader.add(headerLabel);
 				}
 			}
 			{
-				Component verticalStrut = Box.createVerticalStrut(20);
+				verticalStrut = Box.createVerticalStrut(20);
 				verticalBox.add(verticalStrut);
 			}
 			{
-				Box horizontalBox = Box.createHorizontalBox();
+				horizontalBox = Box.createHorizontalBox();
 				verticalBox.add(horizontalBox);
 				{
-					JPanel panel = new JPanel();
-					FlowLayout flowLayout = (FlowLayout) panel.getLayout();
+					panel = new JPanel();
+					flowLayout = (FlowLayout) panel.getLayout();
 					flowLayout.setAlignment(FlowLayout.LEFT);
 					horizontalBox.add(panel);
 					{
-						JLabel lblNewLabel = new JLabel("Nombre");
+						lblNewLabel = new JLabel("Nombre");
 						panel.add(lblNewLabel);
 					}
 					{
-						Component horizontalStrut = Box.createHorizontalStrut(20);
+						horizontalStrut = Box.createHorizontalStrut(20);
 						panel.add(horizontalStrut);
 					}
 					{
@@ -94,17 +113,26 @@ public class NewEditorWizardDialog extends JDialog {
 		}
 		
 		{
-			JPanel buttonPane = new JPanel();
+			buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
-				JButton okButton = new JButton("OK");
+				okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						
+						dialogResult = DialogResult.OK;
+						setFileModel();
+						dispose();
+						
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
-				JButton cancelButton = new JButton("Cancel");
+				cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						closingDialog();
@@ -118,9 +146,28 @@ public class NewEditorWizardDialog extends JDialog {
 		this.pack();
 	}
 	
+	
+	public void setTittleHeader(FileType fileType) {
+		
+		switch (fileType){
+		
+		case ASSEMBLY_FILE: {
+			this.headerLabel.setText("Risc-V Assembly");
+			break;
+		}
+		case TEXT_FILE: {
+			this.headerLabel.setText("Documento de texto");
+			break;
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + fileType);
+		}
+		
+	}
+	
 	private void closingDialog() {
-		this.dispose();
 		this.dialogResult = DialogResult.ABORT;
+		this.dispose();
 	}
 	
 	public void setDialogResult(DialogResult result) {
@@ -131,5 +178,15 @@ public class NewEditorWizardDialog extends JDialog {
 		return this.dialogResult;
 	}
 	
-
+	public void setFileModel() {
+		
+		// Need to idenitify the filetype here
+		this.fileModel = new FileModel(this.txfFileName.getText() + ".asm", this.fileType);
+		
+	}
+	
+	public FileModel getFileModel() {
+		return this.fileModel;
+	}
+	
 }

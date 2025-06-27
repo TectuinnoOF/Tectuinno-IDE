@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.tectuinno.utils.DialogResult;
+import org.tectuinno.utils.FileType;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -145,12 +146,15 @@ public class MainWindow extends JFrame {
 		
 		try {
 									
-			NewEditorWizardDialog dialog = this.openEditorWizard();
+			NewEditorWizardDialog dialog = this.openEditorWizard(FileType.ASSEMBLY_FILE);
 			
 			if(dialog.getDialogResult() != DialogResult.OK) {
 				JOptionPane.showMessageDialog(this, "Result: " + dialog.getDialogResult());
 				return;
 			}
+			
+			
+			JOptionPane.showMessageDialog(this, "Result: " + dialog.getDialogResult() + "file: " + dialog.getFileModel().getName());
 			
 			
 		}catch (Exception e) {
@@ -162,9 +166,9 @@ public class MainWindow extends JFrame {
 	}
 	
 	
-	private NewEditorWizardDialog openEditorWizard() throws Exception{
+	private NewEditorWizardDialog openEditorWizard(FileType fileType) throws Exception{
 		
-		NewEditorWizardDialog newEditorWizard = new NewEditorWizardDialog();
+		NewEditorWizardDialog newEditorWizard = new NewEditorWizardDialog(fileType);
 		newEditorWizard.setModal(true);
 		newEditorWizard.setModalityType(ModalityType.APPLICATION_MODAL);
 		newEditorWizard.setLocationRelativeTo(this);
