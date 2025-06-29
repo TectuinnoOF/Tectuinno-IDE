@@ -55,6 +55,8 @@ import javax.swing.JDialog;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class MainWindow extends JFrame {
 
@@ -83,9 +85,15 @@ public class MainWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public MainWindow() {
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e) {
+				setConsoleDividerLocationEvent();
+			}
+		});
 		setTitle("Tectuinno IDE");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 686, 559);
+		setBounds(100, 100, 864, 692);
 		
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -128,7 +136,7 @@ public class MainWindow extends JFrame {
 		
 		desktopPane = new JDesktopPane();
 		splitPaneEditorAndConsole.setLeftComponent(desktopPane);
-		splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 130);
+		splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 150);
 		
 		panelToolBar = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panelToolBar.getLayout();
@@ -165,6 +173,13 @@ public class MainWindow extends JFrame {
 		
 	}
 	
+	/**
+	 * fix the position of the console and the file explorer before rezising the window
+	 */
+	private void setConsoleDividerLocationEvent() {
+		this.splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 150);
+		this.SplitPanePrincipal.setDividerLocation(700 - this.getWidth());
+	}
 	
 	private NewEditorWizardDialog openEditorWizard(FileType fileType) throws Exception{
 		
