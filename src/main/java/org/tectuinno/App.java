@@ -30,8 +30,6 @@ package org.tectuinno;
 
 import java.awt.EventQueue;
 
-import javax.swing.JFrame;
-
 import org.tectuinno.view.MainWindow;
 
 

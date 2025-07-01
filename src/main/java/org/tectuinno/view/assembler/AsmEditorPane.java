@@ -40,6 +40,8 @@ public class AsmEditorPane extends JTextPane {
 	 * 
 	 */
 	
-	
+	public AsmEditorPane() throws Exception{
+		
+	}
 
 }

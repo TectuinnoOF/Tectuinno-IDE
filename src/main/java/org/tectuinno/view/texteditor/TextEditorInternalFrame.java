@@ -28,8 +28,6 @@
 
 package org.tectuinno.view.texteditor;
 
-import java.awt.EventQueue;
-
 import javax.swing.JInternalFrame;
 
 public class TextEditorInternalFrame extends JInternalFrame {

@@ -12,14 +12,11 @@ import org.tectuinno.model.FileModel;
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
 
-import javax.swing.BoxLayout;
 import javax.swing.Box;
 import javax.swing.JLabel;
-import java.awt.GridLayout;
 import java.awt.Font;
 import javax.swing.JTextField;
 import java.awt.Component;
-import javax.swing.DropMode;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 

@@ -28,8 +28,6 @@
 
 package org.tectuinno.view.assembler;
 
-import java.awt.EventQueue;
-
 import javax.swing.JInternalFrame;
 
 public class AsmEditorInternalFrame extends JInternalFrame {
