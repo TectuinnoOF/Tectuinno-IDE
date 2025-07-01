@@ -35,6 +35,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
+import org.tectuinno.view.component.ResultConsolePanel;
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -73,6 +74,7 @@ public class MainWindow extends JFrame {
 	private JPanel panelToolBar;
 	private JToolBar compilerToolBar;
 	private JDesktopPane desktopPane;
+	private ResultConsolePanel consolePanel;
 
 	/**
 	 * Launch the application.
@@ -136,7 +138,10 @@ public class MainWindow extends JFrame {
 		
 		desktopPane = new JDesktopPane();
 		splitPaneEditorAndConsole.setLeftComponent(desktopPane);
-		splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 150);
+		
+		this.consolePanel = new ResultConsolePanel();
+		this.splitPaneEditorAndConsole.setRightComponent(this.consolePanel);
+		splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 250);
 		
 		panelToolBar = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panelToolBar.getLayout();
@@ -165,6 +170,8 @@ public class MainWindow extends JFrame {
 			JOptionPane.showMessageDialog(this, "Result: " + dialog.getDialogResult() + "file: " + dialog.getFileModel().getName());
 			
 			
+			
+			
 		}catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
@@ -173,11 +180,15 @@ public class MainWindow extends JFrame {
 		
 	}
 	
+	private void openNewEditor() {
+		
+	}
+	
 	/**
 	 * fix the position of the console and the file explorer before rezising the window
 	 */
 	private void setConsoleDividerLocationEvent() {
-		this.splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 150);
+		this.splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 250);
 		this.SplitPanePrincipal.setDividerLocation(700 - this.getWidth());
 	}
 	

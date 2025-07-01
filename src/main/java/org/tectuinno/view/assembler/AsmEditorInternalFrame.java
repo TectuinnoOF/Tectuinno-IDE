@@ -26,13 +26,13 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
-package org.tectuinno.view;
+package org.tectuinno.view.assembler;
 
 import java.awt.EventQueue;
 
 import javax.swing.JInternalFrame;
 
-public class AsmEditoInternalFrame extends JInternalFrame {
+public class AsmEditorInternalFrame extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
 
@@ -43,7 +43,7 @@ public class AsmEditoInternalFrame extends JInternalFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AsmEditoInternalFrame frame = new AsmEditoInternalFrame();
+					AsmEditorInternalFrame frame = new AsmEditorInternalFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -55,7 +55,7 @@ public class AsmEditoInternalFrame extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AsmEditoInternalFrame() {
+	public AsmEditorInternalFrame() {
 		setTitle("Editor de Texto:");
 		setResizable(true);
 		setMaximizable(true);
