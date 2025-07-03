@@ -30,11 +30,13 @@
 package org.tectuinno.view;
 
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
+import org.tectuinno.view.assembler.AsmEditorInternalFrame;
 import org.tectuinno.view.component.ResultConsolePanel;
 
 import javax.swing.JMenuBar;
@@ -167,6 +169,11 @@ public class MainWindow extends JFrame {
 			
 			JOptionPane.showMessageDialog(this, "Result: " + dialog.getDialogResult() + "file: " + dialog.getFileModel().getName());
 			
+			JInternalFrame asmInternalFrame = new AsmEditorInternalFrame();
+			asmInternalFrame.setTitle(dialog.getFileModel().getName());
+			asmInternalFrame.setVisible(true);
+			asmInternalFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			this.desktopPane.add(asmInternalFrame);
 			
 			
 			

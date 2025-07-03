@@ -26,43 +26,42 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
-package org.tectuinno.view.assembler;
+package org.tectuinno.view.assembler.utils;
 
-import javax.swing.JTextPane;
-import javax.swing.text.Style;
-import javax.swing.text.StyledDocument;
+/**
+ * Defines constant identifiers for syntax highlighting style categories
+ * used in the {@link org.tectuinno.view.assembler.AsmEditorPane}.
+ *
+ * These string constants are used as keys when registering and applying
+ * styles in a {@code StyledDocument} via {@code addStyle(...)}.
+ * 
+ * Each key represents a category of lexical elements to be styled,
+ * such as instructions, registers, or labels.
+ *
+ * @author PabloG
+ * @version 1.0
+ * @since 2025
+ */
+public final class AsmEditorStyleName {
 
-import org.tectuinno.view.assembler.utils.AsmEditorStyleName;
-
-
-public class AsmEditorPane extends JTextPane {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	/**
-	 * 
-	 */
 	
-	private final Style keyWordStyle;
-	private final Style registerStyle;
-	private final Style DefaultStyle;
-	private final Style tagStyle;
-	private StyledDocument styledDocument;
-	
-	
-	public AsmEditorPane() throws Exception{
-		
-		this.styledDocument = this.getStyledDocument();
-		
-		this.keyWordStyle = this.addStyle(AsmEditorStyleName.KEYWORD, null);
-		this.registerStyle = this.addStyle(AsmEditorStyleName.REGISTER, null);
-		this.DefaultStyle = this.addStyle(AsmEditorStyleName.DEFAULT, null);
-		this.tagStyle = this.addStyle(AsmEditorStyleName.TAG, null);
-		
-		
-		
-	}
+	/** Style name for assembler keywords (e.g., add, lw, beq). */
+    public static final String KEYWORD = "keywords";
 
+    /** Style name for register identifiers (e.g., x0 to x31). */
+    public static final String REGISTER = "register";
+
+    /** Style name for regular/default text. */
+    public static final String DEFAULT = "default";
+
+    /** Style name for label or tag declarations (e.g., loop:, _start:). */
+    public static final String TAG = "tag";
+
+    /**
+     * Private constructor to prevent instantiation.
+     */
+    private AsmEditorStyleName() {
+        // Utility class — no instantiation
+    }
+	
 }

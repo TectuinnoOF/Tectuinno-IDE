@@ -29,10 +29,18 @@
 package org.tectuinno.view.assembler;
 
 import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import java.awt.Color;
 
 public class AsmEditorInternalFrame extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
+	private JPanel panelPrincipalContainer;
+	private JScrollPane scrollPaneAsmEditor;
+	private JTextPane asmEditorPane;
 
 	/**
 	 * Launch the application.
@@ -53,14 +61,30 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AsmEditorInternalFrame() {
-		setTitle("Editor de Texto:");
+	public AsmEditorInternalFrame() throws Exception{
+		
+		setTitle("RISC-V Assembler Editor");
 		setResizable(true);
 		setMaximizable(true);
 		setIconifiable(true);
 		setClosable(true);
 		setBounds(100, 100, 450, 300);
-
+		
+		panelPrincipalContainer = new JPanel();
+		getContentPane().add(panelPrincipalContainer, BorderLayout.CENTER);
+		panelPrincipalContainer.setLayout(new BorderLayout(0, 0));
+		
+		scrollPaneAsmEditor = new JScrollPane();
+		panelPrincipalContainer.add(scrollPaneAsmEditor, BorderLayout.CENTER);
+		
+		asmEditorPane = new AsmEditorPane();
+		asmEditorPane.setContentType("asm/assembler");
+		asmEditorPane.setCaretColor(new Color(255, 255, 255));
+		asmEditorPane.setForeground(new Color(0, 153, 0));
+		asmEditorPane.setBackground(new Color(51, 51, 51));
+		scrollPaneAsmEditor.setViewportView(this.asmEditorPane);
+		
+		
 	}
 
 }
