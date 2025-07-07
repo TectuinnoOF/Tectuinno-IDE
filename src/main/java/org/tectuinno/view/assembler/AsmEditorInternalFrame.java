@@ -84,6 +84,12 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 				asmEditorPane.highLight();
 			}
 			
+			/*
+			 * Cuando usaba este método para este evento el rograma se ponía bien pinche 
+			 * lentísimo hasta su puta madre
+			 * 
+			 * tuve que reiniciar como 9 veces mi pc XD
+			 * */
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				// TODO Auto-generated method stub
