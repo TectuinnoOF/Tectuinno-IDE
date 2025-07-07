@@ -56,6 +56,9 @@ public final class AsmEditorStyleName {
 
     /** Style name for label or tag declarations (e.g., loop:, _start:). */
     public static final String TAG = "tag";
+    
+    /** Style name for inline comments. */
+    public static final String COMMENT = "comment";    
 
     /**
      * Private constructor to prevent instantiation.

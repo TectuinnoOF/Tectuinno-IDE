@@ -28,11 +28,21 @@
 
 package org.tectuinno.view.assembler;
 
+import java.awt.Color;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import org.tectuinno.view.assembler.utils.AsmEditorStyleName;
+import org.tectuinno.view.assembler.utils.AsmSyntaxDictionary;
+
 
 
 public class AsmEditorPane extends JTextPane {
@@ -47,22 +57,83 @@ public class AsmEditorPane extends JTextPane {
 	
 	private final Style keyWordStyle;
 	private final Style registerStyle;
-	private final Style DefaultStyle;
+	private final Style defaultStyle;
 	private final Style tagStyle;
-	private StyledDocument styledDocument;
+	private final Style commentStyle;
+	//private StyledDocument styledDocument;
 	
 	
 	public AsmEditorPane() throws Exception{
 		
-		this.styledDocument = this.getStyledDocument();
+		//this.styledDocument = this.getStyledDocument();
 		
 		this.keyWordStyle = this.addStyle(AsmEditorStyleName.KEYWORD, null);
 		this.registerStyle = this.addStyle(AsmEditorStyleName.REGISTER, null);
-		this.DefaultStyle = this.addStyle(AsmEditorStyleName.DEFAULT, null);
+		this.defaultStyle = this.addStyle(AsmEditorStyleName.DEFAULT, null);
 		this.tagStyle = this.addStyle(AsmEditorStyleName.TAG, null);
+		this.commentStyle = this.addStyle(AsmEditorStyleName.COMMENT, null);
 		
+		StyleConstants.setForeground(keyWordStyle, Color.CYAN);		
+		StyleConstants.setForeground(this.registerStyle, Color.ORANGE);
+		StyleConstants.setForeground(this.defaultStyle, new Color(63,227,11));
+		StyleConstants.setForeground(this.tagStyle, Color.MAGENTA);
+		StyleConstants.setForeground(this.commentStyle, new Color(208,244,245));
 		
+		//Setting commentary on italic format
+		StyleConstants.setItalic(this.commentStyle, true);			
 		
 	}
+	
+
+	/**
+	 * 
+	 */
+	public void highLight() {
+		
+		String text = this.getText().replaceAll("\\n.*\\r|\\r.*\\n|\\s", " ");
+		StyledDocument document = this.getStyledDocument();
+		
+		SwingUtilities.invokeLater(() -> document.setCharacterAttributes(0, text.length(), this.defaultStyle, true));
+		
+		/*new Thread() {
+			public void run() {
+				//document.setCharacterAttributes(0, text.length(), defaultStyle, true);
+				highlightPattern(AsmSyntaxDictionary.REGISTER_PATTERN, registerStyle);
+				highlightPattern(AsmSyntaxDictionary.INSTRUCTION_PATTERN, keyWordStyle);
+				highlightPattern(AsmSyntaxDictionary.TAGS_PATTERN, tagStyle);
+				highlightPattern(AsmSyntaxDictionary.COMMENTARY_PATTERN, commentStyle);
+			};
+		}.start();*/
+		
+		this.highlightPattern(AsmSyntaxDictionary.REGISTER_PATTERN, this.registerStyle);
+		this.highlightPattern(AsmSyntaxDictionary.INSTRUCTION_PATTERN, this.keyWordStyle);
+		this.highlightPattern(AsmSyntaxDictionary.TAGS_PATTERN, this.tagStyle);
+		this.highlightPattern(AsmSyntaxDictionary.COMMENTARY_PATTERN, this.commentStyle);
+		
+	}
+	
+	/**
+	 * 
+	 * @param pattern
+	 * @param style
+	 */
+	private void highlightPattern(String pattern, Style style) {
+		
+		String text = this.getText().replaceAll("\\n.*\\r|\\r.*\\n|\\s", " ");
+		
+        Matcher matcher = Pattern.compile(pattern).matcher(text);
+        
+        System.out.println(text);
+        
+        StyledDocument doc = getStyledDocument();
+        
+        SwingUtilities.invokeLater(() -> {        	
+        	//doc.setCharacterAttributes(0,getText().length(), this.defaultStyle, true);
+        	
+        	while (matcher.find()) {
+                doc.setCharacterAttributes(matcher.start(), matcher.end() - matcher.start(), style, false);
+            }
+        });
+    }
 
 }

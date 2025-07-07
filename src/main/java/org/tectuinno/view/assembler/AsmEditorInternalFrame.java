@@ -33,6 +33,9 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import java.awt.Color;
 
 public class AsmEditorInternalFrame extends JInternalFrame {
@@ -40,23 +43,7 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel panelPrincipalContainer;
 	private JScrollPane scrollPaneAsmEditor;
-	private JTextPane asmEditorPane;
-
-	/**
-	 * Launch the application.
-	 *
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AsmEditorInternalFrame frame = new AsmEditorInternalFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}*/
+	private AsmEditorPane asmEditorPane;
 
 	/**
 	 * Create the frame.
@@ -84,6 +71,25 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 		asmEditorPane.setBackground(new Color(51, 51, 51));
 		scrollPaneAsmEditor.setViewportView(this.asmEditorPane);
 		
+		
+		this.asmEditorPane.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {				
+				asmEditorPane.highLight();
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				asmEditorPane.highLight();
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				//asmEditorPane.highLight();
+			}
+		});
 		
 	}
 

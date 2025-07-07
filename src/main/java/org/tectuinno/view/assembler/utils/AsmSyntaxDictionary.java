@@ -78,6 +78,8 @@ public final class AsmSyntaxDictionary {
 		"x21", "x22", "x23", "x24", "x25", "x26", "x27", "x28", "x29", "x30", "x31"
 	};
 	
+	
+	
 	/**
      * Regular expression pattern for matching supported instructions.
      * 
@@ -99,6 +101,11 @@ public final class AsmSyntaxDictionary {
      * Example matches: "_start:", "loop:"
      */
 	public static final String TAGS_PATTERN = "\\b[a-zA-Z_][a-zA-Z0-9_]*\\:";
+	
+	/**
+	 * Regular expression pattern for matching one or more line comments in the code
+	 */
+	public static final String COMMENTARY_PATTERN = "/\\*.*?\\*/";	
 	
 	private AsmSyntaxDictionary() {
 		// this is an utility class, therefore prevent the instantiation whit a private constructor
