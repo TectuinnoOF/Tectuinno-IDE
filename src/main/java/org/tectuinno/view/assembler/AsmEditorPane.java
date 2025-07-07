@@ -121,7 +121,7 @@ public class AsmEditorPane extends JTextPane {
 		
 		String text = this.getText().replaceAll("\\n.*\\r|\\r.*\\n|\\s", " ");
 		
-        Matcher matcher = Pattern.compile(pattern).matcher(text);
+        Matcher matcher = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text);
         
         System.out.println(text);
         

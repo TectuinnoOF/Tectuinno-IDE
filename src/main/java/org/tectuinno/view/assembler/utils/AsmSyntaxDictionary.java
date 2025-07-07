@@ -64,7 +64,9 @@ public final class AsmSyntaxDictionary {
 			"beq",
 			"jal",
 			"jalr",
-			"lui"
+			"lui",
+			"call",
+			"ret"
 	};
 	
 	/**

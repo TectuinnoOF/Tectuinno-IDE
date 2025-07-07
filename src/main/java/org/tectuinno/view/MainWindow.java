@@ -196,7 +196,7 @@ public class MainWindow extends JFrame {
 	 */
 	private void setConsoleDividerLocationEvent() {
 		this.splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 250);
-		this.SplitPanePrincipal.setDividerLocation(700 - this.getWidth());
+		this.SplitPanePrincipal.setDividerLocation(/*700 - this.getWidth()*/ 0);
 	}
 	
 	private NewEditorWizardDialog openEditorWizard(FileType fileType) throws Exception{
