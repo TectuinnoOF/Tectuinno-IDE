@@ -94,5 +94,9 @@ public class ResultConsolePanel extends JPanel {
 		this.tabbedTerminalPanel.addTab( opennedTerminals + ".- Resultado", terminalPanel);
 				
 	}
+	
+	public TerminalPanel getTerminalPanel() {
+		return this.terminalPanel;
+	}
 
 }

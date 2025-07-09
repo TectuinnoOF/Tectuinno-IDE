@@ -26,45 +26,15 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
-package org.tectuinno.view.assembler.utils;
+package org.tectuinno.compiler.assembler.utils;
 
-/**
- * Defines constant identifiers for syntax highlighting style categories
- * used in the {@link org.tectuinno.view.assembler.AsmEditorPane}.
- *
- * These string constants are used as keys when registering and applying
- * styles in a {@code StyledDocument} via {@code addStyle(...)}.
- * 
- * Each key represents a category of lexical elements to be styled,
- * such as instructions, registers, or labels.
- *
- * @author PabloG
- * @version 1.0
- * @since 2025
- */
-public final class AsmEditorStyleName {
-
-	
-	/** Style name for assembler keywords (e.g., add, lw, beq). */
-    public static final String KEYWORD = "keywords";
-
-    /** Style name for register identifiers (e.g., x0 to x31). */
-    public static final String REGISTER = "register";
-
-    /** Style name for regular/default text. */
-    public static final String DEFAULT = "default";
-
-    /** Style name for label or tag declarations (e.g., loop:, _start:). */
-    public static final String TAG = "tag";
-    
-    /** Style name for inline comments. */
-    public static final String COMMENT = "comment";    
-
-    /**
-     * Private constructor to prevent instantiation.
-     */
-    private AsmEditorStyleName() {
-        // Utility class — no instantiation
-    }
-	
+public enum TokenType {
+	INSTRUCTION,
+    REGISTER,
+    LABEL,
+    IMMEDIATE,
+    COMMENT,
+    COMMA,
+    COLON,
+    UNKNOWN
 }

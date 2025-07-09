@@ -40,8 +40,9 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import org.tectuinno.view.assembler.utils.AsmEditorStyleName;
-import org.tectuinno.view.assembler.utils.AsmSyntaxDictionary;
+import org.tectuinno.compiler.assembler.AsmLexer;
+import org.tectuinno.compiler.assembler.utils.AsmEditorStyleName;
+import org.tectuinno.compiler.assembler.utils.AsmSyntaxDictionary;
 
 
 
@@ -60,6 +61,7 @@ public class AsmEditorPane extends JTextPane {
 	private final Style defaultStyle;
 	private final Style tagStyle;
 	private final Style commentStyle;
+
 	//private StyledDocument styledDocument;
 	
 	
@@ -82,8 +84,7 @@ public class AsmEditorPane extends JTextPane {
 		//Setting commentary on italic format
 		StyleConstants.setItalic(this.commentStyle, true);			
 		
-	}
-	
+	}		
 
 	/**
 	 * 

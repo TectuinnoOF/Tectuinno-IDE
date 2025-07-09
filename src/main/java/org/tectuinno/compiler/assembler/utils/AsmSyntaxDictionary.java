@@ -26,7 +26,7 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
-package org.tectuinno.view.assembler.utils;
+package org.tectuinno.compiler.assembler.utils;
 
 /**
  * Provides a centralized dictionary of reserved elements used in Tectuinno's RISC-V assembler. <br> 
@@ -65,8 +65,8 @@ public final class AsmSyntaxDictionary {
 			"jal",
 			"jalr",
 			"lui",
-			"call",
-			"ret"
+			"call", //jal eq
+			"ret"   //jalr eq
 	};
 	
 	/**

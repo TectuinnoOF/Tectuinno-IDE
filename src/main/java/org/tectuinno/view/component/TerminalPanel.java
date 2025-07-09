@@ -69,6 +69,8 @@ public class TerminalPanel extends JPanel {
 		    	    "** Powered by RISC-V & Java Swing\n" +
 		    	    "**********************************************************************\n";
 
+	private JTextArea txaConsoleTextResult;
+
 
 	
 	public TerminalPanel() {
@@ -77,7 +79,7 @@ public class TerminalPanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane();
 		add(scrollPane, BorderLayout.CENTER);
 		
-		JTextArea txaConsoleTextResult = new JTextArea();
+		txaConsoleTextResult = new JTextArea();
 		txaConsoleTextResult.setText(firstTest);
 		txaConsoleTextResult.setLocale(new Locale("es", "MX"));
 		txaConsoleTextResult.setForeground(new Color(0, 204, 0));
@@ -90,5 +92,9 @@ public class TerminalPanel extends JPanel {
 		
 		//TODO es posible que se necesite algún método público de escritura cuando se requera editar desde otra clase
 	}	
-
+	
+	public void writteIn(String text) {
+		this.txaConsoleTextResult.append(text);
+	}
+	
 }

@@ -34,10 +34,13 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.tectuinno.compiler.assembler.AsmLexer;
+import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
 import org.tectuinno.view.component.ResultConsolePanel;
+
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -58,6 +61,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 public class MainWindow extends JFrame {
 
@@ -75,6 +84,7 @@ public class MainWindow extends JFrame {
 	private JToolBar compilerToolBar;
 	private JDesktopPane desktopPane;
 	private ResultConsolePanel consolePanel;
+	private JButton btnAnalice;
 
 	/**
 	 * Launch the application.
@@ -143,6 +153,39 @@ public class MainWindow extends JFrame {
 		this.splitPaneEditorAndConsole.setRightComponent(this.consolePanel);
 		splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 250);
 		
+		JPanel panelLeftJTree = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panelLeftJTree.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
+		SplitPanePrincipal.setLeftComponent(panelLeftJTree);
+		
+		JTree fileExplorer = new JTree();
+		fileExplorer.setModel(new DefaultTreeModel(
+			new DefaultMutableTreeNode("JTree") {
+				{
+					DefaultMutableTreeNode node_1;
+					node_1 = new DefaultMutableTreeNode("colors");
+						node_1.add(new DefaultMutableTreeNode("blue"));
+						node_1.add(new DefaultMutableTreeNode("violet"));
+						node_1.add(new DefaultMutableTreeNode("red"));
+						node_1.add(new DefaultMutableTreeNode("yellow"));
+					add(node_1);
+					node_1 = new DefaultMutableTreeNode("sports");
+						node_1.add(new DefaultMutableTreeNode("basketball"));
+						node_1.add(new DefaultMutableTreeNode("soccer"));
+						node_1.add(new DefaultMutableTreeNode("football"));
+						node_1.add(new DefaultMutableTreeNode("hockey"));
+					add(node_1);
+					node_1 = new DefaultMutableTreeNode("food");
+						node_1.add(new DefaultMutableTreeNode("hot dogs"));
+						node_1.add(new DefaultMutableTreeNode("pizza"));
+						node_1.add(new DefaultMutableTreeNode("ravioli"));
+						node_1.add(new DefaultMutableTreeNode("bananas"));
+					add(node_1);
+				}
+			}
+		));
+		panelLeftJTree.add(fileExplorer);
+		
 		panelToolBar = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panelToolBar.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
@@ -150,7 +193,35 @@ public class MainWindow extends JFrame {
 		
 		compilerToolBar = new JToolBar();
 		panelToolBar.add(compilerToolBar);
+		
+		btnAnalice = new JButton("Analizar");
+		btnAnalice.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				AsmLexer currentLexer = getCurrentLexer();
+				List<Token> tokens = currentLexer.tokenize();
+				
+				consolePanel.getTerminalPanel().writteIn(">> Iniciando inspección... \n");				
+				
+				for(Token token : tokens) {
+					consolePanel.getTerminalPanel().writteIn(token.toString() + " \n");
+				}
+								
+				consolePanel.getTerminalPanel().writteIn(">> Inspección terminada \n");
+				
+			}
+		});
+		compilerToolBar.add(btnAnalice);
+		
+		JButton btnEnviarLocal = new JButton("Enviar");
+		compilerToolBar.add(btnEnviarLocal);
 
+	}
+	
+	private AsmLexer getCurrentLexer() {
+		AsmEditorInternalFrame frame = (AsmEditorInternalFrame)this.desktopPane.getSelectedFrame();
+		frame.setAsmLexer();
+		return frame.getLexer();
 	}
 	
 	
@@ -209,8 +280,4 @@ public class MainWindow extends JFrame {
 		return newEditorWizard;
 		
 	}
-	
-	
-	
-
 }
