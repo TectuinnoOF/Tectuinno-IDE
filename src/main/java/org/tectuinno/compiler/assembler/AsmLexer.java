@@ -129,14 +129,20 @@ public class AsmLexer {
 	    while (!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_')) {
 	        advance();
 	    }
+	    
+	    // Verificar si termina con dos puntos para considerar etiqueta
+		if (!isAtEnd() && peek() == ':') {
+			advance();
+			String label = source.substring(start, position);
+			return new Token(TokenType.LABEL, label, start);
+		}
+	    
 	    String value = source.substring(start, position);
 
 	    if (isRegister(value)) {
 	        return new Token(TokenType.REGISTER, value, start);
 	    } else if (isInstruction(value)) {
-	        return new Token(TokenType.INSTRUCTION, value, start);
-	    } else if (value.endsWith(":")) {
-	        return new Token(TokenType.LABEL, value, start);
+	        return new Token(TokenType.INSTRUCTION, value, start);	  
 	    } else {
 	        // No reconocido
 	        return new Token(TokenType.UNKNOWN, value, start);
