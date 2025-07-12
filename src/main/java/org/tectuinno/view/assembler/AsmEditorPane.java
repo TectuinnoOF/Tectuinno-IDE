@@ -34,13 +34,10 @@ import java.util.regex.Pattern;
 
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import org.tectuinno.compiler.assembler.AsmLexer;
 import org.tectuinno.compiler.assembler.utils.AsmEditorStyleName;
 import org.tectuinno.compiler.assembler.utils.AsmSyntaxDictionary;
 

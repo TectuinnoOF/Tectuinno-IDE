@@ -44,7 +44,6 @@ package org.tectuinno.utils;
  *
  * This class is not intended to be instantiated.
  */
-
 public enum FileType {
 	
 	ASSEMBLY_FILE,

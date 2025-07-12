@@ -28,24 +28,80 @@
 
 package org.tectuinno.compiler.assembler.utils;
 
+/**
+ * Represents a lexical token produced during the analysis of assembly source code.
+ * <p>
+ * Each token contains a {@link TokenType} indicating its classification,
+ * the raw text value matched in the source, and its starting position in the input.
+ * </p>
+ * 
+ * <p>Example: <br>
+ * {@code Token(INSTRUCTION, "addi", 42)}</p>
+ * 
+ * @author Tectuinno
+ * @version 1.0
+ * @since 2025-07-12
+ */
 public class Token {
-	private final TokenType type;
+	
+	/** The category or type of the token (e.g., INSTRUCTION, REGISTER, COMMENT). */
+    private final TokenType type;
+
+    /** The exact text value matched from the source code. */
     private final String value;
-    private final int position; // Posición inicial del token en el texto
 
-    public Token(TokenType type, String value, int position) {
-        this.type = type;
-        this.value = value;
-        this.position = position;
+    /** The character position in the input where this token begins. */
+    private final int position;
+    
+    /**
+     * Constructs a new {@code Token} with the specified type, value, and position.
+     *
+     * @param type the type of token (e.g., instruction, label)
+     * @param value the matched string from the input
+     * @param position the starting position in the input string
+     */
+	public Token(TokenType type, String value, int position) {
+		this.type = type;
+		this.value = value;
+		this.position = position;
+	}
+
+	/**
+     * Returns the {@link TokenType} of this token.
+     *
+     * @return the token type
+     */
+    public TokenType getType() {
+        return type;
     }
 
-    // Getters
-    public TokenType getType() { return type; }
-    public String getValue() { return value; }
-    public int getPosition() { return position; }
-
-    @Override
-    public String toString() {
-        return String.format("Token(%s, \"%s\", %d)", type, value, position);
+    /**
+     * Returns the string value matched in the input.
+     *
+     * @return the token's text
+     */
+    public String getValue() {
+        return value;
     }
+
+    /**
+     * Returns the index in the input where this token starts.
+     *
+     * @return the starting character index of the token
+     */
+    public int getPosition() {
+        return position;
+    }
+
+	
+	/**
+     * Returns a string representation of the token for debugging and display.
+     * Format: {@code Token(TYPE, "value", position)}
+     *
+     * @return a formatted string describing the token
+     */
+	@Override
+	public String toString() {
+		return String.format("Token(%s, \"%s\", %d)", type, value, position);
+	}
 }

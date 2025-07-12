@@ -35,11 +35,45 @@ import org.tectuinno.compiler.assembler.utils.AsmSyntaxDictionary;
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.compiler.assembler.utils.TokenType;
 
+
+/**
+ * Performs lexical analysis on Tectuinno RISC‑V assembly source code.
+ * <p>
+ * This lexer reads the input character by character and produces a list of {@link Token},
+ * classifying each fragment as instructions, registers, labels, immediates, comments,
+ * parentheses, commas, or unknown tokens.
+ * </p>
+ * <p>
+ * It relies on definitions from {@link org.tectuinno.view.assembler.utils.AsmSyntaxDictionary},
+ * ensuring consistency with syntax highlighting and later parser stages.
+ * </p>
+ *
+ * <p><strong>Token types produced include:</strong></p>
+ * <ul>
+ *   <li>{@link TokenType#INSTRUCTION}</li>
+ *   <li>{@link TokenType#REGISTER}</li>
+ *   <li>{@link TokenType#LABEL}</li>
+ *   <li>{@link TokenType#IMMEDIATE}</li>
+ *   <li>{@link TokenType#COMMENT}</li>
+ *   <li>{@link TokenType#LEFT_PAREN}, {@link TokenType#RIGHT_PAREN}</li>
+ *   <li>{@link TokenType#COMMA}, {@link TokenType#COLON}</li>
+ *   <li>{@link TokenType#UNKNOWN} for unrecognized tokens</li>
+ * </ul>
+ *
+ * @author Tectuinno
+ * @version 1.0
+ * @since 2025-07-12
+ */
 public class AsmLexer {
 
 	private final String source;
 	private int position;
 
+	/**
+     * Constructs the lexer for the given source code.
+     *
+     * @param source the raw assembler source text to tokenize; must not be {@code null}
+     */
 	public AsmLexer(String source) {
 		this.source = source;
 		this.position = 0;
@@ -92,18 +126,21 @@ public class AsmLexer {
 
 	private Token readIdentifierOrInstruction() {
 		int start = position;
-		while (!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_')) {
-			advance();
-		}
-		String value = source.substring(start, position);
+	    while (!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_')) {
+	        advance();
+	    }
+	    String value = source.substring(start, position);
 
-		if (isRegister(value)) {
-			return new Token(TokenType.REGISTER, value, start);
-		} else if (isInstruction(value)) {
-			return new Token(TokenType.INSTRUCTION, value, start);
-		} else {
-			return new Token(TokenType.LABEL, value, start);
-		}
+	    if (isRegister(value)) {
+	        return new Token(TokenType.REGISTER, value, start);
+	    } else if (isInstruction(value)) {
+	        return new Token(TokenType.INSTRUCTION, value, start);
+	    } else if (value.endsWith(":")) {
+	        return new Token(TokenType.LABEL, value, start);
+	    } else {
+	        // No reconocido
+	        return new Token(TokenType.UNKNOWN, value, start);
+	    }
 	}
 
 	private Token readComment() {
@@ -120,7 +157,15 @@ public class AsmLexer {
 		String value = source.substring(start, position);
 		return new Token(TokenType.COMMENT, value, start);
 	}
-
+	
+	/**
+     * Tokenizes the source code into a list of {@link Token}.
+     *
+     * This method scans the source sequentially, identifies token types using
+     * character classification and syntax definitions, and returns the complete list.
+     *
+     * @return a list of tokens found in the source
+     */
 	public List<Token> tokenize() {
 		List<Token> tokens = new ArrayList<>();
 
