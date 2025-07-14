@@ -73,6 +73,10 @@ public enum TokenType {
      * Represents a colon, typically after labels.
      */
     COLON,
+    
+    LEFTPAREN,
+    
+    RIGHTPAREN,
 
     /**
      * Represents any unrecognized or invalid token.

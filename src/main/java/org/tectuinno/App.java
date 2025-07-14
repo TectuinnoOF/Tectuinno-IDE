@@ -33,9 +33,7 @@ import java.awt.EventQueue;
 import org.tectuinno.view.MainWindow;
 
 
-/**
- * Hello world!
- */
+
 public class App {
     public static void main(String[] args) {
         
@@ -52,3 +50,28 @@ public class App {
     	
     }
 }
+
+/**
+ * Some asm example codes
+ * */
+/*
+ini:
+	addi x7,x0,1
+	addi x4,x0,0x04aa
+	lui x2,0x10000
+
+	sw x4,0(x2)  
+    	call delay
+	addi x4,x0,0x0255
+   	sw x4,0(x2)  
+    	call delay
+	jal x0,ini
+    
+delay:
+	lui x5,1000
+tec:    sub x5, x5,x7
+    	beq x5,x0,salir
+	jal x0,tec
+salir:	ret
+*/
+ 
