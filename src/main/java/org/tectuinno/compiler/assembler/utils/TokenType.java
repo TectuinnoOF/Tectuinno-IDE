@@ -74,8 +74,14 @@ public enum TokenType {
      */
     COLON,
     
+    /**
+     * Represents a left parenthesis {@code (}, used in memory address expressions.
+     */
     LEFTPAREN,
     
+    /**
+     * Represents a right parenthesis {@code )}, used in memory address expressions.
+     */
     RIGHTPAREN,
 
     /**
