@@ -55,6 +55,8 @@ public class App {
  * Some asm example codes
  * */
 /*
+/*Este es otro ejemplo*/
+/*
 ini:
 	addi x7,x0,1
 	addi x4,x0,0x04aa

@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.tectuinno.compiler.assembler.AsmLexer;
+import org.tectuinno.compiler.assembler.AsmParser;
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
@@ -198,16 +199,27 @@ public class MainWindow extends JFrame {
 		btnAnalice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				AsmLexer currentLexer = getCurrentLexer();
-				List<Token> tokens = currentLexer.tokenize();
+				List<Token> tokens = analizeCurrentLexer();
 				
-				consolePanel.getTerminalPanel().writteIn(">> Iniciando inspección... \n");				
+				new Thread() {
+					@Override
+					public void run() {
+						consolePanel.getTerminalPanel().writteIn(">> Iniciando inspección... \n");				
+						
+						for(Token token : tokens) {
+							consolePanel.getTerminalPanel().writteIn(token.toString() + " \n");
+						}
+										
+						consolePanel.getTerminalPanel().writteIn(">> Inspección terminada \n");
+					};					
+				}.start();
 				
-				for(Token token : tokens) {
-					consolePanel.getTerminalPanel().writteIn(token.toString() + " \n");
-				}
-								
-				consolePanel.getTerminalPanel().writteIn(">> Inspección terminada \n");
+				new Thread() {
+					@Override
+					public void run() {
+						asmSyntaxParse(tokens);
+					}
+				}.start();
 				
 			}
 		});
@@ -216,6 +228,21 @@ public class MainWindow extends JFrame {
 		JButton btnEnviarLocal = new JButton("Enviar");
 		compilerToolBar.add(btnEnviarLocal);
 
+	}
+	
+	public void asmSyntaxParse(List<Token> tokens) {			
+		
+		AsmParser parser = new AsmParser(tokens);		
+		parser.parseProgram();
+		
+	}
+	
+	public List<Token> analizeCurrentLexer() {
+		
+		AsmLexer currentLexer = getCurrentLexer();
+		List<Token> tokens = currentLexer.tokenize();				
+		
+		return tokens;
 	}
 	
 	private AsmLexer getCurrentLexer() {
