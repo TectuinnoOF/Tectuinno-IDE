@@ -28,6 +28,8 @@
 
 package org.tectuinno.compiler.assembler.utils;
 
+import java.util.Set;
+
 /**
  * Provides a centralized dictionary of reserved elements used in Tectuinno's RISC-V assembler. <br> 
  *<p>
@@ -43,6 +45,24 @@ package org.tectuinno.compiler.assembler.utils;
  */
 public final class AsmSyntaxDictionary {
 	
+	public static final String LW = "lw";
+	public static final String ADDI = "addi";
+	public static final String SLTI = "slti";
+	public static final String ORI = "ori";
+	public static final String ANDI = "andi";
+	public static final String SW = "sw";
+	public static final String ADD = "add";
+	public static final String SUB = "sub";
+	public static final String SLT = "slt";
+	public static final String OR = "or";
+	public static final String AND = "and";
+	public static final String BEQ = "beq";
+	public static final String JAL = "jal";
+	public static final String JALR ="jalr";
+	public static final String LUI = "lui";
+	public static final String CALL = "call"; 
+	public static final String RET = "ret";   
+	
 	/**
      * A list of supported base RISC-V instructions for the Tectuinno assembler.<br>
      * 
@@ -50,24 +70,26 @@ public final class AsmSyntaxDictionary {
      * Future expansions may include the full RV32I and additional extensions.
      */
 	public static final String[] INSTRUCTIONS = {			
-			"lw", 
-			"addi",
-			"slti",
-			"ori",
-			"andi",
-			"sw",
-			"add",
-			"sub",
-			"slt",
-			"or",
-			"and",
-			"beq",
-			"jal",
-			"jalr",
-			"lui",
-			"call", //jal eq
-			"ret"   //jalr eq
+			LW, 
+			ADDI,
+			SLTI,
+			ORI,
+			ANDI,
+			SW,
+			ADD,
+			SUB,
+			SLT,
+			OR,
+			AND,
+			BEQ,
+			JAL,
+			JALR,
+			LUI,
+			CALL, //jal eq
+			RET   //jalr eq
 	};
+	
+	public static final Set<String> INSTRUCTIONS_SET = Set.of(INSTRUCTIONS);
 	
 	/**
      * A list of all 32 general-purpose registers available in the Tectuinno Core.
