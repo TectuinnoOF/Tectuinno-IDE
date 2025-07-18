@@ -32,11 +32,14 @@ import java.util.List;
 
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.compiler.assembler.utils.TokenType;
+import org.tectuinno.view.component.ResultConsolePanel;
 
 public class AsmParser {
 
 	private final List<Token> tokens;
 	private int position;
+	private ResultConsolePanel consolePanel;
+	private static int errorCounter;
 
 	public AsmParser(List<Token> tokens, int position) {
 		super();
@@ -48,10 +51,14 @@ public class AsmParser {
 		super();
 		this.tokens = tokens;
 		this.position = 0;
+		errorCounter = 0;
 	}
 	
 	private void error(Token token, String message) {
-		System.err.println("Error de sintaxis: " + token + ": " + message);
+		String errorMessage = "Error de sintaxis: " + token + ": " + message;
+		System.err.println(errorMessage);
+		this.consolePanel.getTerminalPanel().writteIn(errorMessage);
+		errorCounter ++;
 		advance();
 	}
 	
@@ -131,7 +138,10 @@ public class AsmParser {
 	        return;
 	    }
 	    
-	    
+	    if(check(TokenType.UNKNOWN)){
+	    	advance();
+	    	return;
+	    }
 		
 		error(peek(), "Argumento inválido");
 	}
@@ -141,6 +151,11 @@ public class AsmParser {
 			do {
 				parseArgument();
 			}while(match(TokenType.COMMA));
+		}
+		
+		if(check(TokenType.UNKNOWN)) {
+			advance();
+			return;
 		}
 	}
 	
@@ -165,14 +180,30 @@ public class AsmParser {
 		}
 		
 		error(peek(), "Linea no válida");
+	}		
+	
+	private void parserFinishResults(long start, long finish) {
+		double time = (double) ((finish - start)/1000);
+		String finishMessage = new StringBuilder()
+				.append("\n============== Analisis de sintaxis ============================\n")
+				.append("Tokens analizados: ").append(this.tokens.size())
+				.append("\nErrores detectados: ").append(errorCounter)
+				.append("\nTiempo: ").append(time)
+				.append("\n================================================================\n")
+				.toString();
+		this.consolePanel.getTerminalPanel().writteIn(finishMessage);
 	}
 	
 	public void parseProgram() {
+		long start = System.currentTimeMillis();
 		while (!isAtEnt()) {			
 			parseLines();			
 		}
+		long finish = System.currentTimeMillis();
+		
+		this.parserFinishResults(start, finish);
 	}
-	
+		
 	public int getPosition() {
 		return position;
 	}
@@ -183,6 +214,14 @@ public class AsmParser {
 
 	public List<Token> getTokens() {
 		return tokens;
+	}
+	
+	public void setResultConsolePanel(ResultConsolePanel consolePanel) {
+		this.consolePanel = consolePanel;
+	}
+	
+	public ResultConsolePanel getConsolePanel() {
+		return this.consolePanel;
 	}
 
 }

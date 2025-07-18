@@ -232,16 +232,18 @@ public class MainWindow extends JFrame {
 	
 	public void asmSyntaxParse(List<Token> tokens) {			
 		
-		AsmParser parser = new AsmParser(tokens);		
+		AsmParser parser = new AsmParser(tokens);
+		parser.setResultConsolePanel(consolePanel);
+		consolePanel.getTerminalPanel().writteIn(">>Iniciando Analisis\n");
 		parser.parseProgram();
+		consolePanel.getTerminalPanel().writteIn(">>Analisis Terminado\n");
 		
 	}
 	
 	public List<Token> analizeCurrentLexer() {
 		
 		AsmLexer currentLexer = getCurrentLexer();
-		List<Token> tokens = currentLexer.tokenize();				
-		
+		List<Token> tokens = currentLexer.tokenize();						
 		return tokens;
 	}
 	
