@@ -36,6 +36,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.tectuinno.compiler.assembler.AsmLexer;
 import org.tectuinno.compiler.assembler.AsmParser;
+import org.tectuinno.compiler.assembler.AsmSemanticAnalyzer;
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
@@ -211,15 +212,20 @@ public class MainWindow extends JFrame {
 						}
 										
 						consolePanel.getTerminalPanel().writteIn(">> Inspección terminada \n");
+						
+						asmSyntaxParse(tokens);
+						
+						asmSemanticParse(tokens);
+						
 					};					
 				}.start();
 				
-				new Thread() {
+				/*new Thread() {
 					@Override
 					public void run() {
 						asmSyntaxParse(tokens);
 					}
-				}.start();
+				}.start();*/
 				
 			}
 		});
@@ -228,6 +234,23 @@ public class MainWindow extends JFrame {
 		JButton btnEnviarLocal = new JButton("Enviar");
 		compilerToolBar.add(btnEnviarLocal);
 
+	}
+	
+	public void asmSemanticParse(List<Token> tokens) {
+		
+		try {
+			
+			AsmSemanticAnalyzer analizer = new AsmSemanticAnalyzer(tokens, this.consolePanel);
+			analizer.analize();
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			this.consolePanel.getTerminalPanel().writteIn(">>> " + e.getMessage());
+		}
+		
+		
+		
 	}
 	
 	public void asmSyntaxParse(List<Token> tokens) {			

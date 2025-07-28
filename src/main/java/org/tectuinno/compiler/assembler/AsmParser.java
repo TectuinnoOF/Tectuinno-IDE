@@ -187,7 +187,7 @@ public class AsmParser {
 		String finishMessage = new StringBuilder()
 				.append("\n============== Analisis de sintaxis ============================\n")
 				.append("Tokens analizados: ").append(this.tokens.size())
-				.append("\nErrores detectados: ").append(errorCounter)
+				.append("\nErrores sintacticos detectados: ").append(errorCounter)
 				.append("\nTiempo: ").append(time)
 				.append("\n================================================================\n")
 				.toString();
