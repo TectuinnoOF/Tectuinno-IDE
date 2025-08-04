@@ -97,7 +97,7 @@ public class AsmSemanticAnalyzer {
 	
 	private boolean check(TokenType type) {
 	    if (isAtEnd()) return false;
-	    this.consolePanel.getTerminalPanel().writteIn("\n\t>>>Parametro: " + type.toString() +  " | Comparar: " + peek().getType().toString() + "\n");
+	    //this.consolePanel.getTerminalPanel().writteIn("\n\t>>>Parametro: " + type.toString() +  " | Comparar: " + peek().getType().toString() + "\n");
 	    return peek().getType() == type;
 	}
 
@@ -121,32 +121,41 @@ public class AsmSemanticAnalyzer {
 		String name = instr.getValue();
 
 		switch (name) {
-		case ADDI:
-		case SLTI:
-		case ORI:
+		case ADDI:			
+		case SLTI:			
+		case ORI:			
 		case ANDI:
-			if (args.size() != 5)
+			if (args.size() != 5) {
+				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
 				errors.add(this.errorArgs(instr, 3, args.size()));
+			}
 			break;
-		case ADD:
-		case SUB:
+		case ADD:			
+		case SUB:			
 		case SLT:
 		case OR:
 		case AND:
-			if (args.size() != 5)
+			if (args.size() != 5) {
+				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
 				errors.add(this.errorArgs(instr, 3, args.size()));
+			}
 			break;
 		case LUI:
-			if (args.size() != 3)
+			if (args.size() != 3) {
+				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
 				errors.add(this.errorArgs(instr, 2, args.size()));
+			}
 			break;
-		case LW:
+		case LW:			
 		case SW:
-			if (args.size() != 6)
+			if (args.size() != 6) {
+				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
 				errors.add(this.errorArgs(instr, 2, args.size()));
+			}
 			break;
 		case BEQ:
 			if (args.size() != 5 || args.get(4).getType() != TokenType.UNKNOWN) {
+				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
 				errors.add("BEQ espera: rs1, rs2, etiqueta");
 			} else {
 				verifyLabel(args.get(4));
@@ -154,23 +163,28 @@ public class AsmSemanticAnalyzer {
 			break;
 		case JAL:
 			if (args.size() == 1 && args.get(0).getType() == TokenType.UNKNOWN) {
+				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
 				verifyLabel(args.get(0));
 			}
 			if (args.size() == 3 && args.get(2).getType() == TokenType.UNKNOWN) {
+				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
 				verifyLabel(args.get(2));
 			}
 			break;
-		case JALR:
+		case JALR:			
 		case CALL:
 			if (args.size() != 1 || args.get(0).getType() != TokenType.UNKNOWN) {
+				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
 				errors.add(this.errorArgs("CALL espera 1 etiqueta como argumento"));
 			} else {
 				verifyLabel(args.get(0));
 			}
 			break;
 		case RET:
-			if (!args.isEmpty())
+			if (!args.isEmpty()) {
+				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
 				this.errors.add(this.errorArgs("Ret no espera ningún argumento"));
+			}
 			break;
 		default:
 			errors.add(this.errorArgs("Instrucción u objeto desconocido...."));
