@@ -87,6 +87,7 @@ public class MainWindow extends JFrame {
 	private JDesktopPane desktopPane;
 	private ResultConsolePanel consolePanel;
 	private JButton btnAnalice;
+	private JMenuItem JMenuArchivoGuardar;	
 
 	/**
 	 * Launch the application.
@@ -129,6 +130,14 @@ public class MainWindow extends JFrame {
 		MenuItemFicheroTexto = new JMenuItem("Texto");
 		JMenuArchivoNuevo.add(MenuItemFicheroTexto);
 		
+		JMenuArchivoGuardar = new JMenuItem("Guardar");
+		JMenuArchivoGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				guardarArchivo();
+			}
+		});
+		JMenuArchivo.add(JMenuArchivoGuardar);
+		
 		JMenuProyecto = new JMenu("Proyecto");
 		menuBar.add(JMenuProyecto);
 		contentPane = new JPanel();
@@ -160,32 +169,7 @@ public class MainWindow extends JFrame {
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
 		SplitPanePrincipal.setLeftComponent(panelLeftJTree);
 		
-		JTree fileExplorer = new JTree();
-		fileExplorer.setModel(new DefaultTreeModel(
-			new DefaultMutableTreeNode("JTree") {
-				{
-					DefaultMutableTreeNode node_1;
-					node_1 = new DefaultMutableTreeNode("colors");
-						node_1.add(new DefaultMutableTreeNode("blue"));
-						node_1.add(new DefaultMutableTreeNode("violet"));
-						node_1.add(new DefaultMutableTreeNode("red"));
-						node_1.add(new DefaultMutableTreeNode("yellow"));
-					add(node_1);
-					node_1 = new DefaultMutableTreeNode("sports");
-						node_1.add(new DefaultMutableTreeNode("basketball"));
-						node_1.add(new DefaultMutableTreeNode("soccer"));
-						node_1.add(new DefaultMutableTreeNode("football"));
-						node_1.add(new DefaultMutableTreeNode("hockey"));
-					add(node_1);
-					node_1 = new DefaultMutableTreeNode("food");
-						node_1.add(new DefaultMutableTreeNode("hot dogs"));
-						node_1.add(new DefaultMutableTreeNode("pizza"));
-						node_1.add(new DefaultMutableTreeNode("ravioli"));
-						node_1.add(new DefaultMutableTreeNode("bananas"));
-					add(node_1);
-				}
-			}
-		));
+		JTree fileExplorer = new JTree();		
 		panelLeftJTree.add(fileExplorer);
 		
 		panelToolBar = new JPanel();
@@ -236,6 +220,10 @@ public class MainWindow extends JFrame {
 
 	}
 	
+	private void guardarArchivo() {
+		
+	}
+	
 	public void asmSemanticParse(List<Token> tokens) {
 		
 		try {
@@ -257,7 +245,8 @@ public class MainWindow extends JFrame {
 		
 		AsmParser parser = new AsmParser(tokens);
 		parser.setResultConsolePanel(consolePanel);
-		consolePanel.getTerminalPanel().writteIn(">>Iniciando Analisis\n");
+		consolePanel.getTerminalPanel().writteIn("\n================================================================\n");
+		consolePanel.getTerminalPanel().writteIn("\n>>Iniciando Analisis\n");
 		parser.parseProgram();
 		consolePanel.getTerminalPanel().writteIn(">>Analisis Terminado\n");
 		

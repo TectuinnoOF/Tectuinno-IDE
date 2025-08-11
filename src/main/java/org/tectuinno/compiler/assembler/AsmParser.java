@@ -55,7 +55,7 @@ public class AsmParser {
 	}
 	
 	private void error(Token token, String message) {
-		String errorMessage = "Error de sintaxis: " + token + ": " + message;
+		String errorMessage = "Error de sintaxis: " + token + ": " + message + "\n\r";
 		System.err.println(errorMessage);
 		this.consolePanel.getTerminalPanel().writteIn(errorMessage);
 		errorCounter ++;

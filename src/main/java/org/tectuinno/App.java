@@ -76,4 +76,14 @@ tec:    sub x5, x5,x7
 	jal x0,tec
 salir:	ret
 */
+/*
+ 
+ Otro ejemplo de codigo ensamblador:
+ 
+ 
+ 
+ */
+
+
+
  

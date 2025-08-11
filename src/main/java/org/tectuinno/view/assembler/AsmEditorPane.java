@@ -121,7 +121,7 @@ public class AsmEditorPane extends JTextPane {
 		
         Matcher matcher = Pattern.compile(pattern, Pattern.MULTILINE).matcher(text);
         
-        System.out.println(text);
+        //System.out.println(text);
         
         StyledDocument doc = getStyledDocument();
         

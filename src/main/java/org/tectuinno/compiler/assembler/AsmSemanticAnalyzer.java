@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.compiler.assembler.utils.TokenType;
@@ -85,20 +86,25 @@ public class AsmSemanticAnalyzer {
 	}
 
 	private boolean check(TokenType... types) {
-		
-		if (isAtEnd()) return false;
-		
+
+		if (isAtEnd())
+			return false;
+
 		TokenType current = peek().getType();
-		
-		for(TokenType type : types) if(type == current) return true;
-		
+
+		for (TokenType type : types)
+			if (type == current)
+				return true;
+
 		return false;
 	}
-	
+
 	private boolean check(TokenType type) {
-	    if (isAtEnd()) return false;
-	    //this.consolePanel.getTerminalPanel().writteIn("\n\t>>>Parametro: " + type.toString() +  " | Comparar: " + peek().getType().toString() + "\n");
-	    return peek().getType() == type;
+		if (isAtEnd())
+			return false;
+		// this.consolePanel.getTerminalPanel().writteIn("\n\t>>>Parametro: " +
+		// type.toString() + " | Comparar: " + peek().getType().toString() + "\n");
+		return peek().getType() == type;
 	}
 
 	private boolean match(TokenType type) {
@@ -112,104 +118,135 @@ public class AsmSemanticAnalyzer {
 	private void verifyLabel(Token token) {
 		String name = token.getValue();
 		if (!declaredLabels.containsKey(name)) {
-			errors.add(this.errorArgs(name + "No se reconoce como etiqueta u objeto declarado"));
+			errors.add(this.errorArgs(name + " No se reconoce como etiqueta u objeto declarado"));
 		}
 	}
 
+	/**
+	 * Validates instruction semantic using logical arguments (no commas/parens).
+	 * Accepts declared labels as LABEL tokens
+	 * 
+	 * @param instr
+	 * @param args
+	 */
 	private void validateInstruction(Token instr, List<Token> args) {
 
-		String name = instr.getValue();
+		final String name = instr.getValue();
+
+		final int n = args.size();
+		final Predicate<Integer> isReg = i -> args.get(i).getType() == TokenType.REGISTER;
+		final Predicate<Integer> isImm = i -> args.get(i).getType() == TokenType.IMMEDIATE;
+		final Predicate<Integer> isLbl = i -> args.get(i).getType() == TokenType.LABEL;
 
 		switch (name) {
-		case ADDI:			
-		case SLTI:			
-		case ORI:			
+		case ADDI:
+		case SLTI:
+		case ORI:
 		case ANDI:
-			if (args.size() != 5) {
-				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
-				errors.add(this.errorArgs(instr, 3, args.size()));
+			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isImm.test(2)) {
+				errors.add(this.errorArgs(instr, 3, n));
 			}
 			break;
-		case ADD:			
-		case SUB:			
+		case ADD:
+		case SUB:
 		case SLT:
 		case OR:
 		case AND:
-			if (args.size() != 5) {
-				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
-				errors.add(this.errorArgs(instr, 3, args.size()));
+			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isReg.test(2)) {
+				errors.add(this.errorArgs(instr, 3, n));
 			}
 			break;
 		case LUI:
-			if (args.size() != 3) {
-				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
-				errors.add(this.errorArgs(instr, 2, args.size()));
+			if (n != 2 || !isReg.test(0) || !isImm.test(1)) {
+				errors.add(this.errorArgs(instr, 2, n));
 			}
 			break;
-		case LW:			
+		case LW:
 		case SW:
-			if (args.size() != 6) {
-				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
-				errors.add(this.errorArgs(instr, 2, args.size()));
+			if (n != 3 || !isReg.test(0) || !isImm.test(1) || !isReg.test(2)) {
+				errors.add(this.errorArgs(instr, 3, n));
 			}
 			break;
 		case BEQ:
-			if (args.size() != 5 || args.get(4).getType() != TokenType.UNKNOWN) {
-				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
-				errors.add("BEQ espera: rs1, rs2, etiqueta");
-			} else {
-				verifyLabel(args.get(4));
+			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isLbl.test(2)) {
+				errors.add(this.errorArgs("BEQ espera: rs1, rs2, etiqueta"));
 			}
 			break;
 		case JAL:
-			if (args.size() == 1 && args.get(0).getType() == TokenType.UNKNOWN) {
-				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
-				verifyLabel(args.get(0));
-			}
-			if (args.size() == 3 && args.get(2).getType() == TokenType.UNKNOWN) {
-				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
-				verifyLabel(args.get(2));
-			}
-			break;
-		case JALR:			
-		case CALL:
-			if (args.size() != 1 || args.get(0).getType() != TokenType.UNKNOWN) {
-				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
-				errors.add(this.errorArgs("CALL espera 1 etiqueta como argumento"));
+			if ((n == 1 && isLbl.test(0)) || (n == 2 && isReg.test(0) && isLbl.test(1))) {
+
 			} else {
-				verifyLabel(args.get(0));
+				errors.add(errorArgs(instr, 1, n));
 			}
 			break;
+		case JALR:
+			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isImm.test(2)) {
+                errors.add(errorArgs(instr, 3, n));
+            }
+            break;
+		case CALL:
+			if (!(n == 1 && isLbl.test(0))) {
+                errors.add(errorArgs("CALL espera 1 etiqueta como argumento"));
+            }
+            break;
 		case RET:
-			if (!args.isEmpty()) {
-				this.consolePanel.getTerminalPanel().writteIn("\nargs "+args.size() + "\n");
-				this.errors.add(this.errorArgs("Ret no espera ningún argumento"));
-			}
-			break;
+			if (n != 0) {
+                errors.add(errorArgs("Ret no espera ningún argumento"));
+            }
+            break;
 		default:
-			errors.add(this.errorArgs("Instrucción u objeto desconocido...."));
+			errors.add(this.errorArgs(name + " | Instrucción u objeto desconocido...."));
 			break;
 		}
 
 	}
 
 	private void parseInstruction() {
+
 		Token instr = this.previous();
 		List<Token> args = new ArrayList<Token>();
+
 		while (check(TokenType.REGISTER) || check(TokenType.IMMEDIATE) || check(TokenType.LEFTPAREN)
 				|| check(TokenType.UNKNOWN)) {
+
 			args.add(advance());
+
 			if (match(TokenType.LEFTPAREN)) {
-				args.add(previous());
+
+				args.add(previous()); // adding the open paren
+
 				if (check(TokenType.REGISTER))
 					args.add(advance());
-				if (check(TokenType.RIGHTPAREN))
+				if (match(TokenType.RIGHTPAREN))
 					args.add(previous());
 			}
+
 			match(TokenType.COMMA);
+
 		}
 
-		validateInstruction(instr, args);
+		// Filter logic args only...
+		List<Token> logicArgs = new ArrayList<Token>();
+
+		for (Token t : args) {
+
+			if (t.getType() == TokenType.COMMA || t.getType() == TokenType.LEFTPAREN
+					|| t.getType() == TokenType.RIGHTPAREN) {
+
+				continue;
+
+			}
+
+			if (t.getType() == TokenType.UNKNOWN && declaredLabels.containsKey(t.getValue())) {
+				logicArgs.add(new Token(TokenType.LABEL, t.getValue(), t.getPosition()));
+				continue;
+			}
+
+			logicArgs.add(t);
+
+		}
+
+		validateInstruction(instr, logicArgs);
 	}
 
 	private void parseLine() {
@@ -220,7 +257,7 @@ public class AsmSemanticAnalyzer {
 			return;
 
 		if (match(TokenType.LABEL)) {
-			if (check(TokenType.INSTRUCTION)) {
+			if (match(TokenType.INSTRUCTION)) {
 				this.parseInstruction();
 			}
 			return;
@@ -246,40 +283,35 @@ public class AsmSemanticAnalyzer {
 			}
 		}
 	}
-	
+
 	private void analizerFinishResult(long start, long finish) {
-		
-		double time = (double) ((finish - start)/1000);
-		
+
+		double time = (double) ((finish - start) / 1000);
+
 		this.consolePanel.getTerminalPanel().writteIn("\n======================================\n");
 		this.consolePanel.getTerminalPanel().writteIn(">> analisis finalizado\n");
-		
-		
-		
-		if(this.errors.size() >= 0) {
+
+		if (this.errors.size() >= 0) {
 			this.errors.stream().forEach(er -> {
 				consolePanel.getTerminalPanel().writteIn(er + "\n");
 			});
 		}
-		
-		String finishMessage = new StringBuilder()
-				.append("\n======================================\n")
-				.append("Tokens analizados: ").append(this.tokens.size())
-				.append("\nErrores semanticos detectados: ").append(errorCounter)
-				.append("\nTiempo: ").append(time)
-				.append("\n======================================\n")
-				.toString();
-		
+
+		String finishMessage = new StringBuilder().append("\n======================================\n")
+				.append("Tokens analizados: ").append(this.tokens.size()).append("\nErrores semanticos detectados: ")
+				.append(errorCounter).append("\nTiempo: ").append(time)
+				.append("\n======================================\n").toString();
+
 		this.consolePanel.getTerminalPanel().writteIn(finishMessage);
 	}
 
-	public void analize() throws Exception {
-		
+	public boolean analize() throws Exception {
+
 		long start = System.currentTimeMillis();
-		
+
 		this.consolePanel.getTerminalPanel().writteIn("\n======================================\n");
-		this.consolePanel.getTerminalPanel().writteIn(">> Iniciando depuración");
-		
+		this.consolePanel.getTerminalPanel().writteIn(">> Analizando Semantica");
+
 		this.collectLabels();
 		this.position = 0;
 		errorCounter = 0;
@@ -287,11 +319,13 @@ public class AsmSemanticAnalyzer {
 		while (!isAtEnd()) {
 			this.parseLine();
 		}
-		
+
 		long finish = System.currentTimeMillis();
-		
+
 		this.analizerFinishResult(start, finish);
 		
+		return errorCounter <= 0;
+
 	}
 
 	public Map<String, Token> getDeclaredLabels() {
