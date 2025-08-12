@@ -80,14 +80,13 @@ public class MainWindow extends JFrame {
 	private JMenuItem MenuItemNvoAsm;
 	private JMenu JMenuProyecto;
 	private JMenuItem MenuItemFicheroTexto;
-	private JSplitPane SplitPanePrincipal;
-	private JSplitPane splitPaneEditorAndConsole;
 	private JPanel panelToolBar;
 	private JToolBar compilerToolBar;
-	private JDesktopPane desktopPane;
-	private ResultConsolePanel consolePanel;
 	private JButton btnAnalice;
 	private JMenuItem JMenuArchivoGuardar;	
+	private JSplitPane splitPaneEditorAndConsole;
+	private JDesktopPane desktopPane;
+	private ResultConsolePanel consolePanel;
 
 	/**
 	 * Launch the application.
@@ -145,33 +144,6 @@ public class MainWindow extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
-		SplitPanePrincipal = new JSplitPane();
-		SplitPanePrincipal.setBackground(new Color(105, 105, 105));
-		contentPane.add(SplitPanePrincipal, BorderLayout.CENTER);
-		
-		splitPaneEditorAndConsole = new JSplitPane();
-		splitPaneEditorAndConsole.setDebugGraphicsOptions(DebugGraphics.NONE_OPTION);
-		splitPaneEditorAndConsole.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		splitPaneEditorAndConsole.setDividerSize(5);
-		splitPaneEditorAndConsole.setContinuousLayout(false);
-		splitPaneEditorAndConsole.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		SplitPanePrincipal.setRightComponent(splitPaneEditorAndConsole);
-		
-		desktopPane = new JDesktopPane();
-		splitPaneEditorAndConsole.setLeftComponent(desktopPane);
-		
-		this.consolePanel = new ResultConsolePanel();
-		this.splitPaneEditorAndConsole.setRightComponent(this.consolePanel);
-		splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 250);
-		
-		JPanel panelLeftJTree = new JPanel();
-		FlowLayout flowLayout_1 = (FlowLayout) panelLeftJTree.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.LEFT);
-		SplitPanePrincipal.setLeftComponent(panelLeftJTree);
-		
-		JTree fileExplorer = new JTree();		
-		panelLeftJTree.add(fileExplorer);
-		
 		panelToolBar = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panelToolBar.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
@@ -217,6 +189,21 @@ public class MainWindow extends JFrame {
 		
 		JButton btnEnviarLocal = new JButton("Enviar");
 		compilerToolBar.add(btnEnviarLocal);
+		
+		splitPaneEditorAndConsole = new JSplitPane();
+		splitPaneEditorAndConsole.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		splitPaneEditorAndConsole.setDividerSize(5);
+		splitPaneEditorAndConsole.setDebugGraphicsOptions(DebugGraphics.NONE_OPTION);
+		splitPaneEditorAndConsole.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		splitPaneEditorAndConsole.setContinuousLayout(false);
+		contentPane.add(splitPaneEditorAndConsole, BorderLayout.CENTER);
+		
+		desktopPane = new JDesktopPane();
+		splitPaneEditorAndConsole.setLeftComponent(desktopPane);
+		
+		consolePanel = new ResultConsolePanel();
+		splitPaneEditorAndConsole.setRightComponent(consolePanel);
+		splitPaneEditorAndConsole.setDividerLocation(442);
 
 	}
 	
@@ -308,7 +295,7 @@ public class MainWindow extends JFrame {
 	 */
 	private void setConsoleDividerLocationEvent() {
 		this.splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 250);
-		this.SplitPanePrincipal.setDividerLocation(/*700 - this.getWidth()*/ 0);
+		//this.SplitPanePrincipal.setDividerLocation(/*700 - this.getWidth()*/ 0);
 	}
 	
 	private NewEditorWizardDialog openEditorWizard(FileType fileType) throws Exception{

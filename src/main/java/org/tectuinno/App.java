@@ -29,14 +29,24 @@
 package org.tectuinno;
 
 import java.awt.EventQueue;
+import javax.swing.UIManager;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import org.tectuinno.view.MainWindow;
+
 
 
 
 public class App {
     public static void main(String[] args) {
         
+    	try {    		
+    		UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+    		
+    	}catch (Exception e) {
+			e.printStackTrace(System.err);
+		}
+    	
     	EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -75,6 +85,8 @@ tec:    sub x5, x5,x7
     	beq x5,x0,salir
 	jal x0,tec
 salir:	ret
+
+
 */
 /*
  
