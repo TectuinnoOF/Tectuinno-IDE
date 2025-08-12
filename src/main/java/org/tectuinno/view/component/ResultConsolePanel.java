@@ -95,6 +95,12 @@ public class ResultConsolePanel extends JPanel {
 				
 	}
 	
+	public void openNewTerminal(String name) {
+		
+		
+		
+	}
+	
 	public TerminalPanel getTerminalPanel() {
 		return this.terminalPanel;
 	}

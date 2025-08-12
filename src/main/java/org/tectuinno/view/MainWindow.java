@@ -87,6 +87,7 @@ public class MainWindow extends JFrame {
 	private JSplitPane splitPaneEditorAndConsole;
 	private JDesktopPane desktopPane;
 	private ResultConsolePanel consolePanel;
+	private boolean isCodeCorrect;
 
 	/**
 	 * Launch the application.
@@ -99,6 +100,9 @@ public class MainWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public MainWindow() {
+		
+		this.isCodeCorrect = false;
+		
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -216,7 +220,7 @@ public class MainWindow extends JFrame {
 		try {
 			
 			AsmSemanticAnalyzer analizer = new AsmSemanticAnalyzer(tokens, this.consolePanel);
-			analizer.analize();
+			this.isCodeCorrect = analizer.analize();
 			
 		}catch (Exception e) {
 			// TODO: handle exception
