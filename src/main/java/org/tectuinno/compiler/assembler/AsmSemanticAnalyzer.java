@@ -85,20 +85,6 @@ public class AsmSemanticAnalyzer {
 		return this.tokens.get(this.position - 1);
 	}
 
-	private boolean check(TokenType... types) {
-
-		if (isAtEnd())
-			return false;
-
-		TokenType current = peek().getType();
-
-		for (TokenType type : types)
-			if (type == current)
-				return true;
-
-		return false;
-	}
-
 	private boolean check(TokenType type) {
 		if (isAtEnd())
 			return false;
@@ -113,14 +99,7 @@ public class AsmSemanticAnalyzer {
 			return true;
 		}
 		return false;
-	}
-
-	private void verifyLabel(Token token) {
-		String name = token.getValue();
-		if (!declaredLabels.containsKey(name)) {
-			errors.add(this.errorArgs(name + " No se reconoce como etiqueta u objeto declarado"));
-		}
-	}
+	}	
 
 	/**
 	 * Validates instruction semantic using logical arguments (no commas/parens).
@@ -200,53 +179,55 @@ public class AsmSemanticAnalyzer {
 		}
 
 	}
-
+	
+	
 	private void parseInstruction() {
 
 		Token instr = this.previous();
+		List<Token> args = this.colletArgumentTokens();		
+		List<Token> logicArgs = this.toLogicalArgs(args);
+		validateInstruction(instr, logicArgs);
+	}
+	
+	private List<Token> colletArgumentTokens(){
+		
 		List<Token> args = new ArrayList<Token>();
-
 		while (check(TokenType.REGISTER) || check(TokenType.IMMEDIATE) || check(TokenType.LEFTPAREN)
 				|| check(TokenType.UNKNOWN)) {
-
-			args.add(advance());
-
-			if (match(TokenType.LEFTPAREN)) {
-
-				args.add(previous()); // adding the open paren
-
-				if (check(TokenType.REGISTER))
-					args.add(advance());
-				if (match(TokenType.RIGHTPAREN))
-					args.add(previous());
+			
+			if (check(TokenType.REGISTER) || check(TokenType.IMMEDIATE) || check(TokenType.UNKNOWN)) {
+	            args.add(advance());
+			}else if(match(TokenType.LEFTPAREN)) {
+				args.add(previous());				
+				if(check(TokenType.REGISTER)) args.add(advance());
+				if(match(TokenType.RIGHTPAREN)) args.add(previous());
+				
 			}
-
+			
 			match(TokenType.COMMA);
-
+			
 		}
-
-		// Filter logic args only...
-		List<Token> logicArgs = new ArrayList<Token>();
-
-		for (Token t : args) {
-
+		
+		return args;
+	}
+	
+	private List<Token> toLogicalArgs(List<Token> raw){
+		List<Token> out = new ArrayList<Token>();
+		for(Token t: raw) {
 			if (t.getType() == TokenType.COMMA || t.getType() == TokenType.LEFTPAREN
 					|| t.getType() == TokenType.RIGHTPAREN) {
-
-				continue;
-
-			}
-
-			if (t.getType() == TokenType.UNKNOWN && declaredLabels.containsKey(t.getValue())) {
-				logicArgs.add(new Token(TokenType.LABEL, t.getValue(), t.getPosition()));
 				continue;
 			}
-
-			logicArgs.add(t);
-
+			out.add(normalizeLabelToken(t));
 		}
-
-		validateInstruction(instr, logicArgs);
+		return out;
+	}
+	
+	private Token normalizeLabelToken(Token t) {
+		if (t.getType() == TokenType.UNKNOWN && declaredLabels.containsKey(t.getValue())) {
+			return new Token(TokenType.LABEL, t.getValue(), t.getPosition());
+		}
+		return t;
 	}
 
 	private void parseLine() {
