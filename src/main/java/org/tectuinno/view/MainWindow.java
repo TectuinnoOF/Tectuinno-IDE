@@ -33,7 +33,9 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.tectuinno.compiler.assembler.AsmFirstPass;
 import org.tectuinno.compiler.assembler.AsmLexer;
+import org.tectuinno.compiler.assembler.AsmListingFormatter;
 import org.tectuinno.compiler.assembler.AsmParser;
 import org.tectuinno.compiler.assembler.AsmSemanticAnalyzer;
 import org.tectuinno.compiler.assembler.utils.Token;
@@ -88,6 +90,7 @@ public class MainWindow extends JFrame {
 	private boolean isSemanticCorrect;
 	private boolean isSintaxCorrect;
 	private JButton btnConvert;
+	private List<Token> tokens;
 
 	/**
 	 * Launch the application.
@@ -165,7 +168,7 @@ public class MainWindow extends JFrame {
 			btnAnalice.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
-					List<Token> tokens = analizeCurrentLexer();
+					tokens = analizeCurrentLexer();
 
 					new Thread() {
 						@Override
@@ -296,6 +299,17 @@ public class MainWindow extends JFrame {
 
 		String currentEditorTittle = this.desktopPane.getSelectedFrame().getTitle();
 		this.consolePanel.getDisassemblyTerminalPanel().writteIn(">>Current code result: " + currentEditorTittle);
+		
+		if(this.tokens.isEmpty() || this.tokens == null) {
+			this.consolePanel.getDisassemblyTerminalPanel().writteIn(">>Error: No Tokens");
+			return;
+		}
+		
+		AsmFirstPass firstPass = new AsmFirstPass(this.tokens, 0);
+		AsmFirstPass.Result result = firstPass.run();
+		
+		String listing = AsmListingFormatter.buildListing(result.lines);
+		this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);
 
 	}
 
