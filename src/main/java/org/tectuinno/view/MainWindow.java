@@ -66,9 +66,6 @@ import java.awt.event.ComponentEvent;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 public class MainWindow extends JFrame {
 
@@ -91,14 +88,6 @@ public class MainWindow extends JFrame {
 	private boolean isSintaxCorrect;
 	private JButton btnConvert;
 	private List<Token> tokens;
-
-	/**
-	 * Launch the application.
-	 *
-	 * public static void main(String[] args) {
-	 * 
-	 * }
-	 */
 
 	/**
 	 * Create the frame.
