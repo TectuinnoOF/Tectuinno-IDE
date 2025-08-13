@@ -60,6 +60,7 @@ public class ResultConsolePanel extends JPanel {
 	private JPanel optionsPanel;
 	private FlowLayout fl_optionsPanel;
 	private TerminalPanel terminalPanel;
+	private DisassemblyTerminalPanel disassemblyTerminalPanel;
 
 	/**
 	 * Create the panel.
@@ -82,7 +83,7 @@ public class ResultConsolePanel extends JPanel {
 		optionsPanel.add(btnNewTerminal);
 		
 		this.openFirstTerminal();
-		
+		this.openDissasemblyTerminal();
 	}
 	
 	/**
@@ -90,12 +91,23 @@ public class ResultConsolePanel extends JPanel {
 	 */
 	private void openFirstTerminal() {
 		
-		this.terminalPanel = new TerminalPanel();
+		opennedTerminals ++;
+		this.terminalPanel = new TerminalPanel();		
 		this.tabbedTerminalPanel.addTab( opennedTerminals + ".- Resultado", terminalPanel);
 				
 	}
 	
-	public void openNewTerminal(String name) {
+	public void openNewTerminal(String name) {				
+		
+	}
+	
+	public void openDissasemblyTerminal() {
+		opennedTerminals++;
+		this.disassemblyTerminalPanel = new DisassemblyTerminalPanel();
+		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Disassembly", disassemblyTerminalPanel);
+	}
+	
+	private void tabResultAlreadyExist(String currentCodeName) {
 		
 		
 		
@@ -103,6 +115,10 @@ public class ResultConsolePanel extends JPanel {
 	
 	public TerminalPanel getTerminalPanel() {
 		return this.terminalPanel;
+	}
+	
+	public DisassemblyTerminalPanel getDisassemblyTerminalPanel() {
+		return this.disassemblyTerminalPanel;
 	}
 
 }

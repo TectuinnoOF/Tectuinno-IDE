@@ -37,48 +37,43 @@ import java.awt.Cursor;
 import java.util.Locale;
 import javax.swing.JScrollPane;
 
-
 /**
  * Represents a single terminal panel within the Tectuinno IDE console system.
  * 
- * This component simulates a terminal-like output console where system messages,
- * assembler results, compiler feedback, and UART communication logs with the microcontroller
- * can be displayed in real-time.
+ * This component simulates a terminal-like output console where system
+ * messages, assembler results, compiler feedback, and UART communication logs
+ * with the microcontroller can be displayed in real-time.
  * 
- * Internally, it uses a {@link JTextArea} styled with a dark background, green monospaced font,
- * and embedded within a {@link JScrollPane} to support scrolling for long outputs.
+ * Internally, it uses a {@link JTextArea} styled with a dark background, green
+ * monospaced font, and embedded within a {@link JScrollPane} to support
+ * scrolling for long outputs.
  * 
- * Upon initialization, it displays a welcome banner similar in style to the Visual Studio Developer Command Prompt.
+ * Upon initialization, it displays a welcome banner similar in style to the
+ * Visual Studio Developer Command Prompt.
  * 
- * This panel is typically managed by the {@link ResultConsolePanel} and added to a {@code JTabbedPane}
- * to support multiple simultaneous output sessions.
+ * This panel is typically managed by the {@link ResultConsolePanel} and added
+ * to a {@code JTabbedPane} to support multiple simultaneous output sessions.
  * 
- * Future improvements may include:
- * - Support for command input
- * - Scroll locking
+ * Future improvements may include: - Support for command input - Scroll locking
  * - Redirecting output from {@code System.out} or external processes
  */
 public class TerminalPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-	
-	private final String firstTest = "\n" +		    		
-		    	    "**********************************************************************\n" +
-		    	    "** Tectuinno Developer Console v1.0\n" +
-		    	    "** Copyright (c) 2025 Tectuinno Project\n" +
-		    	    "** Powered by RISC-V & Java Swing\n" +
-		    	    "**********************************************************************\n";
+
+	private final String firstTest = "\n" + "**********************************************************************\n"
+			+ "** Tectuinno Developer Console v1.0\n" + "** Copyright (c) 2025 Tectuinno Project\n"
+			+ "** Powered by RISC-V & Java Swing\n"
+			+ "**********************************************************************\n";
 
 	private JTextArea txaConsoleTextResult;
 
-
-	
 	public TerminalPanel() {
 		setLayout(new BorderLayout(0, 0));
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		add(scrollPane, BorderLayout.CENTER);
-		
+
 		txaConsoleTextResult = new JTextArea();
 		txaConsoleTextResult.setText(firstTest);
 		txaConsoleTextResult.setLocale(new Locale("es", "MX"));
@@ -89,12 +84,11 @@ public class TerminalPanel extends JPanel {
 		txaConsoleTextResult.setCaretColor(Color.WHITE);
 		txaConsoleTextResult.setBackground(new Color(51, 51, 51));
 		scrollPane.setViewportView(txaConsoleTextResult);
-		
-		//TODO es posible que se necesite algún método público de escritura cuando se requera editar desde otra clase
-	}	
-	
-	public void writteIn(String text) {
-		this.txaConsoleTextResult.append(text);
+
 	}
-	
+
+	public void writteIn(String text) {
+		this.txaConsoleTextResult.append("\n\r" + text);
+	}
+
 }

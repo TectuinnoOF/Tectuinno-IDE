@@ -26,7 +26,6 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
-
 package org.tectuinno.view;
 
 import javax.swing.JFrame;
@@ -42,7 +41,6 @@ import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
 import org.tectuinno.view.component.ResultConsolePanel;
-
 
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -83,26 +81,30 @@ public class MainWindow extends JFrame {
 	private JPanel panelToolBar;
 	private JToolBar compilerToolBar;
 	private JButton btnAnalice;
-	private JMenuItem JMenuArchivoGuardar;	
+	private JMenuItem JMenuArchivoGuardar;
 	private JSplitPane splitPaneEditorAndConsole;
 	private JDesktopPane desktopPane;
 	private ResultConsolePanel consolePanel;
-	private boolean isCodeCorrect;
+	private boolean isSemanticCorrect;
+	private boolean isSintaxCorrect;
+	private JButton btnConvert;
 
 	/**
 	 * Launch the application.
 	 *
-	public static void main(String[] args) {
-		
-	}*/
+	 * public static void main(String[] args) {
+	 * 
+	 * }
+	 */
 
 	/**
 	 * Create the frame.
 	 */
 	public MainWindow() {
-		
-		this.isCodeCorrect = false;
-		
+
+		this.isSemanticCorrect = false;
+		this.isSintaxCorrect = false;
+
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
@@ -112,16 +114,16 @@ public class MainWindow extends JFrame {
 		setTitle("Tectuinno IDE");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 864, 692);
-		
+
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
-		
+
 		JMenuArchivo = new JMenu("Archivo");
 		menuBar.add(JMenuArchivo);
-		
+
 		JMenuArchivoNuevo = new JMenu("Nuevo");
 		JMenuArchivo.add(JMenuArchivoNuevo);
-		
+
 		MenuItemNvoAsm = new JMenuItem("Fichero ASM Risc-V");
 		MenuItemNvoAsm.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -129,10 +131,10 @@ public class MainWindow extends JFrame {
 			}
 		});
 		JMenuArchivoNuevo.add(MenuItemNvoAsm);
-		
+
 		MenuItemFicheroTexto = new JMenuItem("Texto");
 		JMenuArchivoNuevo.add(MenuItemFicheroTexto);
-		
+
 		JMenuArchivoGuardar = new JMenuItem("Guardar");
 		JMenuArchivoGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -140,60 +142,102 @@ public class MainWindow extends JFrame {
 			}
 		});
 		JMenuArchivo.add(JMenuArchivoGuardar);
-		
+
 		JMenuProyecto = new JMenu("Proyecto");
 		menuBar.add(JMenuProyecto);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		
+
 		panelToolBar = new JPanel();
 		FlowLayout flowLayout = (FlowLayout) panelToolBar.getLayout();
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		contentPane.add(panelToolBar, BorderLayout.NORTH);
-		
+
 		compilerToolBar = new JToolBar();
 		panelToolBar.add(compilerToolBar);
-		
-		btnAnalice = new JButton("Analizar");
-		btnAnalice.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				List<Token> tokens = analizeCurrentLexer();
-				
-				new Thread() {
-					@Override
-					public void run() {
-						consolePanel.getTerminalPanel().writteIn(">> Iniciando inspección... \n");				
-						
-						for(Token token : tokens) {
-							consolePanel.getTerminalPanel().writteIn(token.toString() + " \n");
-						}
-										
-						consolePanel.getTerminalPanel().writteIn(">> Inspección terminada \n");
-						
-						asmSyntaxParse(tokens);
-						
-						asmSemanticParse(tokens);
-						
-					};					
-				}.start();
-				
-				/*new Thread() {
-					@Override
-					public void run() {
-						asmSyntaxParse(tokens);
-					}
-				}.start();*/
-				
-			}
-		});
-		compilerToolBar.add(btnAnalice);
-		
+
+		{ /* Analice code button settings, events and configurations */
+
+			btnAnalice = new JButton("Verificar");
+			btnAnalice.setBackground(new Color(255, 255, 255));
+			btnAnalice.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					List<Token> tokens = analizeCurrentLexer();
+
+					new Thread() {
+						@Override
+						public void run() {
+
+							/*
+							 * consolePanel.getTerminalPanel().writteIn(">> Iniciando inspección... \n");
+							 * 
+							 * for(Token token : tokens) {
+							 * consolePanel.getTerminalPanel().writteIn(token.toString() + " \n"); }
+							 * 
+							 * consolePanel.getTerminalPanel().writteIn(">> Inspección terminada \n");
+							 */
+
+							asmSyntaxParse(tokens);
+
+							if (!isSintaxCorrect) {
+								btnConvert.setEnabled(false);
+								JOptionPane.showMessageDialog(null, "Existen errores de sintaxis en el código", "Error",
+										JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+							;
+
+							asmSemanticParse(tokens);
+
+							if (!isSemanticCorrect) {
+								btnConvert.setEnabled(false);
+								JOptionPane.showMessageDialog(null, "Existen errores de Semanticos en el código",
+										"Error", JOptionPane.ERROR_MESSAGE);
+								return;
+							}
+							;
+
+							btnConvert.setEnabled(true);
+
+						};
+					}.start();
+
+					/*
+					 * new Thread() {
+					 * 
+					 * @Override public void run() { asmSyntaxParse(tokens); } }.start();
+					 */
+
+				}
+			});
+
+			compilerToolBar.add(btnAnalice);
+
+		}
+
+		{ /* Convert to machine code button settings and configurations */
+
+			btnConvert = new JButton("Convertir");
+			btnConvert.setEnabled(false);
+			btnConvert.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+					showDisassemblyResult();
+
+				}
+			});
+			btnConvert.setBackground(new Color(255, 255, 255));
+			compilerToolBar.add(btnConvert);
+
+		}
+
 		JButton btnEnviarLocal = new JButton("Enviar");
+		btnEnviarLocal.setBackground(new Color(255, 255, 255));
 		compilerToolBar.add(btnEnviarLocal);
-		
+
 		splitPaneEditorAndConsole = new JSplitPane();
 		splitPaneEditorAndConsole.setOrientation(JSplitPane.VERTICAL_SPLIT);
 		splitPaneEditorAndConsole.setDividerSize(5);
@@ -201,115 +245,142 @@ public class MainWindow extends JFrame {
 		splitPaneEditorAndConsole.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		splitPaneEditorAndConsole.setContinuousLayout(false);
 		contentPane.add(splitPaneEditorAndConsole, BorderLayout.CENTER);
-		
+
 		desktopPane = new JDesktopPane();
 		splitPaneEditorAndConsole.setLeftComponent(desktopPane);
-		
+
 		consolePanel = new ResultConsolePanel();
 		splitPaneEditorAndConsole.setRightComponent(consolePanel);
 		splitPaneEditorAndConsole.setDividerLocation(442);
 
 	}
-	
+
+	/*
+	 * private boolean buildAll() {
+	 * 
+	 * List<Token> tokens = analizeCurrentLexer();
+	 * 
+	 * asmSyntaxParse(tokens);
+	 * 
+	 * if(!isSintaxCorrect) { JOptionPane.showMessageDialog(null,
+	 * "Existen errores de sintaxis en el código", "Error",
+	 * JOptionPane.ERROR_MESSAGE); return false; };
+	 * 
+	 * asmSemanticParse(tokens);
+	 * 
+	 * if(!isSemanticCorrect) { JOptionPane.showMessageDialog(null,
+	 * "Existen errores de Semanticos en el código", "Error",
+	 * JOptionPane.ERROR_MESSAGE); }; }
+	 */
+
 	private void guardarArchivo() {
-		
+
 	}
-	
+
 	public void asmSemanticParse(List<Token> tokens) {
-		
+
 		try {
-			
+
 			AsmSemanticAnalyzer analizer = new AsmSemanticAnalyzer(tokens, this.consolePanel);
-			this.isCodeCorrect = analizer.analize();
-			
-		}catch (Exception e) {
+			this.isSemanticCorrect = analizer.analize();
+
+		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 			this.consolePanel.getTerminalPanel().writteIn(">>> " + e.getMessage());
 		}
-		
-		
-		
+
 	}
-	
-	public void asmSyntaxParse(List<Token> tokens) {			
-		
-		AsmParser parser = new AsmParser(tokens);
-		parser.setResultConsolePanel(consolePanel);
-		consolePanel.getTerminalPanel().writteIn("\n================================================================\n");
-		consolePanel.getTerminalPanel().writteIn("\n>>Iniciando Analisis\n");
-		parser.parseProgram();
-		consolePanel.getTerminalPanel().writteIn(">>Analisis Terminado\n");
-		
+
+	private void showDisassemblyResult() {
+
+		String currentEditorTittle = this.desktopPane.getSelectedFrame().getTitle();
+		this.consolePanel.getDisassemblyTerminalPanel().writteIn(">>Current code result: " + currentEditorTittle);
+
 	}
-	
+
+	public void asmSyntaxParse(List<Token> tokens) {
+
+		try {
+
+			AsmParser parser = new AsmParser(tokens);
+			parser.setResultConsolePanel(consolePanel);
+			consolePanel.getTerminalPanel()
+					.writteIn("\n================================================================\n");
+			consolePanel.getTerminalPanel().writteIn("\n>>Iniciando Analisis\n");
+			this.isSintaxCorrect = parser.parseProgram();
+			consolePanel.getTerminalPanel().writteIn(">>Analisis Terminado\n");
+
+		} catch (Exception er) {
+			er.printStackTrace(System.err);
+			this.consolePanel.getTerminalPanel().writteIn(">>> " + er.getMessage());
+		}
+
+	}
+
 	public List<Token> analizeCurrentLexer() {
-		
+
 		AsmLexer currentLexer = getCurrentLexer();
-		List<Token> tokens = currentLexer.tokenize();						
+		List<Token> tokens = currentLexer.tokenize();
 		return tokens;
 	}
-	
+
 	private AsmLexer getCurrentLexer() {
-		AsmEditorInternalFrame frame = (AsmEditorInternalFrame)this.desktopPane.getSelectedFrame();
+		AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
 		frame.setAsmLexer();
 		return frame.getLexer();
 	}
-	
-	
-	
+
 	public void openNewAsmEditor() {
-		
+
 		try {
-									
+
 			NewEditorWizardDialog dialog = this.openEditorWizard(FileType.ASSEMBLY_FILE);
-			
-			if(dialog.getDialogResult() != DialogResult.OK) {
+
+			if (dialog.getDialogResult() != DialogResult.OK) {
 				JOptionPane.showMessageDialog(this, "Result: " + dialog.getDialogResult());
 				return;
 			}
-			
-			
-			JOptionPane.showMessageDialog(this, "Result: " + dialog.getDialogResult() + "file: " + dialog.getFileModel().getName());
-			
+
+			JOptionPane.showMessageDialog(this,
+					"Result: " + dialog.getDialogResult() + "file: " + dialog.getFileModel().getName());
+
 			JInternalFrame asmInternalFrame = new AsmEditorInternalFrame();
 			asmInternalFrame.setTitle(dialog.getFileModel().getName());
 			asmInternalFrame.setVisible(true);
 			asmInternalFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			this.desktopPane.add(asmInternalFrame);
-			
-			
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-			
+
 			return;
 		}
-		
-		
+
 	}
-	
+
 	private void openNewEditor() {
-		
+
 	}
-	
+
 	/**
-	 * fix the position of the console and the file explorer before rezising the window
+	 * fix the position of the console and the file explorer before rezising the
+	 * window
 	 */
 	private void setConsoleDividerLocationEvent() {
 		this.splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 250);
-		//this.SplitPanePrincipal.setDividerLocation(/*700 - this.getWidth()*/ 0);
+		// this.SplitPanePrincipal.setDividerLocation(/*700 - this.getWidth()*/ 0);
 	}
-	
-	private NewEditorWizardDialog openEditorWizard(FileType fileType) throws Exception{
-		
+
+	private NewEditorWizardDialog openEditorWizard(FileType fileType) throws Exception {
+
 		NewEditorWizardDialog newEditorWizard = new NewEditorWizardDialog(fileType);
 		newEditorWizard.setModal(true);
 		newEditorWizard.setModalityType(ModalityType.APPLICATION_MODAL);
 		newEditorWizard.setLocationRelativeTo(this);
 		newEditorWizard.setVisible(true);
 		return newEditorWizard;
-		
+
 	}
 }

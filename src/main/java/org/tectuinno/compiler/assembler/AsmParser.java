@@ -194,7 +194,7 @@ public class AsmParser {
 		this.consolePanel.getTerminalPanel().writteIn(finishMessage);
 	}
 	
-	public void parseProgram() {
+	public boolean parseProgram() throws Exception{
 		long start = System.currentTimeMillis();
 		while (!isAtEnt()) {			
 			parseLines();			
@@ -202,6 +202,9 @@ public class AsmParser {
 		long finish = System.currentTimeMillis();
 		
 		this.parserFinishResults(start, finish);
+		
+		return errorCounter <= 0;
+		
 	}
 		
 	public int getPosition() {

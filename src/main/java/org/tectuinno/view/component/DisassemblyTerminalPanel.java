@@ -41,13 +41,20 @@ public class DisassemblyTerminalPanel extends JPanel {
 		
 	}
 	
+	public void writteIn(String text) {
+		this.txaDisassemblyResult.setText("");
+		this.txaDisassemblyResult.setText(this.setInitialText());
+		this.txaDisassemblyResult.append("\n");
+		this.txaDisassemblyResult.append(text);
+	}
+	
 	private final String setInitialText() {
 		
 		return new StringBuilder()
 				.append("\n")
-				.append("************************************************************\n\r")
+				.append("**********************************************************************************\n\r")
 				.append("\t Objdumb Code Dissasembly \n")
-				.append("************************************************************\n\r")
+				.append("**********************************************************************************\n\r")
 				.toString();
 		
 	}
