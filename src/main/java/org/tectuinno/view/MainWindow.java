@@ -26,6 +26,15 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
+
+/**
+ * 
+ * Hola lennin este es un comentario de prueba para que veas como 
+ * se integran los cambios de forma remota
+ * 
+ * 
+ */
+
 package org.tectuinno.view;
 
 import javax.swing.JFrame;
