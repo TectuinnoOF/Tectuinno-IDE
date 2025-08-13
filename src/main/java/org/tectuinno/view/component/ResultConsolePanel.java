@@ -105,13 +105,7 @@ public class ResultConsolePanel extends JPanel {
 		opennedTerminals++;
 		this.disassemblyTerminalPanel = new DisassemblyTerminalPanel();
 		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Disassembly", disassemblyTerminalPanel);
-	}
-	
-	private void tabResultAlreadyExist(String currentCodeName) {
-		
-		
-		
-	}
+	}		
 	
 	public TerminalPanel getTerminalPanel() {
 		return this.terminalPanel;
