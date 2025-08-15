@@ -35,12 +35,54 @@ import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.compiler.assembler.utils.TokenType;
 
 /**
- * 
+ * Performs the first pass of the assembler process.
+ * <p>
+ * This class reads a tokenized assembly source and:
+ * <ul>
+ * <li>Identifies and stores labels with their corresponding memory
+ * addresses</li>
+ * <li>Builds an intermediate representation ({@link IrLine}) for each
+ * instruction</li>
+ * <li>Increments the program counter ({@code pc}) for each instruction
+ * encountered</li>
+ * </ul>
+ *
+ * <h2>Key Features:</h2>
+ * <table border="1">
+ * <caption>AsmFirstPass Responsibilities</caption>
+ * <tr>
+ * <th>Method</th>
+ * <th>Description</th>
+ * </tr>
+ * <tr>
+ * <td>{@link #run()}</td>
+ * <td>Executes the first pass, producing a symbol table and a list of
+ * intermediate lines</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #collectArgs()}</td>
+ * <td>Collects argument tokens (registers, immediates, unknowns, or
+ * parenthesized values)</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #rebuildOriginal(String, List)}</td>
+ * <td>Rebuilds a readable source line from mnemonic and argument tokens</td>
+ * </tr>
+ * </table>
+ *
+ * @author Pablo
+ * @version 1.0
+ * @since 2025-08-14
  */
 public final class AsmFirstPass {
 
+	/** List of tokens produced by the lexer for the source assembly file. */
 	private final List<Token> tokens;
+
+	/** Current reading position within the token list. */
 	private int position = 0;
+
+	/** Current program counter (memory address) being processed. */
 	private int pc;
 
 	public AsmFirstPass(List<Token> tokens, int startPc) {
@@ -48,29 +90,63 @@ public final class AsmFirstPass {
 		this.pc = startPc;
 	}
 
-	// --- token stream helpers ---
+	/**
+	 * Checks if the parser has reached the end of the token stream.
+	 *
+	 * @return {@code true} if all tokens have been processed; {@code false}
+	 *         otherwise
+	 */
 	private boolean isAtEnd() {
 		return position >= tokens.size();
 	}
 
+	/**
+	 * Retrieves the current token without advancing the position.
+	 *
+	 * @return the current {@link Token}
+	 */
 	private Token peek() {
 		return tokens.get(position);
 	}
 
+	/**
+	 * Retrieves the previous token.
+	 *
+	 * @return the previous {@link Token}
+	 */
 	private Token previous() {
 		return tokens.get(position - 1);
 	}
 
+	/**
+	 * Checks if the current token matches a given type.
+	 *
+	 * @param type the {@link TokenType} to check against
+	 * @return {@code true} if the token matches; {@code false} otherwise
+	 */
 	private boolean check(TokenType type) {
 		return !isAtEnd() && peek().getType() == type;
 	}
 
+	/**
+	 * Advances the token position by one and returns the previous token.
+	 *
+	 * @return the previous {@link Token}
+	 */
 	private Token advance() {
 		if (!isAtEnd())
 			position++;
 		return previous();
 	}
 
+	/**
+	 * If the current token matches the given type, consumes it and returns
+	 * {@code true}.
+	 *
+	 * @param type the {@link TokenType} to check for
+	 * @return {@code true} if a match was found and consumed; {@code false}
+	 *         otherwise
+	 */
 	private boolean match(TokenType type) {
 		if (check(type)) {
 			advance();
@@ -79,8 +155,16 @@ public final class AsmFirstPass {
 		return false;
 	}
 
+	/**
+	 * Represents the result of the first assembler pass, including the symbol table
+	 * and IR lines.
+	 */
 	public static final class Result {
+
+		/** The symbol table with label definitions and addresses. */
 		public final SymbolTable symbols;
+
+		/** The list of intermediate representation lines generated. */
 		public final List<IrLine> lines;
 
 		Result(SymbolTable s, List<IrLine> l) {
@@ -89,6 +173,18 @@ public final class AsmFirstPass {
 		}
 	}
 
+	/**
+	 * Executes the first assembler pass.
+	 * <p>
+	 * This method:
+	 * <ul>
+	 * <li>Parses labels and stores them in the symbol table</li>
+	 * <li>Identifies instructions and their arguments</li>
+	 * <li>Builds intermediate representation lines</li>
+	 * </ul>
+	 *
+	 * @return a {@link Result} containing the symbol table and list of IR lines
+	 */
 	public Result run() {
 		SymbolTable symbols = new SymbolTable();
 		List<IrLine> lines = new ArrayList<>();
@@ -124,8 +220,17 @@ public final class AsmFirstPass {
 	}
 
 	/**
-	 * Collects raw argument tokens until no more arg-starters are found
-	 * (REGISTER/IMMEDIATE/UNKNOWN or parenthesized).
+	 * Collects raw argument tokens until no more argument starters are found.
+	 * <p>
+	 * Recognized argument types:
+	 * <ul>
+	 * <li>{@link TokenType#REGISTER}</li>
+	 * <li>{@link TokenType#IMMEDIATE}</li>
+	 * <li>{@link TokenType#UNKNOWN}</li>
+	 * <li>Parenthesized register values</li>
+	 * </ul>
+	 *
+	 * @return a list of {@link Token} objects representing the arguments
 	 */
 	private List<Token> collectArgs() {
 		List<Token> args = new ArrayList<>();
@@ -151,7 +256,13 @@ public final class AsmFirstPass {
 		return args;
 	}
 
-	/** Rebuild a readable "mnemonic arg1, arg2, ..." string from tokens. */
+	/**
+	 * Rebuilds a readable {@code "mnemonic arg1, arg2, ..."} string from tokens.
+	 *
+	 * @param mnemonic the instruction mnemonic
+	 * @param args     the list of argument tokens
+	 * @return a reconstructed assembly line as a string
+	 */
 	private String rebuildOriginal(String mnemonic, List<Token> args) {
 		StringBuilder sb = new StringBuilder(mnemonic).append(' ');
 		for (int i = 0; i < args.size(); i++) {
