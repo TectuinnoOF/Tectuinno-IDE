@@ -33,7 +33,70 @@ import java.util.List;
 import org.tectuinno.compiler.assembler.utils.Token;
 
 /**
- * Intermediate representation for one assembled line: address + mnemonic + args + optional label.
+ * Represents an intermediate representation (IR) of a single assembled line.
+ * <p>
+ * This record stores:
+ * <ul>
+ *     <li>The program counter (address) of the instruction</li>
+ *     <li>An optional label associated with this line</li>
+ *     <li>The instruction mnemonic</li>
+ *     <li>The list of arguments as {@link Token} objects</li>
+ *     <li>The original text of the source line</li>
+ * </ul>
+ *
+ * <h2>Usage example:</h2>
+ * <pre>{@code
+ * List<Token> args = List.of(new Token("x1"), new Token("x2"));
+ * IrLine line = new IrLine(0x004, "LOOP", "ADD", args, "ADD x1, x2");
+ * 
+ * System.out.println("Mnemonic: " + line.mnemonic());
+ * System.out.println("PC: " + line.pc());
+ * }</pre>
+ *
+ * <h2>Field descriptions:</h2>
+ * <table border="1">
+ *   <caption>IrLine Fields</caption>
+ *   <tr>
+ *     <th>Field</th>
+ *     <th>Type</th>
+ *     <th>Description</th>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #pc()}</td>
+ *     <td>{@code int}</td>
+ *     <td>The program counter (address) of the instruction in memory</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #labelOpt()}</td>
+ *     <td>{@code String}</td>
+ *     <td>Optional label name; may be {@code null} if no label is present</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #mnemonic()}</td>
+ *     <td>{@code String}</td>
+ *     <td>The instruction mnemonic (e.g., ADD, SUB, JMP)</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #args()}</td>
+ *     <td>{@code List<Token>}</td>
+ *     <td>Arguments (operands) for the instruction, represented as tokens</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #originalText()}</td>
+ *     <td>{@code String}</td>
+ *     <td>The exact source line as written by the user</td>
+ *   </tr>
+ * </table>
+ *
+ * @param pc           the program counter (address) of the instruction
+ * @param labelOpt     optional label name (may be {@code null} or empty if not present)
+ * @param mnemonic     the instruction mnemonic
+ * @param args         the list of instruction arguments as {@link Token} objects
+ * @param originalText the original text of the source line
+ *
+ * @since 2025-08-14
+ * @version 1.0
+ * @see Token
  */
 public record IrLine(int pc, String labelOpt, String mnemonic, List<Token> args, String originalText) {
 }

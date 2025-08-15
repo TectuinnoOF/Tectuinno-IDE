@@ -32,7 +32,54 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Stores symbol (label) addresses gathered during the first pass
+ * Represents a symbol table that stores label addresses during the first pass
+ * of the assembler process.
+ * <p>
+ * This table is typically used to:
+ * <ul>
+ *     <li>Record label names and their corresponding memory addresses</li>
+ *     <li>Check if a label already exists</li>
+ *     <li>Retrieve the address of a specific label</li>
+ * </ul>
+ *
+ * <h2>Usage example:</h2>
+ * <pre>{@code
+ * SymbolTable table = new SymbolTable();
+ * table.define("LOOP", 0x004);
+ * if (table.contains("LOOP")) {
+ *     int address = table.addressOf("LOOP");
+ *     System.out.println("Address of LOOP: " + address);
+ * }
+ * }</pre>
+ *
+ * <h2>Key Features:</h2>
+ * <table border="1">
+ *   <caption>SymbolTable Responsibilities</caption>
+ *   <tr>
+ *     <th>Method</th>
+ *     <th>Description</th>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #define(String, int)}</td>
+ *     <td>Defines or overwrites a label address</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #contains(String)}</td>
+ *     <td>Checks if a label exists</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #addressOf(String)}</td>
+ *     <td>Retrieves the address of a label</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #asMap()}</td>
+ *     <td>Returns the internal map of labels and addresses</td>
+ *   </tr>
+ * </table>
+ *
+ * @author Pablo
+ * @version 1.0
+ * @since 2025-08-14
  */
 public final class SymbolTable {
 
@@ -65,7 +112,14 @@ public final class SymbolTable {
 		return labels.get(name);
 	}
 	
-	
+	/**
+     * Returns the internal mapping of labels to addresses.
+     * <p>
+     * <b>Note:</b> This exposes the internal map directly; modifications to the returned map
+     * will affect the symbol table.
+     *
+     * @return a map containing all labels and their addresses
+     */
 	public Map<String, Integer> asMap(){
 		return labels;
 	}
