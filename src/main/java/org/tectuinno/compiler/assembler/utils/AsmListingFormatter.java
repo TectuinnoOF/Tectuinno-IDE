@@ -26,9 +26,11 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
-package org.tectuinno.compiler.assembler;
+package org.tectuinno.compiler.assembler.utils;
 
 import java.util.List;
+
+import org.tectuinno.compiler.assembler.IrLine;
 
 /**
  * Utility class that builds a human-readable assembly listing from intermediate

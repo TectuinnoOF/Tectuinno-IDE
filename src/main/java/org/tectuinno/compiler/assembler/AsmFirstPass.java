@@ -31,6 +31,7 @@ package org.tectuinno.compiler.assembler;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.tectuinno.compiler.assembler.utils.SymbolTable;
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.compiler.assembler.utils.TokenType;
 

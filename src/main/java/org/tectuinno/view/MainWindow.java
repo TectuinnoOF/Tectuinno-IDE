@@ -44,9 +44,9 @@ import javax.swing.border.EmptyBorder;
 
 import org.tectuinno.compiler.assembler.AsmFirstPass;
 import org.tectuinno.compiler.assembler.AsmLexer;
-import org.tectuinno.compiler.assembler.AsmListingFormatter;
 import org.tectuinno.compiler.assembler.AsmParser;
 import org.tectuinno.compiler.assembler.AsmSemanticAnalyzer;
+import org.tectuinno.compiler.assembler.utils.AsmListingFormatter;
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;

@@ -26,7 +26,7 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
-package org.tectuinno.compiler.assembler;
+package org.tectuinno.compiler.assembler.utils;
 
 import java.util.HashMap;
 import java.util.Map;
