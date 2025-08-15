@@ -31,13 +31,47 @@ package org.tectuinno.compiler.assembler;
 import java.util.List;
 
 /**
- * Builds the human-readable disassembly/assembly listing.
+ * Utility class that builds a human-readable assembly listing from intermediate
+ * representation lines ({@link IrLine}).
+ * <p>
+ * The listing contains the following columns:
+ * <ul>
+ *     <li><b>Dirección</b> - The memory address of the instruction in hexadecimal format</li>
+ *     <li><b>Etiqueta</b> - An optional label associated with the instruction</li>
+ *     <li><b>Instrucción</b> - The original assembly instruction text</li>
+ *     <li><b>Hex</b> - The machine code in hexadecimal (empty in first pass)</li>
+ * </ul>
+ *
+ * <h2>Key Features:</h2>
+ * <table border="1">
+ *   <caption>AsmListingFormatter Responsibilities</caption>
+ *   <tr>
+ *     <th>Method</th>
+ *     <th>Description</th>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #buildListing(List)}</td>
+ *     <td>Generates a formatted table from a list of {@link IrLine} objects</td>
+ *   </tr>
+ * </table>
+ *
+ * @author Pablo
+ * @version 1.0
+ * @since 2025-08-14
  */
 public final class AsmListingFormatter {
 
 	private AsmListingFormatter() {}
 
-    /** Builds a table with columns: Address | Label | Instruction | Hex (empty for now). */
+	/**
+     * Builds a formatted table with columns:
+     * <b>Dirección | Etiqueta | Instrucción | Hex</b>.
+     * <p>
+     * In the first assembler pass, the <b>Hex</b> column is left empty, to be filled in the second pass.
+     *
+     * @param lines the list of {@link IrLine} objects representing assembled lines
+     * @return a {@code String} containing the formatted assembly listing
+     */
     public static String buildListing(List<IrLine> lines) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%-12s %-10s %-30s %s%n", "Dirección", "Etiqueta", "Instrucción", "Hex"));
