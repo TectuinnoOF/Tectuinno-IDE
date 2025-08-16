@@ -45,6 +45,7 @@ import javax.swing.border.EmptyBorder;
 import org.tectuinno.compiler.assembler.AsmFirstPass;
 import org.tectuinno.compiler.assembler.AsmLexer;
 import org.tectuinno.compiler.assembler.AsmParser;
+import org.tectuinno.compiler.assembler.AsmSecondPass;
 import org.tectuinno.compiler.assembler.AsmSemanticAnalyzer;
 import org.tectuinno.compiler.assembler.utils.AsmListingFormatter;
 import org.tectuinno.compiler.assembler.utils.Token;
@@ -298,16 +299,24 @@ public class MainWindow extends JFrame {
 		String currentEditorTittle = this.desktopPane.getSelectedFrame().getTitle();
 		this.consolePanel.getDisassemblyTerminalPanel().writteIn(">>Current code result: " + currentEditorTittle);
 		
-		if(this.tokens.isEmpty() || this.tokens == null) {
+		if(this.tokens == null || this.tokens.isEmpty()) {
 			this.consolePanel.getDisassemblyTerminalPanel().writteIn(">>Error: No Tokens");
 			return;
 		}
 		
+		// First Pass: Symbol table + IRLines
 		AsmFirstPass firstPass = new AsmFirstPass(this.tokens, 0);
 		AsmFirstPass.Result result = firstPass.run();
 		
-		String listing = AsmListingFormatter.buildListing(result.lines);
-		this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);
+		/*String listing = AsmListingFormatter.buildListing(result.lines);
+		this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);*/
+		
+		// Wroking on the second pass
+		AsmSecondPass second = new AsmSecondPass(result.lines, result.symbols.asMap());
+	    AsmSecondPass.Result encRes = second.run();
+		
+	    String listing = AsmListingFormatter.buildListing(encRes.encoded());
+	    this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);
 
 	}
 

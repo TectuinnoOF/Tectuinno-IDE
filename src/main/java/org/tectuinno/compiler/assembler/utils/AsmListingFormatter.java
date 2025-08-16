@@ -30,6 +30,7 @@ package org.tectuinno.compiler.assembler.utils;
 
 import java.util.List;
 
+import org.tectuinno.compiler.assembler.EncoderIrLine;
 import org.tectuinno.compiler.assembler.IrLine;
 
 /**
@@ -71,18 +72,18 @@ public final class AsmListingFormatter {
      * <p>
      * In the first assembler pass, the <b>Hex</b> column is left empty, to be filled in the second pass.
      *
-     * @param lines the list of {@link IrLine} objects representing assembled lines
+     * @param list the list of {@link IrLine} objects representing assembled lines
      * @return a {@code String} containing the formatted assembly listing
      */
-    public static String buildListing(List<IrLine> lines) {
+	public static String buildListing(List<EncoderIrLine> list) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%-12s %-10s %-30s %s%n", "Dirección", "Etiqueta", "Instrucción", "Hex"));
         sb.append("--------------------------------------------------------------------------------\n");
-        for (IrLine ln : lines) {
-            String addr = String.format("%08X", ln.pc());
+        for (EncoderIrLine ln : list) {
+            String addr  = String.format("%08X", ln.pc());
             String label = ln.labelOpt() == null ? "" : ln.labelOpt();
-            String instr = ln.originalText(); // already rebuilt (e.g., "addi x7, x0, 1")
-            String hex = ""; // will be filled in second pass
+            String instr = ln.originalText();                 // ya reconstruida
+            String hex   = ln.hex();                          // <-- USAR EL HEX CODIFICADO
             sb.append(String.format("%-12s %-10s %-30s %s%n", addr, label, instr, hex));
         }
         return sb.toString();
