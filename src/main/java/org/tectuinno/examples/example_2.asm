@@ -1,3 +1,4 @@
+
 ini:
     lui x7, 0x10000    
     addi x3,x0,1

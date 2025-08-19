@@ -48,8 +48,9 @@ final class InstructionTable {
         Map.entry(ADDI, new InstructionDef(Format.I, 0x13, 0x0, 0x00)),
         Map.entry(ANDI, new InstructionDef(Format.I, 0x13, 0x7, 0x00)),
         Map.entry(ORI,  new InstructionDef(Format.I, 0x13, 0x6, 0x00)),
-        Map.entry("jalr", new InstructionDef(Format.I, 0x67, 0x0, 0x00)), // por si lo invocas directo
-        Map.entry("lw",   new InstructionDef(Format.I, 0x03, 0x2, 0x00)),
+        Map.entry(JALR, new InstructionDef(Format.I, 0x67, 0x0, 0x00)), // por si lo invocas directo
+        Map.entry(LW,   new InstructionDef(Format.I, 0x03, 0x2, 0x00)),
+        Map.entry(SLTI, new InstructionDef(Format.I, 0x13, 0x2, 0x00)),
 
         // S-type
         Map.entry("sw",   new InstructionDef(Format.S, 0x23, 0x2, 0x00)),

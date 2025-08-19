@@ -127,28 +127,34 @@ public final class AsmEncoder {
 	 */
 	private static int encodeI(String mnemonic, InstructionDef def, int pc, List<Token> args,
 			Map<String, Integer> labels) {
-		if (ADDI.equals(mnemonic) || ANDI.equals(mnemonic) || ORI.equals(mnemonic) || JALR.equals(mnemonic)) {
-			// if (args.size() != 3) throw new IllegalArgumentException(mnemonic + " expects
-			// 3 args");
-			int rd = regNum(args.get(0));
-			int rs1 = regNum(args.get(1));
-			int imm = imm12(immVal(args.get(2)));
-			return (imm << 20) | (rs1 << 15) | (def.funct3() << 12) | (rd << 7) | def.opcode();
-		}
 
-		if (LW.equals(mnemonic)) {
-			// logical args form you already produce: rd, imm, baseReg
-			// if (args.size() != 3) throw new IllegalArgumentException("lw expects: rd,
-			// imm, baseReg");
-			int rd = regNum(args.get(0));
-			int imm = imm12(immVal(args.get(1)));
-			int rs1 = regNum(args.get(2));
-			return (imm << 20) | (rs1 << 15) | (def.funct3() << 12) | (rd << 7) | def.opcode();
-		}
+		int opcode = def.opcode();
 
-		// throw new IllegalArgumentException("Unsupported I-type mnemonic: " +
-		// mnemonic);
-		return 0;
+	    // ALU-inmediato (addi, slti, xori, ori, andi, etc.) → rd, rs1, imm
+	    if (opcode == 0x13) {
+	        int rd  = regNum(args.get(0));
+	        int rs1 = regNum(args.get(1));
+	        int imm = imm12(immVal(args.get(2)));
+	        return (imm << 20) | (rs1 << 15) | (def.funct3() << 12) | (rd << 7) | opcode;
+	    }
+
+	    // Cargas (ej. lw) → rd, imm, rs1
+	    if (opcode == 0x03) {
+	        int rd  = regNum(args.get(0));
+	        int imm = imm12(immVal(args.get(1)));
+	        int rs1 = regNum(args.get(2));
+	        return (imm << 20) | (rs1 << 15) | (def.funct3() << 12) | (rd << 7) | opcode;
+	    }
+
+	    // JALR → rd, rs1, imm
+	    if (opcode == 0x67) {
+	        int rd  = regNum(args.get(0));
+	        int rs1 = regNum(args.get(1));
+	        int imm = imm12(immVal(args.get(2)));
+	        return (imm << 20) | (rs1 << 15) | (def.funct3() << 12) | (rd << 7) | opcode;
+	    }
+
+	    return 0;
 	}
 
 	/** S-type: sw rs2, imm(rs1) -> logical args: rs2, imm, rs1 */
