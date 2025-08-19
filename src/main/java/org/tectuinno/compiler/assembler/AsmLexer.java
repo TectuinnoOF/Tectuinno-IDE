@@ -82,7 +82,7 @@ public class AsmLexer {
 		this.position = 0;
 	}
 
-	/**
+	/*
 	 * Extracts a numeric token from the source code, starting at the current
 	 * position.
 	 * <p>
@@ -96,31 +96,61 @@ public class AsmLexer {
 	 *
 	 * @return a {@link Token} of type {@link TokenType#IMMEDIATE} representing the
 	 *         parsed numeric value.
-	 */
-	private Token readNumber() {
-		int start = position;
-
-		if (!isAtEnd() && peek() == '0' && peekNext() == 'x') {
-			advance(); // 0 /*Reading hex values as inmediate*/
-			advance(); // x
-
-			while (!isAtEnd() && isHexDigit(peek())) {
+	 *
+		private Token readNumber() {
+			int start = position;
+	
+			if (!isAtEnd() && peek() == '0' && peekNext() == 'x') {
+				advance(); // 0 /*Reading hex values as inmediate
+				advance(); // x
+	
+				while (!isAtEnd() && isHexDigit(peek())) {
+					advance();
+				}
+	
+				String hexValue = source.substring(start, position);
+				return new Token(TokenType.IMMEDIATE, hexValue, start);
+			}
+	
+			/**
+			 * lopp to reading a normal Number, immediate value for registers in teha asm
+			 * code
+			 *
+			while (!isAtEnd() && Character.isDigit(peek())) {
 				advance();
 			}
-
-			String hexValue = source.substring(start, position);
-			return new Token(TokenType.IMMEDIATE, hexValue, start);
+			String value = source.substring(start, position);
+			return new Token(TokenType.IMMEDIATE, value, start);
 		}
+	*/
+	
+	
+	/** Lee inmediatos decimales y hex con signo: -123, +8, -0xFF, 0x10 */
+	private Token readNumberSigned() {
+	    int start = position;
 
-		/**
-		 * lopp to reading a normal Number, immediate value for registers in teha asm
-		 * code
-		 */
-		while (!isAtEnd() && Character.isDigit(peek())) {
-			advance();
-		}
-		String value = source.substring(start, position);
-		return new Token(TokenType.IMMEDIATE, value, start);
+	    // signo opcional
+	    if (!isAtEnd() && (peek() == '+' || peek() == '-')) {
+	        advance();
+	    }
+
+	    // hexa (0x... o -0x...)
+	    if (!isAtEnd() && peek() == '0' && (peekNext() == 'x' || peekNext() == 'X')) {
+	        advance(); // '0'
+	        advance(); // 'x'/'X'
+	        while (!isAtEnd() && isHexDigit(peek())) {
+	            advance();
+	        }
+	        String value = source.substring(start, position);
+	        return new Token(TokenType.IMMEDIATE, value, start);
+	    }
+
+	    // decimal
+	    while (!isAtEnd() && Character.isDigit(peek())) {
+	        advance();
+	    }
+	    String value = source.substring(start, position);
+	    return new Token(TokenType.IMMEDIATE, value, start);
 	}
 
 	/**
@@ -194,6 +224,26 @@ public class AsmLexer {
 	 */
 	private char peek() throws IndexOutOfBoundsException{
 		return source.charAt(position);
+	}
+	
+	private char peekAhead(int k) {
+	    int idx = position + k;
+	    if (idx >= source.length()) return '\0';
+	    return source.charAt(idx);
+	}
+	
+	private boolean isStartOfSignedNumber() {
+	    if (isAtEnd()) return false;
+	    char c0 = peek();
+	    if (c0 != '+' && c0 != '-') return false;
+	    char c1 = peekAhead(1);
+	    if (Character.isDigit(c1)) return true;         // "-1", "+7"
+	    if (c1 == '0') {
+	        char c2 = peekAhead(2);
+	        // Soportamos hexa con signo: -0x..., +0x...
+	        return (c2 == 'x' || c2 == 'X' || Character.isDigit(c2));
+	    }
+	    return false;
 	}
 	
 	/**
@@ -289,40 +339,69 @@ public class AsmLexer {
 	 */
 	public List<Token> tokenize() {
 		List<Token> tokens = new ArrayList<>();
-
+		
 		while (!isAtEnd()) {
-			char current = peek();
+		    char current = peek();
 
-			if (Character.isWhitespace(current)) {
-				advance(); // Ignore spaces and newlines
-			} else if (current == '/') {
-				if (peekNext() == '*') {
-					tokens.add(readComment());
-				} else {
-					tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position));
-					advance();
-				}
-			} else if (Character.isLetter(current) || current == '_') {
-				tokens.add(readIdentifierOrInstruction());
-			} else if (Character.isDigit(current)) {
-				tokens.add(readNumber());
-			} else if (current == ',') {
-				tokens.add(new Token(TokenType.COMMA, ",", position));
-				advance();
-			} else if (current == ':') {
-				tokens.add(new Token(TokenType.COLON, ":", position));
-				advance();
-			} else if (current == '(') {
-				tokens.add(new Token(TokenType.LEFTPAREN, "(", position));
-				advance();
-			} else if (current == ')') {
-				tokens.add(new Token(TokenType.RIGHTPAREN, ")", position));
-				advance();
-			} else {
-				tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position));
-				advance();
-			}
+		    if (Character.isWhitespace(current)) {
+		        advance();
+		    } else if (current == '/') {
+		        if (peekNext() == '*') {
+		            tokens.add(readComment());
+		        } else {
+		            tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position));
+		            advance();
+		        }
+		    } else if (current == '+' || current == '-') {
+		        // número con signo
+		        if (isStartOfSignedNumber()) {
+		            tokens.add(readNumberSigned());
+		        } else {
+		            // si algún día admites operadores, cámbialo; por ahora desconocido
+		            tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position));
+		            advance();
+		        }
+		    } else if (Character.isDigit(current)) {
+		        // número sin signo (0x... o decimal)
+		        tokens.add(readNumberSigned());
+		    } else if (Character.isLetter(current) || current == '_') {
+		        tokens.add(readIdentifierOrInstruction());
+		    } else if (current == ',') {
+		        tokens.add(new Token(TokenType.COMMA, ",", position));
+		        advance();
+		    } else if (current == ':') {
+		        tokens.add(new Token(TokenType.COLON, ":", position));
+		        advance();
+		    } else if (current == '(') {
+		        tokens.add(new Token(TokenType.LEFTPAREN, "(", position));
+		        advance();
+		    } else if (current == ')') {
+		        tokens.add(new Token(TokenType.RIGHTPAREN, ")", position));
+		        advance();
+		    } else {
+		        tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position));
+		        advance();
+		    }
 		}
+		
+		/*
+		 * while (!isAtEnd()) { char current = peek();
+		 * 
+		 * if (Character.isWhitespace(current)) { advance(); // Ignore spaces and
+		 * newlines } else if (current == '/') { if (peekNext() == '*') {
+		 * tokens.add(readComment()); } else { tokens.add(new Token(TokenType.UNKNOWN,
+		 * String.valueOf(current), position)); advance(); } } else if
+		 * (Character.isLetter(current) || current == '_') {
+		 * tokens.add(readIdentifierOrInstruction()); } else if
+		 * (Character.isDigit(current)) { tokens.add(readNumberSigned()); } else if
+		 * (current == ',') { tokens.add(new Token(TokenType.COMMA, ",", position));
+		 * advance(); } else if (current == ':') { tokens.add(new Token(TokenType.COLON,
+		 * ":", position)); advance(); } else if (current == '(') { tokens.add(new
+		 * Token(TokenType.LEFTPAREN, "(", position)); advance(); } else if (current ==
+		 * ')') { tokens.add(new Token(TokenType.RIGHTPAREN, ")", position)); advance();
+		 * } else { tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current),
+		 * position)); advance(); } }
+		 */
 
 		return tokens;
 	}

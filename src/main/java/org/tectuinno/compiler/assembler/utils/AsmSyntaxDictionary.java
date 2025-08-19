@@ -44,7 +44,7 @@ import java.util.Set;
  * </p>
  */
 public final class AsmSyntaxDictionary {
-	
+		
 	public static final String LW = "lw";
 	public static final String ADDI = "addi";
 	public static final String SLTI = "slti";
