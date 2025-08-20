@@ -50,6 +50,8 @@ import org.tectuinno.compiler.assembler.EncoderIrLine;
 import org.tectuinno.compiler.assembler.encode.FrameUtil;
 import org.tectuinno.compiler.assembler.utils.AsmListingFormatter;
 import org.tectuinno.compiler.assembler.utils.Token;
+import org.tectuinno.io.PortInfo;
+import org.tectuinno.io.SerialPortService;
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
@@ -104,12 +106,13 @@ public class MainWindow extends JFrame {
 	private List<Token> tokens;
 	private byte[] preparedFrame = new byte[0];
 	private List<EncoderIrLine> encodedIrLineResult;
-	private final JComboBox cmbEnableComDevices = new JComboBox();
+	private final JComboBox<String> cmbEnableComDevices = new JComboBox<String>();
 	private final JMenu JMenuEdit = new JMenu("Editar");
 	private final JMenu JMenuProgram = new JMenu("Programa");
 	private final JMenu JMenuTools = new JMenu("Herramientas");
 	private final JButton btnSearchComDevices = new JButton("Escanear");
 	private final JSeparator separator = new JSeparator();
+	private List<PortInfo> lastPorts = List.of();
 
 	/**
 	 * Create the frame.
@@ -274,11 +277,16 @@ public class MainWindow extends JFrame {
 			compilerToolBar.add(separator);
 		}
 		{
-			cmbEnableComDevices.setPreferredSize(new Dimension(120, 22));
+			cmbEnableComDevices.setPreferredSize(new Dimension(190, 22));
 			compilerToolBar.add(cmbEnableComDevices);
 			//this.cmbEnableComDevices
 		}
 		{
+			btnSearchComDevices.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					searchForComDevices();
+				}
+			});
 			compilerToolBar.add(btnSearchComDevices);
 		}
 
@@ -296,6 +304,8 @@ public class MainWindow extends JFrame {
 		consolePanel = new ResultConsolePanel();
 		splitPaneEditorAndConsole.setRightComponent(consolePanel);
 		splitPaneEditorAndConsole.setDividerLocation(410);
+		
+		this.searchForComDevices();
 
 	}
 
@@ -316,7 +326,16 @@ public class MainWindow extends JFrame {
 	 * "Existen errores de Semanticos en el código", "Error",
 	 * JOptionPane.ERROR_MESSAGE); }; }
 	 */
-
+	
+	
+	private void searchForComDevices() {
+		lastPorts = SerialPortService.listAvailablePorts();
+		this.cmbEnableComDevices.removeAllItems();
+		for(var pi : lastPorts) {
+			this.cmbEnableComDevices.addItem(pi.toString());	
+		}
+	}
+	
 	private void guardarArchivo() {
 
 	}
