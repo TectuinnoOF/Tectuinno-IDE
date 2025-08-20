@@ -46,6 +46,8 @@ import org.tectuinno.compiler.assembler.AsmLexer;
 import org.tectuinno.compiler.assembler.AsmParser;
 import org.tectuinno.compiler.assembler.AsmSecondPass;
 import org.tectuinno.compiler.assembler.AsmSemanticAnalyzer;
+import org.tectuinno.compiler.assembler.EncoderIrLine;
+import org.tectuinno.compiler.assembler.encode.FrameUtil;
 import org.tectuinno.compiler.assembler.utils.AsmListingFormatter;
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.utils.DialogResult;
@@ -98,6 +100,7 @@ public class MainWindow extends JFrame {
 	private JButton btnConvert;
 	private List<Token> tokens;
 	private byte[] preparedFrame = new byte[0];
+	private List<EncoderIrLine> encodedIrLineResult;
 
 	/**
 	 * Create the frame.
@@ -234,6 +237,7 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 
 					showDisassemblyResult();
+					preparedOrderedHex(encodedIrLineResult);
 
 				}
 			});
@@ -339,10 +343,24 @@ public class MainWindow extends JFrame {
 		// Wroking on the second pass
 		AsmSecondPass second = new AsmSecondPass(result.lines, result.symbols.asMap());
 		AsmSecondPass.Result encRes = second.run();
-
-		String listing = AsmListingFormatter.buildListing(encRes.encoded());
+		
+		this.encodedIrLineResult = encRes.encoded();
+		
+		String listing = AsmListingFormatter.buildListing(encodedIrLineResult);
 		this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);
 
+	}
+	
+	public void preparedOrderedHex(List<EncoderIrLine> data) {
+		
+		if(data == null || data.isEmpty()) {
+			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(">>Error: No existen datos en la tabla de resultados o existene errores de decodificación");
+			return;
+		}
+		
+		this.preparedFrame = FrameUtil.buildLittleEndianFrame(data);
+		String orderedHex = FrameUtil.toHex(preparedFrame, false);
+		this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(orderedHex);
 	}
 
 	public void asmSyntaxParse(List<Token> tokens) {
