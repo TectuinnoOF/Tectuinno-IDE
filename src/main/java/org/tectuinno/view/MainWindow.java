@@ -26,7 +26,6 @@
  * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
  */
 
-
 /**
  * 
  * Hola lennin este es un comentario de prueba para que veas como 
@@ -98,6 +97,7 @@ public class MainWindow extends JFrame {
 	private boolean isSintaxCorrect;
 	private JButton btnConvert;
 	private List<Token> tokens;
+	private byte[] preparedFrame = new byte[0];
 
 	/**
 	 * Create the frame.
@@ -170,17 +170,23 @@ public class MainWindow extends JFrame {
 					tokens = analizeCurrentLexer();
 
 					new Thread() {
+
 						@Override
 						public void run() {
+							consolePanel.getTokenTerminalPanel().writteIn("===========================================================\n");
 
-							/*
-							 * consolePanel.getTerminalPanel().writteIn(">> Iniciando inspección... \n");
-							 * 
-							 * for(Token token : tokens) {
-							 * consolePanel.getTerminalPanel().writteIn(token.toString() + " \n"); }
-							 * 
-							 * consolePanel.getTerminalPanel().writteIn(">> Inspección terminada \n");
-							 */
+							for (Token token : tokens) {
+								consolePanel.getTokenTerminalPanel().writteIn(token.toString() + " \n");
+							}
+
+							consolePanel.getTokenTerminalPanel().writteIn("===========================================================\n");
+						}
+
+					}.start();
+
+					new Thread() {
+						@Override
+						public void run() {
 
 							asmSyntaxParse(tokens);
 
@@ -237,6 +243,11 @@ public class MainWindow extends JFrame {
 		}
 
 		JButton btnEnviarLocal = new JButton("Enviar");
+		btnEnviarLocal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				sendDataToMicroContoller();
+			}
+		});
 		btnEnviarLocal.setBackground(new Color(255, 255, 255));
 		compilerToolBar.add(btnEnviarLocal);
 
@@ -253,7 +264,7 @@ public class MainWindow extends JFrame {
 
 		consolePanel = new ResultConsolePanel();
 		splitPaneEditorAndConsole.setRightComponent(consolePanel);
-		splitPaneEditorAndConsole.setDividerLocation(442);
+		splitPaneEditorAndConsole.setDividerLocation(410);
 
 	}
 
@@ -278,6 +289,18 @@ public class MainWindow extends JFrame {
 	private void guardarArchivo() {
 
 	}
+	
+	private void sendDataToMicroContoller() {
+		
+		byte[] data = getPreparedFrame();
+		if(data == null || data.length == 0) {
+			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(">> Ha ocurrido un error: No existen datos a enviar");
+			return;
+		}
+		
+		
+		
+	}
 
 	public void asmSemanticParse(List<Token> tokens) {
 
@@ -298,25 +321,27 @@ public class MainWindow extends JFrame {
 
 		String currentEditorTittle = this.desktopPane.getSelectedFrame().getTitle();
 		this.consolePanel.getDisassemblyTerminalPanel().writteIn(">>Current code result: " + currentEditorTittle);
-		
-		if(this.tokens == null || this.tokens.isEmpty()) {
+
+		if (this.tokens == null || this.tokens.isEmpty()) {
 			this.consolePanel.getDisassemblyTerminalPanel().writteIn(">>Error: No Tokens");
 			return;
 		}
-		
+
 		// First Pass: Symbol table + IRLines
 		AsmFirstPass firstPass = new AsmFirstPass(this.tokens, 0);
 		AsmFirstPass.Result result = firstPass.run();
-		
-		/*String listing = AsmListingFormatter.buildListing(result.lines);
-		this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);*/
-		
+
+		/*
+		 * String listing = AsmListingFormatter.buildListing(result.lines);
+		 * this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);
+		 */
+
 		// Wroking on the second pass
 		AsmSecondPass second = new AsmSecondPass(result.lines, result.symbols.asMap());
-	    AsmSecondPass.Result encRes = second.run();
-		
-	    String listing = AsmListingFormatter.buildListing(encRes.encoded());
-	    this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);
+		AsmSecondPass.Result encRes = second.run();
+
+		String listing = AsmListingFormatter.buildListing(encRes.encoded());
+		this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);
 
 	}
 
@@ -390,7 +415,7 @@ public class MainWindow extends JFrame {
 	 * window
 	 */
 	private void setConsoleDividerLocationEvent() {
-		this.splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 250);
+		this.splitPaneEditorAndConsole.setDividerLocation(this.getHeight() - 410);
 		// this.SplitPanePrincipal.setDividerLocation(/*700 - this.getWidth()*/ 0);
 	}
 
@@ -403,5 +428,9 @@ public class MainWindow extends JFrame {
 		newEditorWizard.setVisible(true);
 		return newEditorWizard;
 
+	}
+	
+	public byte[] getPreparedFrame() {
+		return this.preparedFrame;
 	}
 }

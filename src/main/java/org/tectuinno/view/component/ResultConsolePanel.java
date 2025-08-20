@@ -61,6 +61,8 @@ public class ResultConsolePanel extends JPanel {
 	private FlowLayout fl_optionsPanel;
 	private TerminalPanel terminalPanel;
 	private DisassemblyTerminalPanel disassemblyTerminalPanel;
+	private TokenTerminalPanel tokenTerminalPanel;
+	private OrderedHexResultTerminalPanel orderedHexResultTerminalPanel;
 
 	/**
 	 * Create the panel.
@@ -82,8 +84,12 @@ public class ResultConsolePanel extends JPanel {
 		btnNewTerminal.setIcon(new ImageIcon(ResultConsolePanel.class.getResource("/org/tectuinno/assets/terminal_ico.png")));
 		optionsPanel.add(btnNewTerminal);
 		
+		
+		this.openTokenTerminal();
 		this.openFirstTerminal();
 		this.openDissasemblyTerminal();
+		this.openOrderedHexResultTerminalPanel();
+		
 	}
 	
 	/**
@@ -101,11 +107,23 @@ public class ResultConsolePanel extends JPanel {
 		
 	}
 	
+	public void openTokenTerminal() {
+		opennedTerminals++;
+		this.tokenTerminalPanel = new TokenTerminalPanel();
+		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Tokens",this.tokenTerminalPanel);
+	}
+	
 	public void openDissasemblyTerminal() {
 		opennedTerminals++;
 		this.disassemblyTerminalPanel = new DisassemblyTerminalPanel();
 		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Disassembly", disassemblyTerminalPanel);
-	}		
+	}
+	
+	public void openOrderedHexResultTerminalPanel() {
+		opennedTerminals++;
+		this.orderedHexResultTerminalPanel = new OrderedHexResultTerminalPanel();
+		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Trama", orderedHexResultTerminalPanel);
+	}
 	
 	public TerminalPanel getTerminalPanel() {
 		return this.terminalPanel;
@@ -113,6 +131,14 @@ public class ResultConsolePanel extends JPanel {
 	
 	public DisassemblyTerminalPanel getDisassemblyTerminalPanel() {
 		return this.disassemblyTerminalPanel;
+	}
+	
+	public TokenTerminalPanel getTokenTerminalPanel() {
+		return this.tokenTerminalPanel;
+	}
+	
+	public OrderedHexResultTerminalPanel getOrderedHexResultTerminalPanel() {
+		return this.orderedHexResultTerminalPanel;
 	}
 
 }
