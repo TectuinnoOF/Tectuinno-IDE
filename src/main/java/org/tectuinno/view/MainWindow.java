@@ -348,7 +348,25 @@ public class MainWindow extends JFrame {
 			return;
 		}
 		
-		
+		int idx = this.cmbEnableComDevices.getSelectedIndex();
+	    if (idx < 0 || idx >= lastPorts.size()) {
+	    	
+	        consolePanel.getOrderedHexResultTerminalPanel().writteIn(">> Selecciona un puerto primero\n");
+	        return;
+	    }
+	    
+	    var selected = lastPorts.get(idx);
+	    final int baud = 115200;
+
+	    new Thread(() -> {
+	        try {
+	            SerialPortService.sendBytes(selected.systemName(), baud, preparedFrame);
+	            consolePanel.getTerminalPanel().writteIn(">> Trama enviada a " + selected.systemName() + "\n");
+	        } catch (Exception ex) {
+	            consolePanel.getTerminalPanel().writteIn(">> Error enviando a " + selected.systemName() + ": " + ex.getMessage() + "\n");
+	            ex.printStackTrace(System.err);
+	        }
+	    }, "uart-send-thread").start();
 		
 	}
 
