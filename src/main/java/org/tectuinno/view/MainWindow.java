@@ -77,16 +77,19 @@ import java.awt.event.ComponentEvent;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import java.awt.Dimension;
 
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JMenuBar menuBar;
-	private JMenu JMenuArchivo;
+	private JMenu JMenuFile;
 	private JMenu JMenuArchivoNuevo;
 	private JMenuItem MenuItemNvoAsm;
-	private JMenu JMenuProyecto;
 	private JMenuItem MenuItemFicheroTexto;
 	private JPanel panelToolBar;
 	private JToolBar compilerToolBar;
@@ -101,6 +104,12 @@ public class MainWindow extends JFrame {
 	private List<Token> tokens;
 	private byte[] preparedFrame = new byte[0];
 	private List<EncoderIrLine> encodedIrLineResult;
+	private final JComboBox cmbEnableComDevices = new JComboBox();
+	private final JMenu JMenuEdit = new JMenu("Editar");
+	private final JMenu JMenuProgram = new JMenu("Programa");
+	private final JMenu JMenuTools = new JMenu("Herramientas");
+	private final JButton btnSearchComDevices = new JButton("Escanear");
+	private final JSeparator separator = new JSeparator();
 
 	/**
 	 * Create the frame.
@@ -123,11 +132,11 @@ public class MainWindow extends JFrame {
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
-		JMenuArchivo = new JMenu("Archivo");
-		menuBar.add(JMenuArchivo);
+		JMenuFile = new JMenu("Archivo");
+		menuBar.add(JMenuFile);
 
 		JMenuArchivoNuevo = new JMenu("Nuevo");
-		JMenuArchivo.add(JMenuArchivoNuevo);
+		JMenuFile.add(JMenuArchivoNuevo);
 
 		MenuItemNvoAsm = new JMenuItem("Fichero ASM Risc-V");
 		MenuItemNvoAsm.addActionListener(new ActionListener() {
@@ -146,10 +155,16 @@ public class MainWindow extends JFrame {
 				guardarArchivo();
 			}
 		});
-		JMenuArchivo.add(JMenuArchivoGuardar);
-
-		JMenuProyecto = new JMenu("Proyecto");
-		menuBar.add(JMenuProyecto);
+		JMenuFile.add(JMenuArchivoGuardar);
+		{
+			menuBar.add(JMenuEdit);
+		}
+		{
+			menuBar.add(JMenuProgram);
+		}
+		{
+			menuBar.add(JMenuTools);
+		}
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -254,6 +269,18 @@ public class MainWindow extends JFrame {
 		});
 		btnEnviarLocal.setBackground(new Color(255, 255, 255));
 		compilerToolBar.add(btnEnviarLocal);
+		{
+			separator.setOrientation(SwingConstants.VERTICAL);
+			compilerToolBar.add(separator);
+		}
+		{
+			cmbEnableComDevices.setPreferredSize(new Dimension(120, 22));
+			compilerToolBar.add(cmbEnableComDevices);
+			//this.cmbEnableComDevices
+		}
+		{
+			compilerToolBar.add(btnSearchComDevices);
+		}
 
 		splitPaneEditorAndConsole = new JSplitPane();
 		splitPaneEditorAndConsole.setOrientation(JSplitPane.VERTICAL_SPLIT);
