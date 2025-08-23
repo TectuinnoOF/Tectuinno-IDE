@@ -36,9 +36,7 @@
 
 package org.tectuinno.view;
 
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import org.tectuinno.compiler.assembler.AsmFirstPass;
@@ -55,33 +53,23 @@ import org.tectuinno.io.SerialPortService;
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
+import org.tectuinno.view.assembler.AsmEditorPane;
 import org.tectuinno.view.component.ResultConsolePanel;
 
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-
 import java.awt.BorderLayout;
-import javax.swing.JSplitPane;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 
-import javax.swing.DebugGraphics;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import javax.swing.JToolBar;
-import javax.swing.JDesktopPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.*;
+import java.sql.SQLOutput;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 import java.awt.Dimension;
 
 public class MainWindow extends JFrame {
@@ -92,7 +80,7 @@ public class MainWindow extends JFrame {
 	private JMenu JMenuFile;
 	private JMenu JMenuArchivoNuevo;
 	private JMenuItem MenuItemNvoAsm;
-	private JMenuItem MenuItemFicheroTexto;
+	/*private JMenuItem MenuItemFicheroTexto;*/
 	private JPanel panelToolBar;
 	private JToolBar compilerToolBar;
 	private JButton btnAnalice;
@@ -107,9 +95,9 @@ public class MainWindow extends JFrame {
 	private byte[] preparedFrame = new byte[0];
 	private List<EncoderIrLine> encodedIrLineResult;
 	private final JComboBox<String> cmbEnableComDevices = new JComboBox<String>();
-	private final JMenu JMenuEdit = new JMenu("Editar");
+	/*private final JMenu JMenuEdit = new JMenu("Editar");
 	private final JMenu JMenuProgram = new JMenu("Programa");
-	private final JMenu JMenuTools = new JMenu("Herramientas");
+	private final JMenu JMenuTools = new JMenu("Herramientas");*/
 	private final JButton btnSearchComDevices = new JButton("Escanear");
 	private final JSeparator separator = new JSeparator();
 	private List<PortInfo> lastPorts = List.of();
@@ -149,8 +137,8 @@ public class MainWindow extends JFrame {
 		});
 		JMenuArchivoNuevo.add(MenuItemNvoAsm);
 
-		MenuItemFicheroTexto = new JMenuItem("Texto");
-		JMenuArchivoNuevo.add(MenuItemFicheroTexto);
+		/*MenuItemFicheroTexto = new JMenuItem("Texto");
+		JMenuArchivoNuevo.add(MenuItemFicheroTexto);*/
 
 		JMenuArchivoGuardar = new JMenuItem("Guardar");
 		JMenuArchivoGuardar.addActionListener(new ActionListener() {
@@ -159,7 +147,10 @@ public class MainWindow extends JFrame {
 			}
 		});
 		JMenuFile.add(JMenuArchivoGuardar);
-		{
+
+
+
+		/*{
 			menuBar.add(JMenuEdit);
 		}
 		{
@@ -167,7 +158,7 @@ public class MainWindow extends JFrame {
 		}
 		{
 			menuBar.add(JMenuTools);
-		}
+		}*/
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -337,10 +328,41 @@ public class MainWindow extends JFrame {
 	}
 	
 	private void guardarArchivo() {
+        AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+        if (frame != null) {
+            String contenido = frame.asmGetEditorText();
+            String titulo = frame.getTitle();
+            File archivo = new File(titulo);
+            archivo = frame.getArchivoActual();
+            if (archivo == null) {
+                JFileChooser guardado = new JFileChooser();
+                guardado.setDialogTitle("Guardar archivo");
+                guardado.setSelectedFile(new File(titulo));
+                int opcion = guardado.showSaveDialog(this);
+                if (opcion == JFileChooser.APPROVE_OPTION) {
+                    archivo = guardado.getSelectedFile();
+                    if (!archivo.getName().contains(".")) {
+                        archivo = new File(archivo.getAbsolutePath() + ".asm");
+                    }
+                    frame.setTitle(archivo.getName());
+                }
+                frame.setArchivoActual(archivo);
+            }
+            try (FileWriter escribir = new FileWriter(archivo)) {
+                escribir.write(contenido);
+                escribir.flush();
+                JOptionPane.showMessageDialog(this, "Archivo guardado correctamente en: "
+                        + archivo.getAbsolutePath());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error al guardar " + e.getMessage() + " .");
+                e.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No hay ningún editor abierto.");
+        }
+    }
 
-	}
-	
-	private void sendDataToMicroContoller() {
+    private void sendDataToMicroContoller() {
 		
 		byte[] data = getPreparedFrame();
 		if(data == null || data.length == 0) {
@@ -469,7 +491,6 @@ public class MainWindow extends JFrame {
 				JOptionPane.showMessageDialog(this, "Result: " + dialog.getDialogResult());
 				return;
 			}
-
 			JOptionPane.showMessageDialog(this,
 					"Result: " + dialog.getDialogResult() + "file: " + dialog.getFileModel().getName());
 
@@ -487,6 +508,7 @@ public class MainWindow extends JFrame {
 		}
 
 	}
+
 
 	private void openNewEditor() {
 

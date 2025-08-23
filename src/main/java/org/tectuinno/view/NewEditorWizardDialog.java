@@ -176,10 +176,12 @@ public class NewEditorWizardDialog extends JDialog {
 	}
 	
 	public void setFileModel() {
-		
-		// Need to idenitify the filetype here
-		this.fileModel = new FileModel(this.txfFileName.getText() + ".asm", this.fileType);
-		
+        // Need to idenitify the filetype here
+        if(txfFileName.getText().contains(".asm")){
+            this.fileModel = new FileModel(this.txfFileName.getText(), this.fileType);
+        }
+        else
+            this.fileModel = new FileModel(this.txfFileName.getText() + ".asm", this.fileType);
 	}
 	
 	public FileModel getFileModel() {

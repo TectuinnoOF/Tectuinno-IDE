@@ -78,11 +78,11 @@ public class ResultConsolePanel extends JPanel {
 		fl_optionsPanel.setAlignment(FlowLayout.RIGHT);
 		add(optionsPanel, BorderLayout.NORTH);
 		
-		btnNewTerminal = new JButton("");
+		/*btnNewTerminal = new JButton("");
 		btnNewTerminal.setBackground(Color.WHITE);
 		btnNewTerminal.setToolTipText("Abrir Terminal");
 		btnNewTerminal.setIcon(new ImageIcon(ResultConsolePanel.class.getResource("/org/tectuinno/assets/terminal_ico.png")));
-		optionsPanel.add(btnNewTerminal);
+		optionsPanel.add(btnNewTerminal);*/
 		
 		
 		this.openTokenTerminal();

@@ -39,6 +39,7 @@ import javax.swing.event.DocumentListener;
 import org.tectuinno.compiler.assembler.AsmLexer;
 
 import java.awt.Color;
+import java.io.File;
 
 public class AsmEditorInternalFrame extends JInternalFrame {
 
@@ -47,6 +48,7 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 	private JScrollPane scrollPaneAsmEditor;
 	private AsmEditorPane asmEditorPane;
 	private AsmLexer asmLexer;
+    private File archivoActual;
 
 	/**
 	 * Create the frame.
@@ -109,5 +111,18 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 	public AsmLexer getLexer() {
 		return this.asmLexer;
 	}
-	
+
+    public String asmGetEditorText(){
+        return asmEditorPane.getText();
+    }
+    public void asmSetEditorText(String text){
+        asmEditorPane.setText(text);
+    }
+    public File getArchivoActual(){
+        return archivoActual;
+    }
+    public void setArchivoActual(File archivoActual){
+        this.archivoActual = archivoActual;
+    }
+
 }
