@@ -147,18 +147,18 @@ public class MainWindow extends JFrame {
 			}
 		});
 		JMenuFile.add(JMenuArchivoGuardar);
-
-
-
-		/*{
+        {
+        }
+        /*{
 			menuBar.add(JMenuEdit);
-		}
-		{
+			}
+			{
 			menuBar.add(JMenuProgram);
-		}
-		{
+			}
+			{
 			menuBar.add(JMenuTools);
-		}*/
+			{
+			}*/
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -383,7 +383,7 @@ public class MainWindow extends JFrame {
 	    }
 	    
 	    var selected = lastPorts.get(idx);
-	    final int baud = 115200;
+	    final int baud = 9600;
 
 	    new Thread(() -> {
 	        try {
