@@ -180,6 +180,11 @@ public class MainWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 
 					tokens = analizeCurrentLexer();
+                    if(tokens.isEmpty()){
+                        JOptionPane.showMessageDialog(null,"No hay contenido que verificar.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
 
 					new Thread() {
 
