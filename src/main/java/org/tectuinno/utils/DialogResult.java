@@ -66,6 +66,11 @@ public enum DialogResult {
 	 * To specify that the operation has been canceled
 	 */
 	ABORT,
+	
+	/**
+	 * To specify a possible error during the creation of the new file
+	 */
+	ERROR
 
 	
 	

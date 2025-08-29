@@ -68,6 +68,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.*;
 import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.List;
 
 import java.awt.Dimension;
@@ -101,6 +102,7 @@ public class MainWindow extends JFrame {
 	private final JButton btnSearchComDevices = new JButton("Escanear");
 	private final JSeparator separator = new JSeparator();
 	private List<PortInfo> lastPorts = List.of();
+	private List<String> opennedEditors;
 
 	/**
 	 * Create the frame.
@@ -109,6 +111,7 @@ public class MainWindow extends JFrame {
 
 		this.isSemanticCorrect = false;
 		this.isSintaxCorrect = false;
+		this.opennedEditors = new ArrayList<String>();
 
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -143,7 +146,7 @@ public class MainWindow extends JFrame {
 		JMenuArchivoGuardar = new JMenuItem("Guardar");
 		JMenuArchivoGuardar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				guardarArchivo();
+				saveCurrentFile();
 			}
 		});
 		JMenuFile.add(JMenuArchivoGuardar);
@@ -332,8 +335,10 @@ public class MainWindow extends JFrame {
 		}
 	}
 	
-	private void guardarArchivo() {
+	private void saveCurrentFile() {
+		
         AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+        
         if (frame != null) {
             String contenido = frame.asmGetEditorText();
             String titulo = frame.getTitle();
@@ -488,14 +493,21 @@ public class MainWindow extends JFrame {
 
 	public void openNewAsmEditor() {
 
-		try {
-
-			NewEditorWizardDialog dialog = this.openEditorWizard(FileType.ASSEMBLY_FILE);
-
-			if (dialog.getDialogResult() != DialogResult.OK) {
-				JOptionPane.showMessageDialog(this, "Result: " + dialog.getDialogResult());
-				return;
-			}
+		try {						
+			
+			//Open the editor wizard and the user fill the data
+			NewEditorWizardDialog dialog = this.openEditorWizard(FileType.ASSEMBLY_FILE);			
+			
+			//Check if the file that the user is attemping to create already exist in the list of oppened editors, if exist, we set the
+			//DilalogResult to ERROR...
+			if(this.isEditorAlreadyOpenned(dialog.getFileModel().getName())) dialog.setDialogResult(DialogResult.ERROR);
+			
+			if(dialog.getDialogResult() == DialogResult.ABORT) JOptionPane.showMessageDialog(this, "Operacion abortada", "Error", JOptionPane.WARNING_MESSAGE);
+			
+			if(dialog.getDialogResult() != DialogResult.OK) return;
+			
+			this.opennedEditors.add(dialog.getFileModel().getName());
+			
 			JOptionPane.showMessageDialog(this,
 					"Result: " + dialog.getDialogResult() + "file: " + dialog.getFileModel().getName());
 
@@ -514,7 +526,17 @@ public class MainWindow extends JFrame {
 
 	}
 
-
+	private boolean isEditorAlreadyOpenned(String editorTittle) {
+		
+		if(this.opennedEditors == null) return true;
+		boolean result = this.opennedEditors.contains(editorTittle);
+		
+		if(result) JOptionPane.showMessageDialog(this, "El archivo ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+		
+		return result;
+		
+	}
+	
 	private void openNewEditor() {
 
 	}
