@@ -69,6 +69,7 @@ import java.awt.event.ComponentEvent;
 import java.io.*;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import java.awt.Dimension;
@@ -102,7 +103,7 @@ public class StartingWindow extends JFrame {
 	private final JButton btnSearchComDevices = new JButton("Escanear");
 	private final JSeparator separator = new JSeparator();
 	private List<PortInfo> lastPorts = List.of();
-	private List<String> opennedEditors;
+	//private List<String> opennedEditors;
 
 	/**
 	 * Create the frame.
@@ -110,8 +111,7 @@ public class StartingWindow extends JFrame {
 	public StartingWindow() {
 
 		this.isSemanticCorrect = false;
-		this.isSintaxCorrect = false;
-		this.opennedEditors = new ArrayList<String>();
+		this.isSintaxCorrect = false;		
 
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -506,7 +506,7 @@ public class StartingWindow extends JFrame {
 			
 			if(dialog.getDialogResult() != DialogResult.OK) return;
 			
-			this.opennedEditors.add(dialog.getFileModel().getName());
+			//this.opennedEditors.add(dialog.getFileModel().getName());
 			
 			JOptionPane.showMessageDialog(this,
 					"Result: " + dialog.getDialogResult() + "file: " + dialog.getFileModel().getName());
@@ -526,14 +526,16 @@ public class StartingWindow extends JFrame {
 
 	}
 
-	private boolean isEditorAlreadyOpenned(String editorTittle) {
+	private boolean isEditorAlreadyOpenned(String editorTittle) {	
 		
-		if(this.opennedEditors == null) return true;
-		boolean result = this.opennedEditors.contains(editorTittle);
+		for(var frame : Arrays.asList(this.desktopPane.getAllFrames())) {
+			if(frame.getTitle().equals(editorTittle)) {
+				JOptionPane.showMessageDialog(this, "El archivo ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+				return true;
+			}
+		}
 		
-		if(result) JOptionPane.showMessageDialog(this, "El archivo ya existe", "Error", JOptionPane.ERROR_MESSAGE);
-		
-		return result;
+		return false;
 		
 	}
 	
