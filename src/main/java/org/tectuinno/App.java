@@ -31,7 +31,7 @@ package org.tectuinno;
 import java.awt.EventQueue;
 import javax.swing.UIManager;
 
-import org.tectuinno.view.MainWindow;
+import org.tectuinno.view.StartingWindow;
 
 
 
@@ -48,7 +48,7 @@ public class App {
     	EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainWindow frame = new MainWindow();
+					StartingWindow frame = new StartingWindow();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

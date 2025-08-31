@@ -73,7 +73,7 @@ import java.util.List;
 
 import java.awt.Dimension;
 
-public class MainWindow extends JFrame {
+public class StartingWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -107,7 +107,7 @@ public class MainWindow extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public MainWindow() {
+	public StartingWindow() {
 
 		this.isSemanticCorrect = false;
 		this.isSintaxCorrect = false;
