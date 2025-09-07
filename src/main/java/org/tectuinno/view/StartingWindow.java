@@ -38,6 +38,7 @@ package org.tectuinno.view;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.tectuinno.compiler.assembler.AsmFirstPass;
 import org.tectuinno.compiler.assembler.AsmLexer;
@@ -53,7 +54,6 @@ import org.tectuinno.io.SerialPortService;
 import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
-import org.tectuinno.view.assembler.AsmEditorPane;
 import org.tectuinno.view.component.ResultConsolePanel;
 
 import java.awt.BorderLayout;
@@ -67,11 +67,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.*;
-import java.sql.SQLOutput;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Scanner;
 import java.awt.Dimension;
 
 public class StartingWindow extends JFrame {
@@ -103,6 +101,7 @@ public class StartingWindow extends JFrame {
 	private final JButton btnSearchComDevices = new JButton("Escanear");
 	private final JSeparator separator = new JSeparator();
 	private List<PortInfo> lastPorts = List.of();
+	private JMenuItem JMenuArchivoAbrir;
 	//private List<String> opennedEditors;
 
 	/**
@@ -150,6 +149,14 @@ public class StartingWindow extends JFrame {
 			}
 		});
 		JMenuFile.add(JMenuArchivoGuardar);
+		
+		JMenuArchivoAbrir = new JMenuItem("Abrir");
+		JMenuArchivoAbrir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openAsmFile();
+			}
+		});
+		JMenuFile.add(JMenuArchivoAbrir);
         {
         }
         /*{
@@ -537,11 +544,7 @@ public class StartingWindow extends JFrame {
 		
 		return false;
 		
-	}
-	
-	private void openNewEditor() {
-
-	}
+	}	
 
 	/**
 	 * fix the position of the console and the file explorer before rezising the
@@ -565,5 +568,57 @@ public class StartingWindow extends JFrame {
 	
 	public byte[] getPreparedFrame() {
 		return this.preparedFrame;
+	}
+	
+	private void openAsmFile() {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		JFileChooser fileChooser = new JFileChooser();				
+		
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Assembly", "asm");
+		fileChooser.setFileFilter(filter);
+		
+		int returnVal = fileChooser.showOpenDialog(this);
+		
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			
+			JOptionPane.showMessageDialog(this, "Fichero seleccionado: " + fileChooser.getSelectedFile().getName());
+			
+			File asmFile = fileChooser.getSelectedFile();
+			
+			try {
+				
+				Scanner reader = new Scanner(asmFile);
+				
+				while(reader.hasNextLine()) {
+					sb.append(reader.nextLine()).append("\n");
+				}
+				
+				AsmEditorInternalFrame asmInternalFrame = new AsmEditorInternalFrame();
+				asmInternalFrame.setTitle(fileChooser.getSelectedFile().getName());
+				asmInternalFrame.setVisible(true);
+				asmInternalFrame.asmSetEditorText(sb.toString());
+				asmInternalFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+				this.desktopPane.add(asmInternalFrame);
+				
+				return;
+				
+			} catch (Exception e) {
+				
+				e.printStackTrace();
+				
+				JOptionPane.showMessageDialog(this, "Ha ocurrido un error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			}
+						
+			
+		}else {
+			
+			JOptionPane.showMessageDialog(this, "Ha ocurrido un error", "Error", JOptionPane.ERROR_MESSAGE);
+			
+		}
+		
+		
+		
 	}
 }

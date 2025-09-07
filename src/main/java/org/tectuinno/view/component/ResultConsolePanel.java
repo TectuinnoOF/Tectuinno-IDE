@@ -33,8 +33,6 @@ import java.awt.BorderLayout;
 import javax.swing.JTabbedPane;
 import java.awt.FlowLayout;
 import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import java.awt.Color;
 
 /**
  * A panel component that hosts the result/output consoles within the Tectuinno IDE.
