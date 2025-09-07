@@ -36,6 +36,7 @@
 
 package org.tectuinno.view;
 
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -365,11 +366,14 @@ public class StartingWindow extends JFrame {
                 }
                 frame.setArchivoActual(archivo);
             }
-            try (FileWriter escribir = new FileWriter(archivo)) {
-                escribir.write(contenido);
-                escribir.flush();
-                JOptionPane.showMessageDialog(this, "Archivo guardado correctamente en: "
-                        + archivo.getAbsolutePath());
+            try {
+                assert archivo != null;
+                try (FileWriter escribir = new FileWriter(archivo)) {
+                    escribir.write(contenido);
+                    escribir.flush();
+                    JOptionPane.showMessageDialog(this, "Archivo guardado correctamente en: "
+                            + archivo.getAbsolutePath());
+                }
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, "Error al guardar " + e.getMessage() + " .");
                 e.printStackTrace();
@@ -588,11 +592,13 @@ public class StartingWindow extends JFrame {
 			File asmFile = fileChooser.getSelectedFile();
 			
 			try {
+
+                FileReader fReader = new FileReader(asmFile);
+				BufferedReader lector = new BufferedReader(fReader);
+                String linea;
 				
-				Scanner reader = new Scanner(asmFile);
-				
-				while(reader.hasNextLine()) {
-					sb.append(reader.nextLine()).append("\n");
+				while((linea = lector.readLine()) != null) {
+					sb.append(linea).append("\n");
 				}
 				
 				AsmEditorInternalFrame asmInternalFrame = new AsmEditorInternalFrame();
