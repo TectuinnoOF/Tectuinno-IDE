@@ -38,6 +38,8 @@ public class AsmParser {
 
 	private final List<Token> tokens;
 	private int position;
+    private int line;
+    private int column;
 	private ResultConsolePanel consolePanel;
 	private static int errorCounter;
 
@@ -45,6 +47,8 @@ public class AsmParser {
 		super();
 		this.tokens = tokens;
 		this.position = position;
+        this.line = 1;
+        this.column = 1;
 	}
 	
 	public AsmParser(List<Token> tokens) {
@@ -55,7 +59,7 @@ public class AsmParser {
 	}
 	
 	private void error(Token token, String message) {
-		String errorMessage = "Error de sintaxis: " + token + ": " + message + "\n\r";
+		String errorMessage = "Error de sintaxis: "+ token + ": " + message + "\n\r";
 		System.err.println(errorMessage);
 		this.consolePanel.getTerminalPanel().writteIn(errorMessage);
 		errorCounter ++;
@@ -71,11 +75,10 @@ public class AsmParser {
 	}
 	
 	private Token advance() {
-		if(!isAtEnt()) {
-			position ++;
-		}
-		return previous();
-	}
+        if (!isAtEnt())
+            position++;
+        return previous();
+    }
 	
 	private Token peek() {
 		return tokens.get(position);

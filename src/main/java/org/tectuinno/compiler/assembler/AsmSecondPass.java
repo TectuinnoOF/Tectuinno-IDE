@@ -32,7 +32,7 @@ public class AsmSecondPass {
                 continue; // descartamos puntación
             }
             if (tt == TokenType.UNKNOWN && labels.containsKey(t.getValue())) {
-                out.add(new Token(TokenType.LABEL, t.getValue(), t.getPosition()));
+                out.add(new Token(TokenType.LABEL, t.getValue(), t.getPosition(), t.getLine(), t.getColumn()));
                 continue;
             }
             out.add(t);

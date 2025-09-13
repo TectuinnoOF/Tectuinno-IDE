@@ -619,8 +619,8 @@ public class StartingWindow extends JFrame {
 						
 			
 		}else {
-			
-			JOptionPane.showMessageDialog(this, "Ha ocurrido un error", "Error", JOptionPane.ERROR_MESSAGE);
+			// !JFileChooser.APPROVE_OPTION entonces...
+			JOptionPane.showMessageDialog(this, "Acción cancelada", "Alerta", JOptionPane.ERROR_MESSAGE);
 			
 		}
 		

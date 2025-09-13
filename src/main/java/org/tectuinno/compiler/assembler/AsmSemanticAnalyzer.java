@@ -58,13 +58,14 @@ public class AsmSemanticAnalyzer {
 	private String errorArgs(Token instr, int expected, int recived) {
 		errorCounter++;
 		return new StringBuilder().append(">>ERROR DETECTADO EN: ").append(instr.getValue()).append(" | SE ESPERABA: ")
-				.append(expected).append(" ARGS | ").append(recived).append("FUERON RECIBIDOS... <<<<<").toString();
+				.append(expected).append(" ARGS | ").append(recived).append("FUERON RECIBIDOS... EN: ").append(instr)
+                .append(" <<<<<").toString();
 	}
 
-	private String errorArgs(String message) {
+	private String errorArgs(Token instr, String message) {
 		errorCounter++;
-		return new StringBuilder().append(">>ERROR DETECTADO: ").append(message).append(" QUE ESTÁS HACIENDO ? <<<<<")
-				.toString();
+		return new StringBuilder().append(">>ERROR DETECTADO: ").append(message).append(" EN ").
+                append(instr).append(" <<<<<").toString();
 	}
 
 	private boolean isAtEnd() {
@@ -148,7 +149,7 @@ public class AsmSemanticAnalyzer {
 			break;
 		case BEQ:
 			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isLbl.test(2)) {
-				errors.add(this.errorArgs("BEQ espera: rs1, rs2, etiqueta"));
+				errors.add(this.errorArgs(instr,"BEQ espera: rs1, rs2, etiqueta"));
 			}
 			break;
 		case JAL:
@@ -165,16 +166,16 @@ public class AsmSemanticAnalyzer {
             break;
 		case CALL:
 			if (!(n == 1 && isLbl.test(0))) {
-                errors.add(errorArgs("CALL espera 1 etiqueta como argumento"));
+                errors.add(errorArgs(instr,"CALL espera 1 etiqueta como argumento"));
             }
             break;
 		case RET:
 			if (n != 0) {
-                errors.add(errorArgs("Ret no espera ningún argumento"));
+                errors.add(errorArgs(instr,"Ret no espera ningún argumento"));
             }
             break;
 		default:
-			errors.add(this.errorArgs(name + " | Instrucción u objeto desconocido...."));
+			errors.add(this.errorArgs(instr,name + " | Instrucción u objeto desconocido...."));
 			break;
 		}
 
@@ -225,7 +226,7 @@ public class AsmSemanticAnalyzer {
 	
 	private Token normalizeLabelToken(Token t) {
 		if (t.getType() == TokenType.UNKNOWN && declaredLabels.containsKey(t.getValue())) {
-			return new Token(TokenType.LABEL, t.getValue(), t.getPosition());
+			return new Token(TokenType.LABEL, t.getValue(), t.getPosition(), t.getLine(), t.getColumn());
 		}
 		return t;
 	}
@@ -257,7 +258,7 @@ public class AsmSemanticAnalyzer {
 			if (token.getType() == TokenType.LABEL) {
 				String name = token.getValue().replace(":", "");
 				if (declaredLabels.containsKey(name)) {
-					errors.add(this.errorArgs("Etiqueta duplicada...."));
+					errors.add(this.errorArgs(token,"Etiqueta duplicada...."));
 				} else {
 					declaredLabels.put(name, token);
 				}

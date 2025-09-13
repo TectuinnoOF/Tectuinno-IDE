@@ -70,6 +70,8 @@ public class AsmLexer {
 
 	private final String source;
 	private int position;
+    private int line;
+    private int column;
 
 	/**
 	 * Constructs the lexer for the given source code.
@@ -80,6 +82,8 @@ public class AsmLexer {
 	public AsmLexer(String source) {
 		this.source = source;
 		this.position = 0;
+        this.line = 1;
+        this.column = 1;
 	}
 
 	/*
@@ -128,6 +132,8 @@ public class AsmLexer {
 	/** Lee inmediatos decimales y hex con signo: -123, +8, -0xFF, 0x10 */
 	private Token readNumberSigned() {
 	    int start = position;
+        int startline = line;
+        int startcolumn = column;
 
 	    // signo opcional
 	    if (!isAtEnd() && (peek() == '+' || peek() == '-')) {
@@ -142,7 +148,7 @@ public class AsmLexer {
 	            advance();
 	        }
 	        String value = source.substring(start, position);
-	        return new Token(TokenType.IMMEDIATE, value, start);
+	        return new Token(TokenType.IMMEDIATE, value, start,startline,startcolumn);
 	    }
 
 	    // decimal
@@ -150,7 +156,7 @@ public class AsmLexer {
 	        advance();
 	    }
 	    String value = source.substring(start, position);
-	    return new Token(TokenType.IMMEDIATE, value, start);
+	    return new Token(TokenType.IMMEDIATE, value, start,startline,startcolumn);
 	}
 
 	/**
@@ -263,9 +269,14 @@ public class AsmLexer {
 	 * This should be used after successfully reading or consuming a character.
 	 */
 	private void advance() {
-		position++;
+        char c = source.charAt(position);
+        if(c == '\n'){
+            line++;
+            column = 1;
+        }else column++;
+        position++;
 	}
-	
+
 	/**
 	 * Reads an identifier from the source code and determines its type.
 	 * <p>
@@ -281,6 +292,8 @@ public class AsmLexer {
 	 */
 	private Token readIdentifierOrInstruction() {
 		int start = position;
+        int startline = line;
+        int startcolumn = column;
 		while (!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_')) {
 			advance();
 		}
@@ -289,18 +302,18 @@ public class AsmLexer {
 		if (!isAtEnd() && peek() == ':') {
 			advance();
 			String label = source.substring(start, position);
-			return new Token(TokenType.LABEL, label, start);
+			return new Token(TokenType.LABEL, label, start, startline, startcolumn);
 		}
 
 		String value = source.substring(start, position);
 
 		if (isRegister(value)) {
-			return new Token(TokenType.REGISTER, value, start);
+			return new Token(TokenType.REGISTER, value, start, startline, startcolumn);
 		} else if (isInstruction(value)) {
-			return new Token(TokenType.INSTRUCTION, value, start);
+			return new Token(TokenType.INSTRUCTION, value, start, startline, startcolumn);
 		} else {
 			// No reconocido
-			return new Token(TokenType.UNKNOWN, value, start);
+			return new Token(TokenType.UNKNOWN, value, start, startline, startcolumn);
 		}
 	}
 	
@@ -315,6 +328,8 @@ public class AsmLexer {
 	 */
 	private Token readComment() {
 		int start = position;
+        int startline = line;
+        int startcolumn = column;
 		advance(); // '/'
 		advance(); // '*'
 		while (!isAtEnd() && !(peek() == '*' && peekNext() == '/')) {
@@ -325,7 +340,7 @@ public class AsmLexer {
 			advance(); // '/'
 		}
 		String value = source.substring(start, position);
-		return new Token(TokenType.COMMENT, value, start);
+		return new Token(TokenType.COMMENT, value, start, startline, startcolumn);
 	}
 
 	/**
@@ -349,7 +364,7 @@ public class AsmLexer {
 		        if (peekNext() == '*') {
 		            tokens.add(readComment());
 		        } else {
-		            tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position));
+		            tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position,line,column));
 		            advance();
 		        }
 		    } else if (current == '+' || current == '-') {
@@ -358,7 +373,7 @@ public class AsmLexer {
 		            tokens.add(readNumberSigned());
 		        } else {
 		            // si algún día admites operadores, cámbialo; por ahora desconocido
-		            tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position));
+		            tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position,line,column));
 		            advance();
 		        }
 		    } else if (Character.isDigit(current)) {
@@ -367,19 +382,19 @@ public class AsmLexer {
 		    } else if (Character.isLetter(current) || current == '_') {
 		        tokens.add(readIdentifierOrInstruction());
 		    } else if (current == ',') {
-		        tokens.add(new Token(TokenType.COMMA, ",", position));
+		        tokens.add(new Token(TokenType.COMMA, ",", position,line,column));
 		        advance();
 		    } else if (current == ':') {
-		        tokens.add(new Token(TokenType.COLON, ":", position));
+		        tokens.add(new Token(TokenType.COLON, ":", position,line,column));
 		        advance();
 		    } else if (current == '(') {
-		        tokens.add(new Token(TokenType.LEFTPAREN, "(", position));
+		        tokens.add(new Token(TokenType.LEFTPAREN, "(", position,line,column));
 		        advance();
 		    } else if (current == ')') {
-		        tokens.add(new Token(TokenType.RIGHTPAREN, ")", position));
+		        tokens.add(new Token(TokenType.RIGHTPAREN, ")", position,line,column));
 		        advance();
 		    } else {
-		        tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position));
+		        tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position,line,column));
 		        advance();
 		    }
 		}

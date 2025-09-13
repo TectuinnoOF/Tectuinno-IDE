@@ -52,6 +52,12 @@ public class Token {
 
     /** The character position in the input where this token begins. */
     private final int position;
+
+    /** The character line in the input where this tokens begins */
+    private final int line;
+
+    /** The character column in the input where this token begins */
+    private final int column;
     
     /**
      * Constructs a new {@code Token} with the specified type, value, and position.
@@ -59,11 +65,16 @@ public class Token {
      * @param type the type of token (e.g., instruction, label)
      * @param value the matched string from the input
      * @param position the starting position in the input string
+     * @param line the line location of the input character
+     * @param column column to find character
      */
-	public Token(TokenType type, String value, int position) {
+	public Token(TokenType type, String value, int position, int line, int column) {
 		this.type = type;
 		this.value = value;
 		this.position = position;
+        this.line = line;
+        this.column = column;
+
 	}
 
 	/**
@@ -93,8 +104,25 @@ public class Token {
         return position;
     }
 
-	
-	/**
+    /**
+     * Returns the line number in the input where this token starts.
+     *
+     * @return the line number of the token
+     */
+    public int getLine(){
+        return line;
+    }
+
+    /**
+     * Returns the column number in the input where this token starts.
+     *
+     * @return the column number of the token
+     */
+    public int getColumn() {
+        return column;
+    }
+
+    /**
      * Returns a string representation of the token for debugging and display.
      * Format: {@code Token(TYPE, "value", position)}
      *
@@ -102,6 +130,6 @@ public class Token {
      */
 	@Override
 	public String toString() {
-		return String.format("Token(%s, \"%s\", %d)", type, value, position);
+		return String.format("Token (%s, \"%s\", %d, linea: %d, columna: %d)", type, value, position,line,column);
 	}
 }
