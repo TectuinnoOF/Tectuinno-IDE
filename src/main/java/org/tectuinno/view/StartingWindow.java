@@ -53,6 +53,7 @@ import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.io.PortInfo;
 import org.tectuinno.io.SerialPortService;
 import org.tectuinno.utils.DialogResult;
+import org.tectuinno.utils.ExampleResources;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
 import org.tectuinno.view.component.ResultConsolePanel;
@@ -103,6 +104,8 @@ public class StartingWindow extends JFrame {
 	private final JSeparator separator = new JSeparator();
 	private List<PortInfo> lastPorts = List.of();
 	private JMenuItem JMenuArchivoAbrir;
+	private JSeparator separator_1;
+	private JMenu jMenuItemEjemplos;
 	//private List<String> opennedEditors;
 
 	/**
@@ -158,6 +161,12 @@ public class StartingWindow extends JFrame {
 			}
 		});
 		JMenuFile.add(JMenuArchivoAbrir);
+		
+		separator_1 = new JSeparator();
+		JMenuFile.add(separator_1);
+		
+		jMenuItemEjemplos = new JMenu("Ejemplos");
+		JMenuFile.add(jMenuItemEjemplos);
         {
         }
         /*{
@@ -313,6 +322,8 @@ public class StartingWindow extends JFrame {
 		splitPaneEditorAndConsole.setDividerLocation(410);
 		
 		this.searchForComDevices();
+		
+		this.builExamplesMenu();
 
 	}
 
@@ -536,6 +547,15 @@ public class StartingWindow extends JFrame {
 		}
 
 	}
+	
+	private void openNewAsmEditor(String tittle, String content) throws Exception {
+		AsmEditorInternalFrame asminternalFrame = new AsmEditorInternalFrame();
+		asminternalFrame.setTitle(tittle);
+		asminternalFrame.asmSetEditorText(content);
+		asminternalFrame.setVisible(true);
+		asminternalFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.desktopPane.add(asminternalFrame);
+	}
 
 	private boolean isEditorAlreadyOpenned(String editorTittle) {	
 		
@@ -608,6 +628,7 @@ public class StartingWindow extends JFrame {
 				asmInternalFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				this.desktopPane.add(asmInternalFrame);
 				
+				lector.close();				
 				return;
 				
 			} catch (Exception e) {
@@ -621,10 +642,42 @@ public class StartingWindow extends JFrame {
 		}else {
 			// !JFileChooser.APPROVE_OPTION entonces...
 			JOptionPane.showMessageDialog(this, "Acción cancelada", "Alerta", JOptionPane.ERROR_MESSAGE);
-			
 		}
 		
 		
 		
 	}
+	
+	private void builExamplesMenu() {
+		
+		List<String> files = ExampleResources.listAsm();
+		
+		if(files.isEmpty()) {
+			JMenuItem emptyMenu = new JMenuItem("(no hay ejemplos para mostar)");
+			emptyMenu.setEnabled(false);
+			this.jMenuItemEjemplos.add(emptyMenu);
+			return;
+		}
+		
+		for(String fileName : files) {
+			
+			JMenuItem menuItem = new JMenuItem(fileName);
+			menuItem.addActionListener( ev -> {
+				
+				try {
+					
+					String content = ExampleResources.readAsm(fileName);
+					openNewAsmEditor(fileName, content);
+					
+				}catch(Exception er) {
+					er.printStackTrace();
+				}
+				
+			});
+			
+			this.jMenuItemEjemplos.add(menuItem);
+		}
+		
+	}
+		
 }
