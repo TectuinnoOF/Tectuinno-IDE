@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 public final class ExampleResources {
 	
-	private static final String EXAMPLES_DIR = "org/tectuinno/examples";
+	private static final String EXAMPLES_DIR = "org\\tectuinno\\examples\\";
 	
 	private ExampleResources() {}
 	
