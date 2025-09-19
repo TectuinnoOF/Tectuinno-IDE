@@ -1,15 +1,35 @@
+/*
+ * This file is part of Tectuinno IDE.
+ *
+ * Tectuinno IDE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * As a special exception, you may use this file as part of a free software
+ * library without restriction. Specifically, if other files instantiate
+ * templates or use macros or inline functions from this file, or you compile
+ * this file and link it with other files to produce an executable, this
+ * file does not by itself cause the resulting executable to be covered by
+ * the GNU General Public License. This exception does not however
+ * invalidate any other reasons why the executable file might be covered by
+ * the GNU General Public License.
+ *
+ * Copyright 2025 Tectuinno Team (https://github.com/tectuinno)
+ */
+
 package org.tectuinno.view.component;
 
-import java.awt.EventQueue;
-
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import org.tectuinno.io.WifiProgrammer;
@@ -20,13 +40,6 @@ public class FrWiFiWizarDialog extends JFrame {
 	private JPanel contentPane;
 	
 	/*================================*/
-	private final JTextField txtHost = new JTextField("192.168.4.1");
-    private final JSpinner spPort = new JSpinner(new SpinnerNumberModel(3333, 1, 65535, 1));
-    private final JButton btnTest = new JButton("Probar conexión");
-    private final JButton btnSend = new JButton("Enviar programa");
-    private final JButton btnClose = new JButton("Cerrar");
-    private final JProgressBar progress = new JProgressBar(0, 100);
-    private final JTextArea log = new JTextArea(10, 60);
 
     private final byte[] payload;
     private final WifiProgrammer programmer = new WifiProgrammer();
@@ -41,11 +54,10 @@ public class FrWiFiWizarDialog extends JFrame {
 		this.payload = payload.clone();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 518, 388);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		
 		
 
 	}
