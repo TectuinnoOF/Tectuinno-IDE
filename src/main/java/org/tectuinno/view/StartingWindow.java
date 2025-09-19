@@ -56,6 +56,7 @@ import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.ExampleResources;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
+import org.tectuinno.view.component.FrWiFiWizarDialog;
 import org.tectuinno.view.component.ResultConsolePanel;
 
 import java.awt.BorderLayout;
@@ -106,6 +107,7 @@ public class StartingWindow extends JFrame {
 	private JMenuItem JMenuArchivoAbrir;
 	private JSeparator separator_1;
 	private JMenu jMenuItemEjemplos;
+	private JButton btnWifiSend;
 	//private List<String> opennedEditors;
 
 	/**
@@ -305,6 +307,16 @@ public class StartingWindow extends JFrame {
 			});
 			compilerToolBar.add(btnSearchComDevices);
 		}
+		
+		btnWifiSend = new JButton("WiFi Programmer");
+		btnWifiSend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openWifiWizard();
+			}
+		});
+		
+		compilerToolBar.add(btnWifiSend);
+		
 
 		splitPaneEditorAndConsole = new JSplitPane();
 		splitPaneEditorAndConsole.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -677,6 +689,17 @@ public class StartingWindow extends JFrame {
 			
 			this.jMenuItemEjemplos.add(menuItem);
 		}
+		
+	}
+	
+	private void openWifiWizard() {
+		
+		//if(this.preparedFrame.length <= 0) return;
+		
+		FrWiFiWizarDialog wifiWizard = new FrWiFiWizarDialog(this.preparedFrame);
+		wifiWizard.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		wifiWizard.setVisible(true);
+		
 		
 	}
 		
