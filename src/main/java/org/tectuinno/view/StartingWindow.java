@@ -108,6 +108,7 @@ public class StartingWindow extends JFrame {
 	private JSeparator separator_1;
 	private JMenu jMenuItemEjemplos;
 	private JButton btnWifiSend;
+	private String orderedHexCache;
 	//private List<String> opennedEditors;
 
 	/**
@@ -484,13 +485,15 @@ public class StartingWindow extends JFrame {
 	public void preparedOrderedHex(List<EncoderIrLine> data) {
 		
 		if(data == null || data.isEmpty()) {
-			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(">>Error: No existen datos en la tabla de resultados o existene errores de decodificación");
+			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(">>Error: No existen datos en la tabla de resultados o existen errores de decodificación");
 			return;
 		}
 		
 		this.preparedFrame = FrameUtil.buildLittleEndianFrame(data);
 		String orderedHex = FrameUtil.toHex(preparedFrame, false);
+		//this.orderedHexCache = orderedHex;
 		this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(orderedHex);
+		
 	}
 
 	public void asmSyntaxParse(List<Token> tokens) {
@@ -694,7 +697,10 @@ public class StartingWindow extends JFrame {
 	
 	private void openWifiWizard() {
 		
-		//if(this.preparedFrame.length <= 0) return;
+		if(this.preparedFrame.length <= 0) {
+			JOptionPane.showMessageDialog(this, "No hay datos para el envio", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
 		
 		FrWiFiWizarDialog wifiWizard = new FrWiFiWizarDialog(this.preparedFrame);
 		wifiWizard.setDefaultCloseOperation(DISPOSE_ON_CLOSE);

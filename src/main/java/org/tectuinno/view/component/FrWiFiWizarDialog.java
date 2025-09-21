@@ -35,14 +35,20 @@ import javax.swing.border.EmptyBorder;
 import org.tectuinno.io.WifiProgrammer;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.util.List;
+import java.util.function.IntConsumer;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingWorker;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
+import java.awt.event.ActionListener;
 
 public class FrWiFiWizarDialog extends JFrame {
 
@@ -103,12 +109,27 @@ public class FrWiFiWizarDialog extends JFrame {
 			JPanelSuperiorBotones.add(jSpinSpPort);
 		}
 		{
+			btnTestConnection.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					testConnection();
+				}
+			});
 			JPanelSuperiorBotones.add(btnTestConnection);
 		}
 		{
+			btnSend.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					sendProgram();
+				}
+			});
 			JPanelSuperiorBotones.add(btnSend);
 		}
 		{
+			btnClose.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					dispose();
+				}
+			});
 			JPanelSuperiorBotones.add(btnClose);
 		}
 		{
@@ -127,7 +148,112 @@ public class FrWiFiWizarDialog extends JFrame {
 			panelCenterTerminal.add(progressBar, BorderLayout.NORTH);
 		}
 		
+		this.consoleWritte("Trama preparada: " + this.payload.toString());
+	}
+	
+	private void testConnection() {
+		
+		final String host = this.txfIpHost.getText();
+		final int port = (Integer) this.jSpinSpPort.getValue();
+		this.consoleWritte("Provado conexión a: " + host + ":" + port + "...");
+		//btnTestConnection.setEnabled(false);
+		//this.btnSend.setEnabled(false);
+		
+		SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>(){
+			@Override protected Boolean doInBackground() {
+				try {
+					return programmer.ping(host, port, 4000);
+				}catch (Exception e) {
+					consoleWritte("Error: " + e.getMessage());
+					return false;
+				}
+			}
+			
+			@Override protected void done() {
+				try {
+					boolean ok = get();
+					if(ok) {
+						consoleWritte("Ok: Dispositivo disponible");
+						btnSend.setEnabled(true);
+					}else {
+						consoleWritte("Intento fallido: no hubo respuesta");
+						btnSend.setEnabled(true);
+					}
+				}catch (Exception e) {
+					consoleWritte("Error: " + e.getMessage());
+				}finally {
+					btnTestConnection.setEnabled(true);
+				}
+			}
+		};
+		
+		worker.execute();
+		
 		
 	}
-
+	
+	private void sendProgram() {
+		
+		final String host = this.txfIpHost.getText();
+		final int port = (Integer) this.jSpinSpPort.getValue();
+		//btnTestConnection.setEnabled(false);
+		//this.btnSend.setEnabled(false);
+		
+		this.consoleWritte("Enviando " + payload.length + " bytes a: " + host + ":" + port + "...");
+		
+		SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
+			
+			@Override
+			protected Void doInBackground() throws Exception {
+				progressBar.setValue(0);
+				try {
+					
+					IntConsumer pc = p -> publish(p);
+					programmer.send(host, port, payload, 7000, pc);
+					consoleWritte("Envio terminado. esperando confirmación");
+					
+				}catch (Exception e) {
+					
+					consoleWritte("Error durante envio: " + e.getMessage());
+					throw new RuntimeException(e);
+					
+				}
+				
+				return null;
+			}
+			
+			@Override protected void process(List<Integer> chunks) {
+				if(!chunks.isEmpty()) {
+					progressBar.setValue(chunks.get(chunks.size()-1));
+				}
+			}
+			
+			@Override protected void done() {
+				
+				try {
+					
+					get();
+					consoleWritte("Ok: programación completada");
+					progressBar.setValue(100);
+					
+				}catch (Exception e) {
+					
+					consoleWritte("Error: " + e.getMessage());
+					
+				}finally {
+					btnTestConnection.setEnabled(true);
+					btnSend.setEnabled(true);
+				}
+				
+			}
+		};
+		
+		worker.execute();
+	}
+	
+	
+	private void consoleWritte(String s) {
+		this.txaTerminalLog.append(">> " + s + "\n\r");
+		this.txaTerminalLog.setCaretPosition(this.txaTerminalLog.getDocument().getLength());
+	}
 }
