@@ -50,6 +50,45 @@ import javax.swing.JTextArea;
 import javax.swing.JProgressBar;
 import java.awt.event.ActionListener;
 
+/**
+ * A Swing-based dialog (frame) that provides a user interface for programming
+ * the Tectuinno device over WiFi.
+ * <p>
+ * This frame, called the <b>WiFi Programmer Wizard</b>, allows the user to:
+ * <ul>
+ *   <li>Specify the host IP address and port of the Tectuinno device.</li>
+ *   <li>Test the network connection to ensure the device is reachable.</li>
+ *   <li>Send a prepared payload (compiled hexadecimal program) to the device.</li>
+ *   <li>Monitor logs and transmission progress through a console and progress bar.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Internally, the class uses {@link WifiProgrammer} to handle the network
+ * operations (ping and send) while keeping the UI responsive through
+ * {@link javax.swing.SwingWorker} tasks.
+ * </p>
+ *
+ * <h3>UI Components</h3>
+ * <ul>
+ *   <li><b>IP and Port Input:</b> Text field and spinner for connection details.</li>
+ *   <li><b>Buttons:</b> Test connection, Send program, Exit.</li>
+ *   <li><b>Console Log:</b> Text area to display real-time status and errors.</li>
+ *   <li><b>Progress Bar:</b> Shows the transmission progress of the payload.</li>
+ * </ul>
+ *
+ * <h3>Typical Workflow</h3>
+ * <ol>
+ *   <li>User connects manually to the "Tectuinno" WiFi network from their OS.</li>
+ *   <li>User launches this dialog and verifies connectivity with <i>Test Connection</i>.</li>
+ *   <li>Upon success, the <i>Send</i> button becomes available to transmit the program.</li>
+ *   <li>Transmission progress is displayed, and logs are appended to the console area.</li>
+ * </ol>
+ *
+ * @see WifiProgrammer
+ * @see javax.swing.SwingWorker
+ * @author Tectuinno
+ * @since 0.1.0
+ */
 public class FrWiFiWizarDialog extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -151,6 +190,24 @@ public class FrWiFiWizarDialog extends JFrame {
 		this.consoleWritte("Trama preparada: " + this.payload.toString());
 	}
 	
+	/**
+     * Tests the connectivity with the Tectuinno device over WiFi.
+     * <p>
+     * This method reads the host IP and port from the UI fields, then launches
+     * a {@link SwingWorker} in the background to avoid blocking the Event Dispatch
+     * Thread (EDT). The worker attempts to "ping" the device using
+     * {@link WifiProgrammer#ping(String, int, int)}.
+     * </p>
+     * <p>
+     * Behavior:
+     * <ul>
+     *   <li>If the device responds with "OK", the console logs that the device
+     *       is available and enables the <b>Send</b> button.</li>
+     *   <li>If the connection fails or times out, an error is logged.</li>
+     *   <li>The <b>Test Connection</b> button is re-enabled when the worker finishes.</li>
+     * </ul>
+     * </p>
+     */
 	private void testConnection() {
 		
 		final String host = this.txfIpHost.getText();
@@ -192,6 +249,26 @@ public class FrWiFiWizarDialog extends JFrame {
 		
 	}
 	
+
+    /**
+     * Sends the prepared program (payload) to the Tectuinno device over WiFi.
+     * <p>
+     * This method reads the host IP and port from the UI fields, then uses a
+     * {@link SwingWorker} to transmit the payload asynchronously.
+     * </p>
+     * <p>
+     * Behavior:
+     * <ul>
+     *   <li>Resets the progress bar to 0%.</li>
+     *   <li>Uses {@link WifiProgrammer#send(String, int, byte[], int, java.util.function.IntConsumer)}
+     *       to transmit the payload in chunks, reporting progress back to the UI.</li>
+     *   <li>Logs status messages to the console before, during, and after transmission.</li>
+     *   <li>If transmission is successful, sets the progress bar to 100% and logs
+     *       "programming completed".</li>
+     *   <li>If an error occurs, the exception is logged and the buttons are re-enabled.</li>
+     * </ul>
+     * </p>
+     */
 	private void sendProgram() {
 		
 		final String host = this.txfIpHost.getText();
@@ -251,7 +328,16 @@ public class FrWiFiWizarDialog extends JFrame {
 		worker.execute();
 	}
 	
-	
+	/**
+     * Writes a message to the terminal log area in the UI.
+     * <p>
+     * Each message is prefixed with {@code ">> "} and appended to the text area,
+     * followed by a newline. The caret position is automatically moved to the end,
+     * ensuring that the latest message is always visible.
+     * </p>
+     *
+     * @param s the message to append to the console log
+     */
 	private void consoleWritte(String s) {
 		this.txaTerminalLog.append(">> " + s + "\n\r");
 		this.txaTerminalLog.setCaretPosition(this.txaTerminalLog.getDocument().getLength());
