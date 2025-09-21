@@ -56,6 +56,7 @@ import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.ExampleResources;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
+import org.tectuinno.view.component.FrWiFiWizarDialog;
 import org.tectuinno.view.component.ResultConsolePanel;
 
 import java.awt.BorderLayout;
@@ -106,6 +107,8 @@ public class StartingWindow extends JFrame {
 	private JMenuItem JMenuArchivoAbrir;
 	private JSeparator separator_1;
 	private JMenu jMenuItemEjemplos;
+	private JButton btnWifiSend;
+	private String orderedHexCache;
 	//private List<String> opennedEditors;
 
 	/**
@@ -305,6 +308,16 @@ public class StartingWindow extends JFrame {
 			});
 			compilerToolBar.add(btnSearchComDevices);
 		}
+		
+		btnWifiSend = new JButton("WiFi Programmer");
+		btnWifiSend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openWifiWizard();
+			}
+		});
+		
+		compilerToolBar.add(btnWifiSend);
+		
 
 		splitPaneEditorAndConsole = new JSplitPane();
 		splitPaneEditorAndConsole.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -472,13 +485,15 @@ public class StartingWindow extends JFrame {
 	public void preparedOrderedHex(List<EncoderIrLine> data) {
 		
 		if(data == null || data.isEmpty()) {
-			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(">>Error: No existen datos en la tabla de resultados o existene errores de decodificación");
+			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(">>Error: No existen datos en la tabla de resultados o existen errores de decodificación");
 			return;
 		}
 		
 		this.preparedFrame = FrameUtil.buildLittleEndianFrame(data);
 		String orderedHex = FrameUtil.toHex(preparedFrame, false);
+		//this.orderedHexCache = orderedHex;
 		this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(orderedHex);
+		
 	}
 
 	public void asmSyntaxParse(List<Token> tokens) {
@@ -677,6 +692,20 @@ public class StartingWindow extends JFrame {
 			
 			this.jMenuItemEjemplos.add(menuItem);
 		}
+		
+	}
+	
+	private void openWifiWizard() {
+		
+		if(this.preparedFrame.length <= 0) {
+			JOptionPane.showMessageDialog(this, "No hay datos para el envio", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		FrWiFiWizarDialog wifiWizard = new FrWiFiWizarDialog(this.preparedFrame);
+		wifiWizard.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		wifiWizard.setVisible(true);
+		
 		
 	}
 		

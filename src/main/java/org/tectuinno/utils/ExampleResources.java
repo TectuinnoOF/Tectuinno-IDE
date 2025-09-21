@@ -1,5 +1,6 @@
 package org.tectuinno.utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,11 +23,70 @@ import java.util.stream.Stream;
 
 public final class ExampleResources {
 	
-	private static final String EXAMPLES_DIR = "org/tectuinno/examples";
+	private static final String EXAMPLES_DIR = "org\\tectuinno\\examples\\";
 	
 	private ExampleResources() {}
-	
-	public static List<String> listAsm(){
+
+    public static List<String> listAsm(){
+
+		try {
+
+			URL url = ExampleResources.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation();
+            Path path = Paths.get(url.toURI());
+
+
+            String protocol = url.getProtocol();
+            if ("file".equals(protocol)) {
+                // Ejecución en IDE: ejemplo como directorio real
+                Path dir = path.resolve(EXAMPLES_DIR);
+                if(!Files.exists(dir))
+                    return List.of();
+                else {
+                    try (Stream<Path> s = Files.list(dir)) {
+                        return s.filter(p -> Files.isRegularFile(p) && p.getFileName().toString().endsWith(".asm"))
+                                .map(p -> p.getFileName().toString())
+                                .sorted()
+                                .collect(Collectors.toList());
+                    }
+                }
+            }
+
+            if("jar".equals(protocol)) {
+
+                String prefix = EXAMPLES_DIR + "/";
+                JarFile jar = new JarFile(path.toFile());
+
+                 try(jar){
+                	 List<String> out = new ArrayList<>();
+                     Enumeration<JarEntry> en = jar.entries();
+                     while (en.hasMoreElements()) {
+                         JarEntry e = en.nextElement();
+                         String name = e.getName();
+                         if (!e.isDirectory() && name.startsWith(prefix) && name.endsWith(".asm")) {
+                             out.add(name.substring(prefix.length()));
+                         }
+                     }
+                     Collections.sort(out);
+                     return out;
+                 }
+            }
+
+
+			return List.of();
+
+		}catch (Exception e) {
+
+			e.printStackTrace();
+			return List.of();
+
+		}
+
+	}
+
+	/*public static List<String> listAsm(){
 		
 		try {
 			
@@ -85,7 +145,7 @@ public final class ExampleResources {
 			
 		}				
 		
-	}
+	}*/
 	
 	/** Lee el contenido de un ejemplo .asm como texto UTF-8. */
     public static String readAsm(String fileName) throws IOException {
