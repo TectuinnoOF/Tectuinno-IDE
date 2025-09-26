@@ -194,7 +194,7 @@ public class WifiProgrammer {
     	int position = 0;
     	
     	//Convert the first message in bytearray
-    	byte[] byteHandShake = handShake.getBytes();
+    	//byte[] byteHandShake = handShake.getBytes();
     	
     	//converting the size to a byte data
     	int size = payload.length;
@@ -202,16 +202,16 @@ public class WifiProgrammer {
     	byte sizeLow = (byte) (size & 0xff);    	    	
     	
     	//the new completed payload included the handshake message and the code
-    	byte[] completePayload = new byte[byteHandShake.length + 2 + payload.length + 1];
+    	byte[] completePayload = new byte[/*byteHandShake.length + 2 + */payload.length];
     	
     	//then, we concat the data in just one array
-    	System.arraycopy(byteHandShake, 0, completePayload, position, byteHandShake.length);
-    	position += byteHandShake.length;
-    	completePayload[position++] = sizeHigh;
-    	completePayload[position++] = sizeLow;    	    	
+    	//System.arraycopy(byteHandShake, 0, completePayload, position, byteHandShake.length);
+    	//position += byteHandShake.length;
+    	//completePayload[position++] = sizeHigh;
+    	//completePayload[position++] = sizeLow;    	    	
     	System.arraycopy(payload, 0, completePayload, position, payload.length);
-    	position += payload.length;
-    	completePayload[position] = (byte) checksum;
+    	//position += payload.length;
+    	//completePayload[position] = (byte) checksum;
     	    	
     	
     	return completePayload;
