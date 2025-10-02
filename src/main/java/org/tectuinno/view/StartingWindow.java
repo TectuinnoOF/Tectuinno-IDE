@@ -704,6 +704,7 @@ public class StartingWindow extends JFrame {
 		
 		FrWiFiWizarDialog wifiWizard = new FrWiFiWizarDialog(this.preparedFrame);
 		wifiWizard.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		wifiWizard.setLocationRelativeTo(this);
 		wifiWizard.setVisible(true);
 		
 		

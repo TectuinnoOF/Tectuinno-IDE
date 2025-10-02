@@ -144,7 +144,7 @@ public class FrWiFiWizarDialog extends JFrame {
 			JPanelSuperiorBotones.add(lblNewLabel_1);
 		}
 		{
-			jSpinSpPort.setModel(new SpinnerNumberModel(3333, 1, 65535, 1));
+			jSpinSpPort.setModel(new SpinnerNumberModel(80, 1, 65535, 1));
 			JPanelSuperiorBotones.add(jSpinSpPort);
 		}
 		{
