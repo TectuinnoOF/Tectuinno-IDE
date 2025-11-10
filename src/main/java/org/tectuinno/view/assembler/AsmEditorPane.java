@@ -38,8 +38,22 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
+import javax.swing.undo.UndoManager;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.Document;
+
+
+
 import org.tectuinno.compiler.assembler.utils.AsmEditorStyleName;
 import org.tectuinno.compiler.assembler.utils.AsmSyntaxDictionary;
+
 
 
 
@@ -57,14 +71,14 @@ public class AsmEditorPane extends JTextPane {
 	private final Style registerStyle;
 	private final Style defaultStyle;
 	private final Style tagStyle;
-	private final Style commentStyle;
+	private final Style commentStyle;	
 
 	//private StyledDocument styledDocument;
 	
 	
 	public AsmEditorPane() throws Exception{
 		
-		//this.styledDocument = this.getStyledDocument();
+		//this.styledDocument = this.getStyledDocument();			
 		
 		this.keyWordStyle = this.addStyle(AsmEditorStyleName.KEYWORD, null);
 		this.registerStyle = this.addStyle(AsmEditorStyleName.REGISTER, null);
@@ -79,7 +93,29 @@ public class AsmEditorPane extends JTextPane {
 		StyleConstants.setForeground(this.commentStyle, new Color(208,244,245));
 		
 		//Setting commentary on italic format
-		StyleConstants.setItalic(this.commentStyle, true);			
+		StyleConstants.setItalic(this.commentStyle, true);	
+				
+		
+		/*this.getDocument().addUndoableEditListener((UndoableEditEvent e) -> {
+			var edit = e.getEdit();			
+			System.out.println("evento");
+			if(edit instanceof AbstractDocument.DefaultDocumentEvent dd) {
+				DocumentEvent.EventType t = dd.getType();
+				if (t == DocumentEvent.EventType.INSERT || t == DocumentEvent.EventType.REMOVE) {
+	                undoManager.addEdit(edit);
+	                System.out.println("acción agregada");
+	            }
+			}else {
+				undoManager.addEdit(edit);
+				System.out.println("acción agregada");
+			}
+			
+		});*/
+		
+		
+		
+		// Keybindings cross-platform (Ctrl en Win/Linux, Cmd en macOS)
+	    /**/
 		
 	}		
 
@@ -133,5 +169,7 @@ public class AsmEditorPane extends JTextPane {
             }
         });
     }
+	
+	
 
 }

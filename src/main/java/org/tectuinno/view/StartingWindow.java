@@ -37,7 +37,40 @@
 package org.tectuinno.view;
 
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.swing.DebugGraphics;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDesktopPane;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -56,24 +89,11 @@ import org.tectuinno.utils.DialogResult;
 import org.tectuinno.utils.ExampleResources;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
+import org.tectuinno.view.assembler.AsmEditorPane;
 import org.tectuinno.view.component.FrWiFiWizarDialog;
 import org.tectuinno.view.component.ResultConsolePanel;
 
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dialog.ModalityType;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-import java.awt.Dimension;
 
 public class StartingWindow extends JFrame {
 
@@ -109,6 +129,18 @@ public class StartingWindow extends JFrame {
 	private JMenu jMenuItemEjemplos;
 	private JButton btnWifiSend;
 	private String orderedHexCache;
+	private JMenu JMenuEdit;
+	private JMenuItem JMenuOptionUndoo;
+	private JMenuItem JMenuOptionRedo;
+	private JMenuItem JMenuOptionCopy;
+	private JMenuItem JMenuOptionCut;
+	private JMenuItem JMenuOptionPaste;
+	private JSeparator separator_2;
+	private JMenuItem JMenuOptionGoToLine;
+	private JMenuItem JMenuOptionSelectAll;
+	private JSeparator separator_3;
+	private JMenuItem JMenuOptionIncreaseFont;
+	private JMenuItem JMenuOptionDecreaseFont;
 	//private List<String> opennedEditors;
 
 	/**
@@ -127,7 +159,7 @@ public class StartingWindow extends JFrame {
 		});
 		setTitle("Tectuinno IDE");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 864, 692);
+		setBounds(100, 100, 960, 692);
 
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -170,6 +202,47 @@ public class StartingWindow extends JFrame {
 		
 		jMenuItemEjemplos = new JMenu("Ejemplos");
 		JMenuFile.add(jMenuItemEjemplos);
+		
+		JMenuEdit = new JMenu("Editar");
+		menuBar.add(JMenuEdit);
+		
+		JMenuOptionUndoo = new JMenuItem("Deshacer");
+		JMenuOptionUndoo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				undoActionInActiveEditor();
+			}
+		});
+		JMenuEdit.add(JMenuOptionUndoo);
+		
+		JMenuOptionRedo = new JMenuItem("Rehacer");
+		JMenuEdit.add(JMenuOptionRedo);
+		
+		JMenuOptionCopy = new JMenuItem("Copiar");
+		JMenuEdit.add(JMenuOptionCopy);
+		
+		JMenuOptionCut = new JMenuItem("Cortar");
+		JMenuEdit.add(JMenuOptionCut);
+		
+		JMenuOptionPaste = new JMenuItem("Pegar");
+		JMenuEdit.add(JMenuOptionPaste);
+		
+		separator_2 = new JSeparator();
+		JMenuEdit.add(separator_2);
+		
+		JMenuOptionGoToLine = new JMenuItem("Ir a linea...");
+		JMenuEdit.add(JMenuOptionGoToLine);
+		
+		JMenuOptionSelectAll = new JMenuItem("Seleccionar todo");
+		JMenuEdit.add(JMenuOptionSelectAll);
+		
+		separator_3 = new JSeparator();
+		JMenuEdit.add(separator_3);
+		
+		JMenuOptionIncreaseFont = new JMenuItem("Aumentar tamaño de fuente");
+		JMenuEdit.add(JMenuOptionIncreaseFont);
+		
+		JMenuOptionDecreaseFont = new JMenuItem("Disminuir tamaño de fuente");
+		JMenuEdit.add(JMenuOptionDecreaseFont);
         {
         }
         /*{
@@ -526,6 +599,18 @@ public class StartingWindow extends JFrame {
 		AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
 		frame.setAsmLexer();
 		return frame.getLexer();
+	}
+	
+	private void undoActionInActiveEditor() {
+		
+		AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+		//AsmEditorPane activeAsmEditorPane = frame.getAsmEditorPane();
+		
+		consolePanel.getTerminalPanel()
+		.writteIn("\n================================================================\n");		
+		frame.undo();
+		this.consolePanel.getTerminalPanel().writteIn("Acción deshecha");
+		
 	}
 
 	public void openNewAsmEditor() {

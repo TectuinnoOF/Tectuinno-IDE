@@ -28,14 +28,26 @@
 
 package org.tectuinno.view.assembler;
 
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.AbstractDocument;
+import javax.swing.undo.UndoManager;
 
 import org.tectuinno.compiler.assembler.AsmLexer;
+
+import java.awt.Toolkit;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 import java.awt.Color;
 import java.io.File;
@@ -48,6 +60,7 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 	private AsmEditorPane asmEditorPane;
 	private AsmLexer asmLexer;
     private File archivoActual;
+    private final UndoManager undoManager;
 
 	/**
 	 * Create the frame.
@@ -75,12 +88,13 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 		asmEditorPane.setBackground(new Color(51, 51, 51));
 		scrollPaneAsmEditor.setViewportView(this.asmEditorPane);
 		
+		this.undoManager = new UndoManager();	
 		
 		this.asmEditorPane.getDocument().addDocumentListener(new DocumentListener() {
 			
 			@Override
 			public void removeUpdate(DocumentEvent e) {				
-				asmEditorPane.highLight();
+				asmEditorPane.highLight();				
 			}
 			
 			@Override
@@ -100,6 +114,48 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 				//asmEditorPane.highLight();
 			}
 		});
+		
+		this.undoManager.setLimit(1000);
+		
+		this.asmEditorPane.getDocument().addUndoableEditListener(new UndoableEditListener() {
+			
+			@Override
+			public void undoableEditHappened(UndoableEditEvent e) {
+				
+				var edit = e.getEdit();			
+				System.out.println("evento");
+				if(edit instanceof AbstractDocument.DefaultDocumentEvent dd) {
+					DocumentEvent.EventType t = dd.getType();
+					if (t == DocumentEvent.EventType.INSERT || t == DocumentEvent.EventType.REMOVE) {
+		                undoManager.addEdit(edit);
+		            }
+				}else {
+					undoManager.addEdit(edit);
+				}
+				
+			}			
+			
+		});
+		
+		int menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+
+	    InputMap im = this.getInputMap(JComponent.WHEN_FOCUSED);
+	    ActionMap am = this.getActionMap();
+
+	    // Undo: Ctrl/Cmd + Z
+	    im.put(KeyStroke.getKeyStroke(menuMask, KeyEvent.VK_Z), "undo-action");
+	    am.put("undo-action", new javax.swing.AbstractAction() {
+	        @Override public void actionPerformed(java.awt.event.ActionEvent e) { undo(); }
+	    });
+
+	    // Redo: Ctrl/Cmd + Y
+	    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_Y, menuMask), "redo-action");
+	    // Alternative redo: Ctrl/Cmd + Shift + Z (standar in macOS and another editors)
+	    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuMask | InputEvent.SHIFT_DOWN_MASK), "redo-action");
+
+	    am.put("redo-action", new javax.swing.AbstractAction() {
+	        @Override public void actionPerformed(java.awt.event.ActionEvent e) { redo(); }
+	    });
 		
 	}
 	
@@ -123,5 +179,20 @@ public class AsmEditorInternalFrame extends JInternalFrame {
     public void setArchivoActual(File archivoActual){
         this.archivoActual = archivoActual;
     }
+    
+    public AsmEditorPane getAsmEditorPane() {
+    	return this.asmEditorPane;
+    }
+    
+    public void undo() {
+	    if (undoManager.canUndo()) undoManager.undo();
+	}
+
+	public void redo() {
+	    if (undoManager.canRedo()) undoManager.redo();
+	}
+
+	public boolean canUndo() { return undoManager.canUndo(); }
+	public boolean canRedo() { return undoManager.canRedo(); }
 
 }
