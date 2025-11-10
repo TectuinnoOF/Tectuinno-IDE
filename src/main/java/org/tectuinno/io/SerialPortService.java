@@ -55,7 +55,9 @@ public final class SerialPortService {
         port.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
 
         if (!port.openPort()) {
+        	
             throw new IOException("No se pudo abrir el puerto: " + systemPortName);
+            
         }
         try {
             int wrote = port.writeBytes(data, data.length);

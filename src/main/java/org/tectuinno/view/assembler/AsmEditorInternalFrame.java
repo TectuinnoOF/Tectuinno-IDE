@@ -139,11 +139,11 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 		
 		int menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
 
-	    InputMap im = this.getInputMap(JComponent.WHEN_FOCUSED);
-	    ActionMap am = this.getActionMap();
+	    InputMap im = this.asmEditorPane.getInputMap(JComponent.WHEN_FOCUSED);
+	    ActionMap am = this.asmEditorPane.getActionMap();
 
 	    // Undo: Ctrl/Cmd + Z
-	    im.put(KeyStroke.getKeyStroke(menuMask, KeyEvent.VK_Z), "undo-action");
+	    im.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z,menuMask), "undo-action");
 	    am.put("undo-action", new javax.swing.AbstractAction() {
 	        @Override public void actionPerformed(java.awt.event.ActionEvent e) { undo(); }
 	    });

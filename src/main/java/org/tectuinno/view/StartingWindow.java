@@ -215,6 +215,11 @@ public class StartingWindow extends JFrame {
 		JMenuEdit.add(JMenuOptionUndoo);
 		
 		JMenuOptionRedo = new JMenuItem("Rehacer");
+		JMenuOptionRedo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				redoActionInActiveEditor();
+			}
+		});
 		JMenuEdit.add(JMenuOptionRedo);
 		
 		JMenuOptionCopy = new JMenuItem("Copiar");
@@ -610,6 +615,16 @@ public class StartingWindow extends JFrame {
 		.writteIn("\n================================================================\n");		
 		frame.undo();
 		this.consolePanel.getTerminalPanel().writteIn("Acción deshecha");
+		
+	}
+	
+	private void redoActionInActiveEditor() {
+		
+		AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+		consolePanel.getTerminalPanel()
+		.writteIn("\n================================================================\n");
+		frame.redo();
+		consolePanel.getTerminalPanel().writteIn("Acción recuperada");
 		
 	}
 
