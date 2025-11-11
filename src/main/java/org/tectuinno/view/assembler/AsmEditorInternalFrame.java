@@ -122,13 +122,17 @@ public class AsmEditorInternalFrame extends JInternalFrame {
 			@Override
 			public void undoableEditHappened(UndoableEditEvent e) {
 				
-				var edit = e.getEdit();			
-				System.out.println("evento");
+				var edit = e.getEdit();
+				
 				if(edit instanceof AbstractDocument.DefaultDocumentEvent dd) {
+					
 					DocumentEvent.EventType t = dd.getType();
 					if (t == DocumentEvent.EventType.INSERT || t == DocumentEvent.EventType.REMOVE) {
+						
 		                undoManager.addEdit(edit);
+		                
 		            }
+					
 				}else {
 					undoManager.addEdit(edit);
 				}
