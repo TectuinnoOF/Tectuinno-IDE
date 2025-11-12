@@ -43,6 +43,9 @@ import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -223,12 +226,28 @@ public class StartingWindow extends JFrame {
 		JMenuEdit.add(JMenuOptionRedo);
 		
 		JMenuOptionCopy = new JMenuItem("Copiar");
+		JMenuOptionCopy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//Copiar el texto seleccionado
+				copySelectedCodeToSystemClipboard();
+			}
+		});
 		JMenuEdit.add(JMenuOptionCopy);
 		
 		JMenuOptionCut = new JMenuItem("Cortar");
+		JMenuOptionCut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				cutSelectedCodeToSystemClipboard();
+			}			
+		});
 		JMenuEdit.add(JMenuOptionCut);
 		
 		JMenuOptionPaste = new JMenuItem("Pegar");
+		JMenuOptionPaste.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				pasteCurrentContextOfTheClipboard();
+			}
+		});
 		JMenuEdit.add(JMenuOptionPaste);
 		
 		separator_2 = new JSeparator();
@@ -809,5 +828,49 @@ public class StartingWindow extends JFrame {
 		
 		
 	}
+	
+	private void copySelectedCodeToSystemClipboard() {
 		
+		try {
+			
+			AsmEditorInternalFrame currentFrame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+			AsmEditorPane currentEditorPane = currentFrame.getAsmEditorPane();
+			currentEditorPane.copy();						
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace(System.err);
+		}
+		
+	}
+	
+	private void cutSelectedCodeToSystemClipboard() {
+		
+		try {
+			
+			AsmEditorInternalFrame currentFrame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+			AsmEditorPane currentEditorPane = currentFrame.getAsmEditorPane();
+			currentEditorPane.cut();
+			
+		}catch(Exception e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
+		
+	private void pasteCurrentContextOfTheClipboard() {
+		
+		try {
+			
+			AsmEditorInternalFrame currentFrame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+			AsmEditorPane currentEditorPane = currentFrame.getAsmEditorPane();
+			currentEditorPane.paste();
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+	}
 }
