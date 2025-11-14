@@ -36,16 +36,12 @@
 
 package org.tectuinno.view;
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -96,8 +92,6 @@ import org.tectuinno.view.assembler.AsmEditorPane;
 import org.tectuinno.view.component.FrWiFiWizarDialog;
 import org.tectuinno.view.component.ResultConsolePanel;
 
-
-
 public class StartingWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -106,7 +100,7 @@ public class StartingWindow extends JFrame {
 	private JMenu JMenuFile;
 	private JMenu JMenuArchivoNuevo;
 	private JMenuItem MenuItemNvoAsm;
-	/*private JMenuItem MenuItemFicheroTexto;*/
+	/* private JMenuItem MenuItemFicheroTexto; */
 	private JPanel panelToolBar;
 	private JToolBar compilerToolBar;
 	private JButton btnAnalice;
@@ -121,9 +115,11 @@ public class StartingWindow extends JFrame {
 	private byte[] preparedFrame = new byte[0];
 	private List<EncoderIrLine> encodedIrLineResult;
 	private final JComboBox<String> cmbEnableComDevices = new JComboBox<String>();
-	/*private final JMenu JMenuEdit = new JMenu("Editar");
-	private final JMenu JMenuProgram = new JMenu("Programa");
-	private final JMenu JMenuTools = new JMenu("Herramientas");*/
+	/*
+	 * private final JMenu JMenuEdit = new JMenu("Editar"); private final JMenu
+	 * JMenuProgram = new JMenu("Programa"); private final JMenu JMenuTools = new
+	 * JMenu("Herramientas");
+	 */
 	private final JButton btnSearchComDevices = new JButton("Escanear");
 	private final JSeparator separator = new JSeparator();
 	private List<PortInfo> lastPorts = List.of();
@@ -144,7 +140,7 @@ public class StartingWindow extends JFrame {
 	private JSeparator separator_3;
 	private JMenuItem JMenuOptionIncreaseFont;
 	private JMenuItem JMenuOptionDecreaseFont;
-	//private List<String> opennedEditors;
+	// private List<String> opennedEditors;
 
 	/**
 	 * Create the frame.
@@ -152,7 +148,7 @@ public class StartingWindow extends JFrame {
 	public StartingWindow() {
 
 		this.isSemanticCorrect = false;
-		this.isSintaxCorrect = false;		
+		this.isSintaxCorrect = false;
 
 		addComponentListener(new ComponentAdapter() {
 			@Override
@@ -181,8 +177,10 @@ public class StartingWindow extends JFrame {
 		});
 		JMenuArchivoNuevo.add(MenuItemNvoAsm);
 
-		/*MenuItemFicheroTexto = new JMenuItem("Texto");
-		JMenuArchivoNuevo.add(MenuItemFicheroTexto);*/
+		/*
+		 * MenuItemFicheroTexto = new JMenuItem("Texto");
+		 * JMenuArchivoNuevo.add(MenuItemFicheroTexto);
+		 */
 
 		JMenuArchivoGuardar = new JMenuItem("Guardar");
 		JMenuArchivoGuardar.addActionListener(new ActionListener() {
@@ -191,7 +189,7 @@ public class StartingWindow extends JFrame {
 			}
 		});
 		JMenuFile.add(JMenuArchivoGuardar);
-		
+
 		JMenuArchivoAbrir = new JMenuItem("Abrir");
 		JMenuArchivoAbrir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -199,16 +197,16 @@ public class StartingWindow extends JFrame {
 			}
 		});
 		JMenuFile.add(JMenuArchivoAbrir);
-		
+
 		separator_1 = new JSeparator();
 		JMenuFile.add(separator_1);
-		
+
 		jMenuItemEjemplos = new JMenu("Ejemplos");
 		JMenuFile.add(jMenuItemEjemplos);
-		
+
 		JMenuEdit = new JMenu("Editar");
 		menuBar.add(JMenuEdit);
-		
+
 		JMenuOptionUndoo = new JMenuItem("Deshacer");
 		JMenuOptionUndoo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -216,7 +214,7 @@ public class StartingWindow extends JFrame {
 			}
 		});
 		JMenuEdit.add(JMenuOptionUndoo);
-		
+
 		JMenuOptionRedo = new JMenuItem("Rehacer");
 		JMenuOptionRedo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -224,24 +222,24 @@ public class StartingWindow extends JFrame {
 			}
 		});
 		JMenuEdit.add(JMenuOptionRedo);
-		
+
 		JMenuOptionCopy = new JMenuItem("Copiar");
 		JMenuOptionCopy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//Copiar el texto seleccionado
+				// Copiar el texto seleccionado
 				copySelectedCodeToSystemClipboard();
 			}
 		});
 		JMenuEdit.add(JMenuOptionCopy);
-		
+
 		JMenuOptionCut = new JMenuItem("Cortar");
 		JMenuOptionCut.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				cutSelectedCodeToSystemClipboard();
-			}			
+			}
 		});
 		JMenuEdit.add(JMenuOptionCut);
-		
+
 		JMenuOptionPaste = new JMenuItem("Pegar");
 		JMenuOptionPaste.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -249,36 +247,40 @@ public class StartingWindow extends JFrame {
 			}
 		});
 		JMenuEdit.add(JMenuOptionPaste);
-		
+
 		separator_2 = new JSeparator();
 		JMenuEdit.add(separator_2);
-		
+
 		JMenuOptionGoToLine = new JMenuItem("Ir a linea...");
 		JMenuEdit.add(JMenuOptionGoToLine);
-		
+
 		JMenuOptionSelectAll = new JMenuItem("Seleccionar todo");
 		JMenuEdit.add(JMenuOptionSelectAll);
-		
+
 		separator_3 = new JSeparator();
 		JMenuEdit.add(separator_3);
-		
+
 		JMenuOptionIncreaseFont = new JMenuItem("Aumentar tamaño de fuente");
+		JMenuOptionIncreaseFont.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				increaseFontInCurrentEditor();
+			}
+		});
 		JMenuEdit.add(JMenuOptionIncreaseFont);
-		
+
 		JMenuOptionDecreaseFont = new JMenuItem("Disminuir tamaño de fuente");
+		JMenuOptionDecreaseFont.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				decreaseFontSizeInCurrentEditor();
+			}
+		});
 		JMenuEdit.add(JMenuOptionDecreaseFont);
-        {
-        }
-        /*{
-			menuBar.add(JMenuEdit);
-			}
-			{
-			menuBar.add(JMenuProgram);
-			}
-			{
-			menuBar.add(JMenuTools);
-			{
-			}*/
+		{
+		}
+		/*
+		 * { menuBar.add(JMenuEdit); } { menuBar.add(JMenuProgram); } {
+		 * menuBar.add(JMenuTools); { }
+		 */
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -300,23 +302,25 @@ public class StartingWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 
 					tokens = analizeCurrentLexer();
-                    if(tokens.isEmpty()){
-                        JOptionPane.showMessageDialog(null,"No hay contenido que verificar.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
+					if (tokens.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "No hay contenido que verificar.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+						return;
+					}
 
 					new Thread() {
 
 						@Override
 						public void run() {
-							consolePanel.getTokenTerminalPanel().writteIn("===========================================================\n");
+							consolePanel.getTokenTerminalPanel()
+									.writteIn("===========================================================\n");
 
 							for (Token token : tokens) {
 								consolePanel.getTokenTerminalPanel().writteIn(token.toString() + " \n");
 							}
 
-							consolePanel.getTokenTerminalPanel().writteIn("===========================================================\n");
+							consolePanel.getTokenTerminalPanel()
+									.writteIn("===========================================================\n");
 						}
 
 					}.start();
@@ -395,7 +399,7 @@ public class StartingWindow extends JFrame {
 		{
 			cmbEnableComDevices.setPreferredSize(new Dimension(190, 22));
 			compilerToolBar.add(cmbEnableComDevices);
-			//this.cmbEnableComDevices
+			// this.cmbEnableComDevices
 		}
 		{
 			btnSearchComDevices.addActionListener(new ActionListener() {
@@ -405,16 +409,15 @@ public class StartingWindow extends JFrame {
 			});
 			compilerToolBar.add(btnSearchComDevices);
 		}
-		
+
 		btnWifiSend = new JButton("WiFi Programmer");
 		btnWifiSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				openWifiWizard();
 			}
 		});
-		
+
 		compilerToolBar.add(btnWifiSend);
-		
 
 		splitPaneEditorAndConsole = new JSplitPane();
 		splitPaneEditorAndConsole.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -430,9 +433,9 @@ public class StartingWindow extends JFrame {
 		consolePanel = new ResultConsolePanel();
 		splitPaneEditorAndConsole.setRightComponent(consolePanel);
 		splitPaneEditorAndConsole.setDividerLocation(410);
-		
+
 		this.searchForComDevices();
-		
+
 		this.builExamplesMenu();
 
 	}
@@ -454,84 +457,85 @@ public class StartingWindow extends JFrame {
 	 * "Existen errores de Semanticos en el código", "Error",
 	 * JOptionPane.ERROR_MESSAGE); }; }
 	 */
-	
-	
+
 	private void searchForComDevices() {
 		lastPorts = SerialPortService.listAvailablePorts();
 		this.cmbEnableComDevices.removeAllItems();
-		for(var pi : lastPorts) {
-			this.cmbEnableComDevices.addItem(pi.toString());	
+		for (var pi : lastPorts) {
+			this.cmbEnableComDevices.addItem(pi.toString());
 		}
 	}
-	
-	private void saveCurrentFile() {
-		
-        AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
-        
-        if (frame != null) {
-            String contenido = frame.asmGetEditorText();
-            String titulo = frame.getTitle();
-            File archivo = new File(titulo);
-            archivo = frame.getArchivoActual();
-            if (archivo == null) {
-                JFileChooser guardado = new JFileChooser();
-                guardado.setDialogTitle("Guardar archivo");
-                guardado.setSelectedFile(new File(titulo));
-                int opcion = guardado.showSaveDialog(this);
-                if (opcion == JFileChooser.APPROVE_OPTION) {
-                    archivo = guardado.getSelectedFile();
-                    if (!archivo.getName().contains(".")) {
-                        archivo = new File(archivo.getAbsolutePath() + ".asm");
-                    }
-                    frame.setTitle(archivo.getName());
-                }
-                frame.setArchivoActual(archivo);
-            }
-            try {
-                assert archivo != null;
-                try (FileWriter escribir = new FileWriter(archivo)) {
-                    escribir.write(contenido);
-                    escribir.flush();
-                    JOptionPane.showMessageDialog(this, "Archivo guardado correctamente en: "
-                            + archivo.getAbsolutePath());
-                }
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "Error al guardar " + e.getMessage() + " .");
-                e.printStackTrace();
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "No hay ningún editor abierto.");
-        }
-    }
 
-    private void sendDataToMicroContoller() {
-		
+	private void saveCurrentFile() {
+
+		AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+
+		if (frame != null) {
+			String contenido = frame.asmGetEditorText();
+			String titulo = frame.getTitle();
+			File archivo = new File(titulo);
+			archivo = frame.getArchivoActual();
+			if (archivo == null) {
+				JFileChooser guardado = new JFileChooser();
+				guardado.setDialogTitle("Guardar archivo");
+				guardado.setSelectedFile(new File(titulo));
+				int opcion = guardado.showSaveDialog(this);
+				if (opcion == JFileChooser.APPROVE_OPTION) {
+					archivo = guardado.getSelectedFile();
+					if (!archivo.getName().contains(".")) {
+						archivo = new File(archivo.getAbsolutePath() + ".asm");
+					}
+					frame.setTitle(archivo.getName());
+				}
+				frame.setArchivoActual(archivo);
+			}
+			try {
+				assert archivo != null;
+				try (FileWriter escribir = new FileWriter(archivo)) {
+					escribir.write(contenido);
+					escribir.flush();
+					JOptionPane.showMessageDialog(this,
+							"Archivo guardado correctamente en: " + archivo.getAbsolutePath());
+				}
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(this, "Error al guardar " + e.getMessage() + " .");
+				e.printStackTrace();
+			}
+		} else {
+			JOptionPane.showMessageDialog(this, "No hay ningún editor abierto.");
+		}
+	}
+
+	private void sendDataToMicroContoller() {
+
 		byte[] data = getPreparedFrame();
-		if(data == null || data.length == 0) {
-			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(">> Ha ocurrido un error: No existen datos a enviar");
+		if (data == null || data.length == 0) {
+			this.consolePanel.getOrderedHexResultTerminalPanel()
+					.writteIn(">> Ha ocurrido un error: No existen datos a enviar");
 			return;
 		}
-		
-		int idx = this.cmbEnableComDevices.getSelectedIndex();
-	    if (idx < 0 || idx >= lastPorts.size()) {
-	    	
-	        consolePanel.getOrderedHexResultTerminalPanel().writteIn(">> Selecciona un puerto primero\n");
-	        return;
-	    }
-	    
-	    var selected = lastPorts.get(idx);
-	    final int baud = 9600;
 
-	    new Thread(() -> {
-	        try {
-	            SerialPortService.sendBytes(selected.systemName(), baud, preparedFrame);
-	            consolePanel.getTerminalPanel().writteIn(">> Trama enviada a " + selected.systemName() + "\n");
-	        } catch (Exception ex) {
-	            consolePanel.getTerminalPanel().writteIn(">> Error enviando a " + selected.systemName() + ": " + ex.getMessage() + "\n");
-	            ex.printStackTrace(System.err);
-	        }
-	    }, "uart-send-thread").start();
-		
+		int idx = this.cmbEnableComDevices.getSelectedIndex();
+		if (idx < 0 || idx >= lastPorts.size()) {
+
+			consolePanel.getOrderedHexResultTerminalPanel().writteIn(">> Selecciona un puerto primero\n");
+			return;
+		}
+
+		var selected = lastPorts.get(idx);
+		final int baud = 9600;
+
+		new Thread(() -> {
+			try {
+				SerialPortService.sendBytes(selected.systemName(), baud, preparedFrame);
+				consolePanel.getTerminalPanel().writteIn(">> Trama enviada a " + selected.systemName() + "\n");
+			} catch (Exception ex) {
+				consolePanel.getTerminalPanel()
+						.writteIn(">> Error enviando a " + selected.systemName() + ": " + ex.getMessage() + "\n");
+				ex.printStackTrace(System.err);
+			}
+		}, "uart-send-thread").start();
+
 	}
 
 	public void asmSemanticParse(List<Token> tokens) {
@@ -571,26 +575,27 @@ public class StartingWindow extends JFrame {
 		// Wroking on the second pass
 		AsmSecondPass second = new AsmSecondPass(result.lines, result.symbols.asMap());
 		AsmSecondPass.Result encRes = second.run();
-		
+
 		this.encodedIrLineResult = encRes.encoded();
-		
+
 		String listing = AsmListingFormatter.buildListing(encodedIrLineResult);
 		this.consolePanel.getDisassemblyTerminalPanel().writteIn(listing);
 
 	}
-	
+
 	public void preparedOrderedHex(List<EncoderIrLine> data) {
-		
-		if(data == null || data.isEmpty()) {
-			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(">>Error: No existen datos en la tabla de resultados o existen errores de decodificación");
+
+		if (data == null || data.isEmpty()) {
+			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(
+					">>Error: No existen datos en la tabla de resultados o existen errores de decodificación");
 			return;
 		}
-		
+
 		this.preparedFrame = FrameUtil.buildLittleEndianFrame(data);
 		String orderedHex = FrameUtil.toHex(preparedFrame, false);
-		//this.orderedHexCache = orderedHex;
+		// this.orderedHexCache = orderedHex;
 		this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(orderedHex);
-		
+
 	}
 
 	public void asmSyntaxParse(List<Token> tokens) {
@@ -624,46 +629,50 @@ public class StartingWindow extends JFrame {
 		frame.setAsmLexer();
 		return frame.getLexer();
 	}
-	
+
 	private void undoActionInActiveEditor() {
-		
+
 		AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
-		//AsmEditorPane activeAsmEditorPane = frame.getAsmEditorPane();
-		
+		// AsmEditorPane activeAsmEditorPane = frame.getAsmEditorPane();
+
 		consolePanel.getTerminalPanel()
-		.writteIn("\n================================================================\n");		
+				.writteIn("\n================================================================\n");
 		frame.undo();
 		this.consolePanel.getTerminalPanel().writteIn("Acción deshecha");
-		
+
 	}
-	
+
 	private void redoActionInActiveEditor() {
-		
+
 		AsmEditorInternalFrame frame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
 		consolePanel.getTerminalPanel()
-		.writteIn("\n================================================================\n");
+				.writteIn("\n================================================================\n");
 		frame.redo();
 		consolePanel.getTerminalPanel().writteIn("Acción recuperada");
-		
+
 	}
 
 	public void openNewAsmEditor() {
 
-		try {						
-			
-			//Open the editor wizard and the user fill the data
-			NewEditorWizardDialog dialog = this.openEditorWizard(FileType.ASSEMBLY_FILE);			
-			
-			//Check if the file that the user is attemping to create already exist in the list of oppened editors, if exist, we set the
-			//DilalogResult to ERROR...
-			if(this.isEditorAlreadyOpenned(dialog.getFileModel().getName())) dialog.setDialogResult(DialogResult.ERROR);
-			
-			if(dialog.getDialogResult() == DialogResult.ABORT) JOptionPane.showMessageDialog(this, "Operacion abortada", "Error", JOptionPane.WARNING_MESSAGE);
-			
-			if(dialog.getDialogResult() != DialogResult.OK) return;
-			
-			//this.opennedEditors.add(dialog.getFileModel().getName());
-			
+		try {
+
+			// Open the editor wizard and the user fill the data
+			NewEditorWizardDialog dialog = this.openEditorWizard(FileType.ASSEMBLY_FILE);
+
+			// Check if the file that the user is attemping to create already exist in the
+			// list of oppened editors, if exist, we set the
+			// DilalogResult to ERROR...
+			if (this.isEditorAlreadyOpenned(dialog.getFileModel().getName()))
+				dialog.setDialogResult(DialogResult.ERROR);
+
+			if (dialog.getDialogResult() == DialogResult.ABORT)
+				JOptionPane.showMessageDialog(this, "Operacion abortada", "Error", JOptionPane.WARNING_MESSAGE);
+
+			if (dialog.getDialogResult() != DialogResult.OK)
+				return;
+
+			// this.opennedEditors.add(dialog.getFileModel().getName());
+
 			JOptionPane.showMessageDialog(this,
 					"Result: " + dialog.getDialogResult() + "file: " + dialog.getFileModel().getName());
 
@@ -681,7 +690,7 @@ public class StartingWindow extends JFrame {
 		}
 
 	}
-	
+
 	private void openNewAsmEditor(String tittle, String content) throws Exception {
 		AsmEditorInternalFrame asminternalFrame = new AsmEditorInternalFrame();
 		asminternalFrame.setTitle(tittle);
@@ -691,18 +700,18 @@ public class StartingWindow extends JFrame {
 		this.desktopPane.add(asminternalFrame);
 	}
 
-	private boolean isEditorAlreadyOpenned(String editorTittle) {	
-		
-		for(var frame : Arrays.asList(this.desktopPane.getAllFrames())) {
-			if(frame.getTitle().equals(editorTittle)) {
+	private boolean isEditorAlreadyOpenned(String editorTittle) {
+
+		for (var frame : Arrays.asList(this.desktopPane.getAllFrames())) {
+			if (frame.getTitle().equals(editorTittle)) {
 				JOptionPane.showMessageDialog(this, "El archivo ya existe", "Error", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 		}
-		
+
 		return false;
-		
-	}	
+
+	}
 
 	/**
 	 * fix the position of the console and the file explorer before rezising the
@@ -723,154 +732,167 @@ public class StartingWindow extends JFrame {
 		return newEditorWizard;
 
 	}
-	
+
 	public byte[] getPreparedFrame() {
 		return this.preparedFrame;
 	}
-	
+
 	private void openAsmFile() {
-		
+
 		StringBuilder sb = new StringBuilder();
-		
-		JFileChooser fileChooser = new JFileChooser();				
-		
+
+		JFileChooser fileChooser = new JFileChooser();
+
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Assembly", "asm");
 		fileChooser.setFileFilter(filter);
-		
+
 		int returnVal = fileChooser.showOpenDialog(this);
-		
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
-			
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+
 			JOptionPane.showMessageDialog(this, "Fichero seleccionado: " + fileChooser.getSelectedFile().getName());
-			
+
 			File asmFile = fileChooser.getSelectedFile();
-			
+
 			try {
 
-                FileReader fReader = new FileReader(asmFile);
+				FileReader fReader = new FileReader(asmFile);
 				BufferedReader lector = new BufferedReader(fReader);
-                String linea;
-				
-				while((linea = lector.readLine()) != null) {
+				String linea;
+
+				while ((linea = lector.readLine()) != null) {
 					sb.append(linea).append("\n");
 				}
-				
+
 				AsmEditorInternalFrame asmInternalFrame = new AsmEditorInternalFrame();
 				asmInternalFrame.setTitle(fileChooser.getSelectedFile().getName());
 				asmInternalFrame.setVisible(true);
 				asmInternalFrame.asmSetEditorText(sb.toString());
 				asmInternalFrame.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 				this.desktopPane.add(asmInternalFrame);
-				
-				lector.close();				
+
+				lector.close();
 				return;
-				
+
 			} catch (Exception e) {
-				
+
 				e.printStackTrace();
-				
-				JOptionPane.showMessageDialog(this, "Ha ocurrido un error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+				JOptionPane.showMessageDialog(this, "Ha ocurrido un error: " + e.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
-						
-			
-		}else {
+
+		} else {
 			// !JFileChooser.APPROVE_OPTION entonces...
 			JOptionPane.showMessageDialog(this, "Acción cancelada", "Alerta", JOptionPane.ERROR_MESSAGE);
 		}
-		
-		
-		
+
 	}
-	
+
 	private void builExamplesMenu() {
-		
+
 		List<String> files = ExampleResources.listAsm();
-		
-		if(files.isEmpty()) {
+
+		if (files.isEmpty()) {
 			JMenuItem emptyMenu = new JMenuItem("(no hay ejemplos para mostar)");
 			emptyMenu.setEnabled(false);
 			this.jMenuItemEjemplos.add(emptyMenu);
 			return;
 		}
-		
-		for(String fileName : files) {
-			
+
+		for (String fileName : files) {
+
 			JMenuItem menuItem = new JMenuItem(fileName);
-			menuItem.addActionListener( ev -> {
-				
+			menuItem.addActionListener(ev -> {
+
 				try {
-					
+
 					String content = ExampleResources.readAsm(fileName);
 					openNewAsmEditor(fileName, content);
-					
-				}catch(Exception er) {
+
+				} catch (Exception er) {
 					er.printStackTrace();
 				}
-				
+
 			});
-			
+
 			this.jMenuItemEjemplos.add(menuItem);
 		}
-		
+
 	}
-	
+
 	private void openWifiWizard() {
-		
-		if(this.preparedFrame.length <= 0) {
+
+		if (this.preparedFrame.length <= 0) {
 			JOptionPane.showMessageDialog(this, "No hay datos para el envio", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		FrWiFiWizarDialog wifiWizard = new FrWiFiWizarDialog(this.preparedFrame);
 		wifiWizard.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		wifiWizard.setLocationRelativeTo(this);
 		wifiWizard.setVisible(true);
-		
-		
+
 	}
-	
+
 	private void copySelectedCodeToSystemClipboard() {
-		
+
 		try {
-			
+
 			AsmEditorInternalFrame currentFrame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
 			AsmEditorPane currentEditorPane = currentFrame.getAsmEditorPane();
-			currentEditorPane.copy();						
-			
-		}catch (Exception e) {
+			currentEditorPane.copy();
+
+		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace(System.err);
 		}
-		
+
 	}
-	
+
 	private void cutSelectedCodeToSystemClipboard() {
-		
+
 		try {
-			
+
 			AsmEditorInternalFrame currentFrame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
 			AsmEditorPane currentEditorPane = currentFrame.getAsmEditorPane();
 			currentEditorPane.cut();
-			
-		}catch(Exception e) {
-			
+
+		} catch (Exception e) {
+
 			e.printStackTrace();
 		}
-		
+
 	}
-		
+
 	private void pasteCurrentContextOfTheClipboard() {
-		
+
 		try {
-			
+
 			AsmEditorInternalFrame currentFrame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
 			AsmEditorPane currentEditorPane = currentFrame.getAsmEditorPane();
 			currentEditorPane.paste();
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		
+
+	}
+
+	private void increaseFontInCurrentEditor() {
+
+		AsmEditorInternalFrame currentFrame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+		AsmEditorPane currentEditorPane = currentFrame.getAsmEditorPane();
+		currentEditorPane.increaseFontSize();
+
+	}
+
+	private void decreaseFontSizeInCurrentEditor() {
+
+		AsmEditorInternalFrame currentFrame = (AsmEditorInternalFrame) this.desktopPane.getSelectedFrame();
+		AsmEditorPane currentEditorPane = currentFrame.getAsmEditorPane();
+		currentEditorPane.decreaseFontSize();
+
 	}
 }

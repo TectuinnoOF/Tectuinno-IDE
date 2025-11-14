@@ -31,20 +31,25 @@ package org.tectuinno.compiler.assembler.utils;
 import java.util.Set;
 
 /**
- * Provides a centralized dictionary of reserved elements used in Tectuinno's RISC-V assembler. <br> 
- *<p>
- * This utility class defines the supported instruction set, register identifiers,<br>
- * and regular expression patterns for syntax highlighting and lexical analysis<br>
+ * Provides a centralized dictionary of reserved elements used in Tectuinno's
+ * RISC-V assembler. <br>
+ * <p>
+ * This utility class defines the supported instruction set, register
+ * identifiers,<br>
+ * and regular expression patterns for syntax highlighting and lexical
+ * analysis<br>
  * in the assembler editor or compiler components of the Tectuinno IDE.<br>
  *
- * It is used in conjunction with syntax highlighters, parsers, and validators<br>
- * to identify keywords, registers, and label declarations in user-written assembly code.<br>
+ * It is used in conjunction with syntax highlighters, parsers, and
+ * validators<br>
+ * to identify keywords, registers, and label declarations in user-written
+ * assembly code.<br>
  *
  * This class is not intended to be instantiated.<br>
  * </p>
  */
 public final class AsmSyntaxDictionary {
-		
+
 	public static final String LW = "lw";
 	public static final String ADDI = "addi";
 	public static final String SLTI = "slti";
@@ -58,81 +63,63 @@ public final class AsmSyntaxDictionary {
 	public static final String AND = "and";
 	public static final String BEQ = "beq";
 	public static final String JAL = "jal";
-	public static final String JALR ="jalr";
+	public static final String JALR = "jalr";
 	public static final String LUI = "lui";
-	public static final String CALL = "call"; 
-	public static final String RET = "ret";   
-	
+	public static final String CALL = "call";
+	public static final String RET = "ret";
+
 	/**
-     * A list of supported base RISC-V instructions for the Tectuinno assembler.<br>
-     * 
-     * These include arithmetic, logic, memory, branch, and jump instructions.
-     * Future expansions may include the full RV32I and additional extensions.
-     */
-	public static final String[] INSTRUCTIONS = {			
-			LW, 
-			ADDI,
-			SLTI,
-			ORI,
-			ANDI,
-			SW,
-			ADD,
-			SUB,
-			SLT,
-			OR,
-			AND,
-			BEQ,
-			JAL,
-			JALR,
-			LUI,
-			CALL, //jal eq
-			RET   //jalr eq
+	 * A list of supported base RISC-V instructions for the Tectuinno assembler.<br>
+	 * 
+	 * These include arithmetic, logic, memory, branch, and jump instructions.
+	 * Future expansions may include the full RV32I and additional extensions.
+	 */
+	public static final String[] INSTRUCTIONS = { LW, ADDI, SLTI, ORI, ANDI, SW, ADD, SUB, SLT, OR, AND, BEQ, JAL, JALR,
+			LUI, CALL, // jal eq
+			RET // jalr eq
 	};
-	
+
 	public static final Set<String> INSTRUCTIONS_SET = Set.of(INSTRUCTIONS);
-	
+
 	/**
-     * A list of all 32 general-purpose registers available in the Tectuinno Core.
-     * 
-     * These follow the RISC-V convention: x0 to x31.
-     */
-	public static final String[] REGISTERS = {
-		"x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11",
-		"x12", "x13", "x14", "x15", "x16", "x17", "x18", "x19", "x20", "x21",
-		"x22", "x23", "x24", "x25", "x26", "x27", "x28", "x29", "x30", "x31"
-	};
-	
-	
-	
+	 * A list of all 32 general-purpose registers available in the Tectuinno Core.
+	 * 
+	 * These follow the RISC-V convention: x0 to x31.
+	 */
+	public static final String[] REGISTERS = { "x0", "x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11",
+			"x12", "x13", "x14", "x15", "x16", "x17", "x18", "x19", "x20", "x21", "x22", "x23", "x24", "x25", "x26",
+			"x27", "x28", "x29", "x30", "x31" };
+
 	/**
-     * Regular expression pattern for matching supported instructions.
-     * 
-     * Matches full words only (e.g. "\\b(add|sub|lw)\\b").
-     */
+	 * Regular expression pattern for matching supported instructions.
+	 * 
+	 * Matches full words only (e.g. "\\b(add|sub|lw)\\b").
+	 */
 	public static final String INSTRUCTION_PATTERN = "\\b(" + String.join("|", INSTRUCTIONS) + ")\\b";
-	
+
 	/**
-     * Regular expression pattern for matching general-purpose registers.
-     * 
-     * Matches x0 to x31 as full words.
-     */
+	 * Regular expression pattern for matching general-purpose registers.
+	 * 
+	 * Matches x0 to x31 as full words.
+	 */
 	public static final String REGISTER_PATTERN = "\\b(" + String.join("|", REGISTERS) + ")\\b";
-	
+
 	/**
-     * Regular expression pattern for matching label declarations in assembly.
-     * 
-     * Labels must begin with a letter or underscore and end with a colon.
-     * Example matches: "_start:", "loop:"
-     */
+	 * Regular expression pattern for matching label declarations in assembly.
+	 * 
+	 * Labels must begin with a letter or underscore and end with a colon. Example
+	 * matches: "_start:", "loop:"
+	 */
 	public static final String TAGS_PATTERN = "\\b[a-zA-Z_][a-zA-Z0-9_]*\\:";
-	
+
 	/**
 	 * Regular expression pattern for matching one or more line comments in the code
 	 */
-	public static final String COMMENTARY_PATTERN = "/\\*.*?\\*/";	
-	
+	public static final String COMMENTARY_PATTERN = "/\\*.*?\\*/";
+
 	private AsmSyntaxDictionary() {
-		// this is an utility class, therefore prevent the instantiation whit a private constructor
+		// this is an utility class, therefore prevent the instantiation whit a private
+		// constructor
 	}
-	
+
 }

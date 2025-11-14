@@ -86,38 +86,48 @@ public class AsmEditorPane extends JTextPane {
 		this.tagStyle = this.addStyle(AsmEditorStyleName.TAG, null);
 		this.commentStyle = this.addStyle(AsmEditorStyleName.COMMENT, null);
 		
+		this.setStyleConstantsInEditor();
+				
+		
+	}		
+	
+	private void setStyleConstantsInEditor() {
+		
 		StyleConstants.setForeground(keyWordStyle, Color.CYAN);		
 		StyleConstants.setForeground(this.registerStyle, Color.ORANGE);
 		StyleConstants.setForeground(this.defaultStyle, new Color(63,227,11));
 		StyleConstants.setForeground(this.tagStyle, Color.MAGENTA);
 		StyleConstants.setForeground(this.commentStyle, new Color(208,244,245));
+		StyleConstants.setItalic(this.commentStyle, true);
 		
-		//Setting commentary on italic format
-		StyleConstants.setItalic(this.commentStyle, true);	
-				
+	}
+	
+	private void updateFontSize(int newSize) {
 		
-		/*this.getDocument().addUndoableEditListener((UndoableEditEvent e) -> {
-			var edit = e.getEdit();			
-			System.out.println("evento");
-			if(edit instanceof AbstractDocument.DefaultDocumentEvent dd) {
-				DocumentEvent.EventType t = dd.getType();
-				if (t == DocumentEvent.EventType.INSERT || t == DocumentEvent.EventType.REMOVE) {
-	                undoManager.addEdit(edit);
-	                System.out.println("acción agregada");
-	            }
-			}else {
-				undoManager.addEdit(edit);
-				System.out.println("acción agregada");
-			}
-			
-		});*/
+		StyleConstants.setFontSize(keyWordStyle, newSize);
+		StyleConstants.setFontSize(this.registerStyle, newSize);
+		StyleConstants.setFontSize(this.defaultStyle, newSize);
+		StyleConstants.setFontSize(this.tagStyle, newSize);
+		StyleConstants.setFontSize(this.commentStyle, newSize);
 		
+		this.setFont(this.getFont().deriveFont((float) newSize));
+		this.repaint();
 		
+	}
+	
+	public void increaseFontSize() {
 		
-		// Keybindings cross-platform (Ctrl en Win/Linux, Cmd en macOS)
-	    /**/
+		int newSize = this.getFont().getSize() + 2;
+		this.updateFontSize(newSize);
 		
-	}		
+	}
+	
+	public void decreaseFontSize() {
+		
+		int newSize = this.getFont().getSize() - 2;
+		this.updateFontSize(newSize);
+		
+	}
 
 	/**
 	 * 
