@@ -523,7 +523,7 @@ public class StartingWindow extends JFrame {
 		}
 
 		var selected = lastPorts.get(idx);
-		final int baud = 9600;
+		final int baud = 115200;
 
 		new Thread(() -> {
 			try {
