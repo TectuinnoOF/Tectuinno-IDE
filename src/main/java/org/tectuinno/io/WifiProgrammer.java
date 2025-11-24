@@ -149,6 +149,10 @@ public class WifiProgrammer {
     	
     	byte[] completeMessage = this.prepareMessage("TECTUINNO", payload);
     	
+    	for(int i = 0; i<completeMessage.length; i++) {
+    		System.out.print(completeMessage[i]);
+    	}
+    	
     	try(Socket s = new Socket()){
     		
     		s.connect(new InetSocketAddress(host, port), timeoutMs);
@@ -185,19 +189,17 @@ public class WifiProgrammer {
      */
     private byte[] prepareMessage(String handShake,byte[] payload) throws PayloadTooLargeException{
     	
-    	if(payload.length > 0xFFFF) {
-    		throw new PayloadTooLargeException(payload.length);
-    	}
-    	
-    	String currentPayload = new String(payload);
-    	
-    	String preparedPayload = handShake + currentPayload;
-    	
-    	byte[] completePayload = preparedPayload.getBytes();
-    	
-    	
-    	
-    	return completePayload;
+    	if (payload.length > 0xFFFF) {
+            throw new PayloadTooLargeException(payload.length);
+        }
+
+        byte[] header = handShake.getBytes(StandardCharsets.US_ASCII);
+        byte[] frame = new byte[header.length + payload.length];
+
+        System.arraycopy(header, 0, frame, 0, header.length);
+        System.arraycopy(payload, 0, frame, header.length, payload.length);
+
+        return frame;
     }
     
     /**
