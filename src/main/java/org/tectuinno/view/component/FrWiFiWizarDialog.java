@@ -117,6 +117,7 @@ public class FrWiFiWizarDialog extends JFrame {
 	 * Create the frame.
 	 */
 	public FrWiFiWizarDialog(byte[] payload) {
+		
 		setTitle("WiFi Programmer");
 		txfIpHost.setText("192.168.4.1");
 		txfIpHost.setColumns(10);
@@ -283,17 +284,10 @@ public class FrWiFiWizarDialog extends JFrame {
 			@Override
 			protected Void doInBackground() throws Exception {
 				progressBar.setValue(0);
-				try {									
-					
-					String uncompletedPayload = new String(payload);
-					String hello = "TECTUINNO";
-					
-					String completePayload = hello + uncompletedPayload;
-					
-					byte[] newPayload = completePayload.getBytes();
+				try {																			
 					
 					IntConsumer pc = p -> publish(p);
-					programmer.send(host, port, newPayload, 7000, pc);
+					programmer.send(host, port, payload, 7000, pc);
 					consoleWritte("Envio terminado. esperando confirmación");
 					
 				}catch (Exception e) {

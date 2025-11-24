@@ -147,7 +147,7 @@ public class WifiProgrammer {
      */
     public void send(String host, int port, byte[] payload, int timeoutMs, IntConsumer onProgress) throws IOException, PayloadTooLargeException{
     	
-    	byte[] completeMessage = this.prepareMessage("Tectuinno", payload, this.checksum(payload));
+    	byte[] completeMessage = this.prepareMessage("TECTUINNO", payload);
     	
     	try(Socket s = new Socket()){
     		
@@ -178,41 +178,24 @@ public class WifiProgrammer {
      * </pre>
      * </p>
      *
-     * @param handShake the handshake string (usually {@code "Tectuinno"})
+     * @param handShake the handshake string (usually {@code "TECTUINNO"})
      * @param payload   the raw program data
-     * @param checksum  1-byte checksum of the payload
      * @return the full byte array ready for transmission
      * @throws PayloadTooLargeException if {@code payload.length > 65535}
      */
-    private byte[] prepareMessage(String handShake,byte[] payload, int checksum) throws PayloadTooLargeException{
+    private byte[] prepareMessage(String handShake,byte[] payload) throws PayloadTooLargeException{
     	
     	if(payload.length > 0xFFFF) {
     		throw new PayloadTooLargeException(payload.length);
     	}
     	
-    	//this pointer is needed to alocate the data in the final message array
-    	int position = 0;
+    	String currentPayload = new String(payload);
     	
-    	//Convert the first message in bytearray
-    	//byte[] byteHandShake = handShake.getBytes();
+    	String preparedPayload = handShake + currentPayload;
     	
-    	//converting the size to a byte data
-    	int size = payload.length;
-    	byte sizeHigh = (byte) ((size >> 8) & 0xff);
-    	byte sizeLow = (byte) (size & 0xff);    	    	
+    	byte[] completePayload = preparedPayload.getBytes();
     	
-    	//the new completed payload included the handshake message and the code
-    	byte[] completePayload = new byte[/*byteHandShake.length + 2 + */payload.length];
     	
-    	//then, we concat the data in just one array
-    	//System.arraycopy(byteHandShake, 0, completePayload, position, byteHandShake.length);
-    	//position += byteHandShake.length;
-    	//completePayload[position++] = sizeHigh;
-    	//completePayload[position++] = sizeLow;    	    	
-    	System.arraycopy(payload, 0, completePayload, position, payload.length);
-    	//position += payload.length;
-    	//completePayload[position] = (byte) checksum;
-    	    	
     	
     	return completePayload;
     }
