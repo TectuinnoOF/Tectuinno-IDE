@@ -522,6 +522,13 @@ public class StartingWindow extends JFrame {
 			return;
 		}
 
+		String firstHello = "TECTUINNO";
+		String unPreparedFrame = new String(this.preparedFrame);
+		
+		String completedFrameString = firstHello + unPreparedFrame;
+		
+		this.preparedFrame = completedFrameString.getBytes();
+		
 		var selected = lastPorts.get(idx);
 
 		final int baud = 115200;
@@ -590,8 +597,8 @@ public class StartingWindow extends JFrame {
 			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(
 					">>Error: No existen datos en la tabla de resultados o existen errores de decodificación");
 			return;
-		}
-
+		}					
+		
 		this.preparedFrame = FrameUtil.buildLittleEndianFrame(data);
 		String orderedHex = FrameUtil.toHex(preparedFrame, false);
 		// this.orderedHexCache = orderedHex;
