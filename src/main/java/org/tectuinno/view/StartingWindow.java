@@ -522,12 +522,12 @@ public class StartingWindow extends JFrame {
 			return;
 		}
 
-		String firstHello = "TECTUINNO";
+		/*String firstHello = "TECTUINNO";
 		String unPreparedFrame = new String(this.preparedFrame);
 		
-		String completedFrameString = firstHello + unPreparedFrame;
+		String completedFrameString = firstHello + unPreparedFrame;*/
 		
-		this.preparedFrame = completedFrameString.getBytes();
+		//this.preparedFrame = completedFrameString.getBytes();
 		
 		var selected = lastPorts.get(idx);
 

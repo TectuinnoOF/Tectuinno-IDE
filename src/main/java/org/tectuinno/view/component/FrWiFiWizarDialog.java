@@ -283,10 +283,17 @@ public class FrWiFiWizarDialog extends JFrame {
 			@Override
 			protected Void doInBackground() throws Exception {
 				progressBar.setValue(0);
-				try {
+				try {									
+					
+					String uncompletedPayload = new String(payload);
+					String hello = "TECTUINNO";
+					
+					String completePayload = hello + uncompletedPayload;
+					
+					byte[] newPayload = completePayload.getBytes();
 					
 					IntConsumer pc = p -> publish(p);
-					programmer.send(host, port, payload, 7000, pc);
+					programmer.send(host, port, newPayload, 7000, pc);
 					consoleWritte("Envio terminado. esperando confirmación");
 					
 				}catch (Exception e) {
