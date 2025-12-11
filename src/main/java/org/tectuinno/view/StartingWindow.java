@@ -612,7 +612,7 @@ public class StartingWindow extends JFrame {
 			this.consolePanel.getOrderedHexResultTerminalPanel().writteIn(
 					">>Error: No existen datos en la tabla de resultados o existen errores de decodificación");
 			return;
-		}					
+		}
 		
 		this.preparedFrame = FrameUtil.buildLittleEndianFrame(data);
 		String orderedHex = FrameUtil.toHex(preparedFrame, false);

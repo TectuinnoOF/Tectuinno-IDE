@@ -31,7 +31,30 @@ public class FrAbout extends JFrame {
 			Tectuinno Team
 			Sitio web oficial:
 			https://tectuinno.org/
-
+			
+			-------------------------------------------
+			   Instrucciones soportadas
+			-------------------------------------------
+			
+			LW
+			ADDI
+			SLTI
+			ORI
+			ANDI
+			SW
+			ADD
+			SUB
+			SLT
+			OR
+			AND
+			BEQ
+			JAL
+			JALR
+			LUI			
+			------------------------------------------			
+			CALL
+			RET
+			
 			-------------------------------------------
 			   Repositorios Oficiales del Proyecto
 			-------------------------------------------

@@ -58,8 +58,15 @@ public final class FrameUtil {
             out.write(le, 0, le.length);
         }
         
+        byte[] payload = out.toByteArray();
+        byte[] header = "TECTUINNO".getBytes(StandardCharsets.US_ASCII);
         
-        return out.toByteArray();
+        byte[] frame = new byte[header.length + payload.length];
+        
+        System.arraycopy(header, 0, frame, 0, header.length);
+        System.arraycopy(payload, 0, frame, header.length, payload.length);
+        
+        return frame;
     }
 	
 	 public static String toHex(byte[] frame, boolean conEspacios) {
