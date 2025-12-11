@@ -38,9 +38,11 @@ package org.tectuinno.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -89,6 +91,7 @@ import org.tectuinno.utils.ExampleResources;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
 import org.tectuinno.view.assembler.AsmEditorPane;
+import org.tectuinno.view.component.FrAbout;
 import org.tectuinno.view.component.FrWiFiWizarDialog;
 import org.tectuinno.view.component.ResultConsolePanel;
 
@@ -140,6 +143,7 @@ public class StartingWindow extends JFrame {
 	private JSeparator separator_3;
 	private JMenuItem JMenuOptionIncreaseFont;
 	private JMenuItem JMenuOptionDecreaseFont;
+	private JSeparator separator_4;
 	// private List<String> opennedEditors;
 
 	/**
@@ -203,6 +207,17 @@ public class StartingWindow extends JFrame {
 
 		jMenuItemEjemplos = new JMenu("Ejemplos");
 		JMenuFile.add(jMenuItemEjemplos);
+		
+		separator_4 = new JSeparator();
+		JMenuFile.add(separator_4);
+		
+		JMenuItem JMenuAbout = new JMenuItem("Acerca de...");
+		JMenuAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				openAboutWindow();
+			}
+		});
+		JMenuFile.add(JMenuAbout);
 
 		JMenuEdit = new JMenu("Editar");
 		menuBar.add(JMenuEdit);
@@ -902,5 +917,21 @@ public class StartingWindow extends JFrame {
 		AsmEditorPane currentEditorPane = currentFrame.getAsmEditorPane();
 		currentEditorPane.decreaseFontSize();
 
+	}
+	
+	private void openAboutWindow() {
+		Component current = this;
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					FrAbout frame = new FrAbout();
+					frame.setLocationRelativeTo(current);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 }

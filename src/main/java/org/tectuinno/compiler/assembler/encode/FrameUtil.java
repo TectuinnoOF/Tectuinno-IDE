@@ -29,6 +29,7 @@
 package org.tectuinno.compiler.assembler.encode;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.tectuinno.compiler.assembler.EncoderIrLine;
@@ -37,6 +38,11 @@ public final class FrameUtil {
 	
 	private FrameUtil() {}
 	
+	/**
+	 * Construlle la trama hexadecimal en little Endian y concatena la cadena de texto TECTUINNO.
+	 * @param encodedLines
+	 * @return
+	 */
 	public static byte[] buildLittleEndianFrame(List<EncoderIrLine> encodedLines) {
         ByteArrayOutputStream out = new ByteArrayOutputStream(encodedLines.size() * 4);
 
@@ -51,6 +57,8 @@ public final class FrameUtil {
             byte[] le = AsmEncoder.toLittleEndian(word);
             out.write(le, 0, le.length);
         }
+        
+        
         return out.toByteArray();
     }
 	
