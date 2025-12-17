@@ -78,6 +78,8 @@ public class AsmEditorPane extends JTextPane {
 	private static final Color WARNING_LINE_FILL = new Color(255, 184, 108, 28);
 	private static final Color WARNING_LINE_BORDER = new Color(255, 184, 108, 90);
 
+	private final List<Object> searchHighlights = new ArrayList<>();
+
 	// private StyledDocument styledDocument;
 
 	public AsmEditorPane() throws Exception {
@@ -391,6 +393,49 @@ public class AsmEditorPane extends JTextPane {
 		SwingUtilities.invokeLater(() -> {
 			while (matcher.find()) {
 				doc.setCharacterAttributes(matcher.start(), matcher.end() - matcher.start(), style, true);
+			}
+		});
+	}
+
+	public void clearSearchHighlights() {
+		SwingUtilities.invokeLater(() -> {
+			Highlighter hl = getHighlighter();
+			for (Object tag : searchHighlights) {
+				hl.removeHighlight(tag);
+			}
+			searchHighlights.clear();
+		});
+	}
+
+	public void highlightAllOccurrences(String query, boolean matchCase) {
+		SwingUtilities.invokeLater(() -> {
+			try {
+				Highlighter hl = getHighlighter();
+				for (Object tag : searchHighlights) {
+					hl.removeHighlight(tag);
+				}
+				searchHighlights.clear();
+
+				if (query == null || query.isEmpty())
+					return;
+
+				String text = getText();
+				String hay = matchCase ? text : text.toLowerCase();
+				String needle = matchCase ? query : query.toLowerCase();
+
+				int idx = hay.indexOf(needle);
+				javax.swing.text.DefaultHighlighter.DefaultHighlightPainter painter = new javax.swing.text.DefaultHighlighter.DefaultHighlightPainter(new Color(255, 255, 0, 80));
+				while (idx >= 0) {
+					int start = idx;
+					int end = idx + query.length();
+					try {
+						Object tag = hl.addHighlight(start, end, painter);
+						searchHighlights.add(tag);
+					} catch (BadLocationException ignored) {
+					}
+					idx = hay.indexOf(needle, end);
+				}
+			} catch (Exception ex) {
 			}
 		});
 	}

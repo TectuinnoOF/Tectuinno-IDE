@@ -370,6 +370,20 @@ public class StartingWindow extends JFrame {
 				java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
 		JMenuEdit.add(JMenuOptionSelectAll);
 
+		JMenuEdit.add(new JSeparator());
+
+		JMenuItem JMenuOptionFind = new JMenuItem("Buscar...");
+		// Atajo: Ctrl/Cmd + F
+		JMenuOptionFind.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F,
+				java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+		JMenuOptionFind.addActionListener(e -> {
+			AsmEditorInternalFrame frame = getActiveEditorFrame();
+			if (frame != null) {
+				frame.showSearchDialog();
+			}
+		});
+		JMenuEdit.add(JMenuOptionFind);
+
 		// Opciones de tamaño de fuente desactivadas: se usa el zoom con Ctrl + rueda
 		/*
 		 * { menuBar.add(JMenuEdit); } { menuBar.add(JMenuProgram); } { menuBar.add(JMenuTools); { }

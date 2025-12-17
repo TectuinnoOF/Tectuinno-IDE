@@ -1,7 +1,5 @@
 package org.tectuinno.view.component;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -31,11 +29,11 @@ public class FrAbout extends JFrame {
 			Tectuinno Team
 			Sitio web oficial:
 			https://tectuinno.org/
-			
+
 			-------------------------------------------
 			   Instrucciones soportadas
 			-------------------------------------------
-			
+
 			LW
 			ADDI
 			SLTI
@@ -50,11 +48,11 @@ public class FrAbout extends JFrame {
 			BEQ
 			JAL
 			JALR
-			LUI			
-			------------------------------------------			
+			LUI
+			------------------------------------------
 			CALL
 			RET
-			
+
 			-------------------------------------------
 			   Repositorios Oficiales del Proyecto
 			-------------------------------------------
@@ -65,7 +63,6 @@ public class FrAbout extends JFrame {
 			Repositorio General de Tectuinno:
 			https://github.com/TectuinnoOF
 			""";
-
 
 	/**
 	 * Create the frame.
@@ -78,14 +75,14 @@ public class FrAbout extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		
+
 		JPanel PanelCentralText = new JPanel();
 		contentPane.add(PanelCentralText, BorderLayout.CENTER);
 		PanelCentralText.setLayout(new BorderLayout(0, 0));
-		
+
 		JScrollPane scrollPaneAboutText = new JScrollPane();
 		PanelCentralText.add(scrollPaneAboutText, BorderLayout.CENTER);
-		
+
 		JTextArea TxaAboutInfoText = new JTextArea();
 		TxaAboutInfoText.setBackground(new Color(51, 51, 51));
 		TxaAboutInfoText.setForeground(new Color(0, 153, 0));
@@ -94,12 +91,12 @@ public class FrAbout extends JFrame {
 		TxaAboutInfoText.setEditable(false);
 		scrollPaneAboutText.setViewportView(TxaAboutInfoText);
 		TxaAboutInfoText.setText(aboutText);
-		
+
 		JPanel PanelDowButtons = new JPanel();
 		FlowLayout fl_PanelDowButtons = (FlowLayout) PanelDowButtons.getLayout();
 		fl_PanelDowButtons.setAlignment(FlowLayout.RIGHT);
 		contentPane.add(PanelDowButtons, BorderLayout.SOUTH);
-		
+
 		JButton btn_exit = new JButton("Salir");
 		btn_exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -109,9 +106,9 @@ public class FrAbout extends JFrame {
 		PanelDowButtons.add(btn_exit);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
-	
+
 	private void disposeWindow() {
 		this.dispose();
 	}
-	
+
 }
