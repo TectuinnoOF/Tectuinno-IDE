@@ -35,13 +35,18 @@ import java.awt.FlowLayout;
 import javax.swing.JButton;
 
 /**
- * A panel component that hosts the result/output consoles within the Tectuinno IDE.
+ * A panel component that hosts the result/output consoles within the Tectuinno
+ * IDE.
  * 
- * This class provides a tabbed interface for managing multiple terminal instances,
- * allowing developers to visualize assembler outputs, system messages, and UART communication logs.
- * It includes a button to open new terminal tabs dynamically and initializes with a default terminal.
+ * This class provides a tabbed interface for managing multiple terminal
+ * instances,
+ * allowing developers to visualize assembler outputs, system messages, and UART
+ * communication logs.
+ * It includes a button to open new terminal tabs dynamically and initializes
+ * with a default terminal.
  *
- * Internally, it uses a {@code JTabbedPane} to separate outputs by session or task,
+ * Internally, it uses a {@code JTabbedPane} to separate outputs by session or
+ * task,
  * and a header panel with control buttons for user interaction.
  *
  * Typical usage:
@@ -50,10 +55,10 @@ import javax.swing.JButton;
  * - Serve as an integrated developer terminal.
  */
 public class ResultConsolePanel extends JPanel {
-	
+
 	private static int opennedTerminals = 0;
 	private static final long serialVersionUID = 1L;
-	private JButton btnNewTerminal;
+	private JButton btnClearTerminals;
 	private JTabbedPane tabbedTerminalPanel;
 	private JPanel optionsPanel;
 	private FlowLayout fl_optionsPanel;
@@ -67,76 +72,138 @@ public class ResultConsolePanel extends JPanel {
 	 */
 	public ResultConsolePanel() {
 		setLayout(new BorderLayout(0, 0));
-		
+
 		tabbedTerminalPanel = new JTabbedPane(JTabbedPane.TOP);
+		// Forzar subrayado cyan y delgado en pestañas de terminal
+		// Usar el mismo tono que el editor para el área de pestañas
+		java.awt.Color andromedaPanelBg = new java.awt.Color(0x0a, 0x0c, 0x12);
+		java.awt.Color andromedaAccent = new java.awt.Color(0x00, 0xe8, 0xc6);
+		tabbedTerminalPanel.putClientProperty("TabbedPane.underlineHeight", 1);
+		tabbedTerminalPanel.putClientProperty("TabbedPane.underlineColor", andromedaAccent);
+		tabbedTerminalPanel.putClientProperty("TabbedPane.selectedUnderlineColor", andromedaAccent);
+		tabbedTerminalPanel.putClientProperty("TabbedPane.showTabSeparators", Boolean.TRUE);
+		tabbedTerminalPanel.setBackground(andromedaPanelBg);
+		tabbedTerminalPanel.setForeground(andromedaAccent);
+		// Mantener las etiquetas de pestañas en cyan aun no seleccionadas
+		tabbedTerminalPanel.putClientProperty("TabbedPane.selectedForeground", andromedaAccent);
+		tabbedTerminalPanel.putClientProperty("TabbedPane.tabAreaBackground", andromedaPanelBg);
 		add(tabbedTerminalPanel, BorderLayout.CENTER);
-		
+
 		optionsPanel = new JPanel();
 		fl_optionsPanel = (FlowLayout) optionsPanel.getLayout();
 		fl_optionsPanel.setAlignment(FlowLayout.RIGHT);
 		add(optionsPanel, BorderLayout.NORTH);
-		
-		/*btnNewTerminal = new JButton("");
-		btnNewTerminal.setBackground(Color.WHITE);
-		btnNewTerminal.setToolTipText("Abrir Terminal");
-		btnNewTerminal.setIcon(new ImageIcon(ResultConsolePanel.class.getResource("/org/tectuinno/assets/terminal_ico.png")));
-		optionsPanel.add(btnNewTerminal);*/
-		
-		
+
+		// Cargar ícono de bote de basura desde assets
+		javax.swing.ImageIcon trashIcon = new javax.swing.ImageIcon(
+				getClass().getResource("/org/tectuinno/assets/trash.png"));
+		btnClearTerminals = new JButton(trashIcon);
+		btnClearTerminals.setToolTipText("Limpiar todas las terminales");
+		btnClearTerminals.setFocusable(false);
+		btnClearTerminals.setBorderPainted(false);
+		btnClearTerminals.setContentAreaFilled(false);
+		btnClearTerminals.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
+		// Efecto hover: cambiar opacidad o borde
+		btnClearTerminals.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mouseEntered(java.awt.event.MouseEvent e) {
+				btnClearTerminals.setBorderPainted(true);
+			}
+
+			@Override
+			public void mouseExited(java.awt.event.MouseEvent e) {
+				btnClearTerminals.setBorderPainted(false);
+			}
+		});
+		btnClearTerminals.addActionListener(e -> clearAllTerminals());
+		optionsPanel.add(btnClearTerminals);
+
 		this.openTokenTerminal();
 		this.openFirstTerminal();
 		this.openDissasemblyTerminal();
 		this.openOrderedHexResultTerminalPanel();
-		
+
 	}
-	
+
 	/**
 	 * open the first terminal when the component is called
 	 */
 	private void openFirstTerminal() {
-		
-		opennedTerminals ++;
-		this.terminalPanel = new TerminalPanel();		
-		this.tabbedTerminalPanel.addTab( opennedTerminals + ".- Resultado", terminalPanel);
-				
+
+		opennedTerminals++;
+		this.terminalPanel = new TerminalPanel();
+		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Resultado", terminalPanel);
+
 	}
-	
-	public void openNewTerminal(String name) {				
-		
+
+	public void openNewTerminal(String name) {
+
 	}
-	
+
 	public void openTokenTerminal() {
 		opennedTerminals++;
 		this.tokenTerminalPanel = new TokenTerminalPanel();
-		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Tokens",this.tokenTerminalPanel);
+		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Tokens", this.tokenTerminalPanel);
 	}
-	
+
 	public void openDissasemblyTerminal() {
 		opennedTerminals++;
 		this.disassemblyTerminalPanel = new DisassemblyTerminalPanel();
 		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Disassembly", disassemblyTerminalPanel);
 	}
-	
+
 	public void openOrderedHexResultTerminalPanel() {
 		opennedTerminals++;
 		this.orderedHexResultTerminalPanel = new OrderedHexResultTerminalPanel();
 		this.tabbedTerminalPanel.addTab(opennedTerminals + ".- Trama", orderedHexResultTerminalPanel);
 	}
-	
+
 	public TerminalPanel getTerminalPanel() {
 		return this.terminalPanel;
 	}
-	
+
 	public DisassemblyTerminalPanel getDisassemblyTerminalPanel() {
 		return this.disassemblyTerminalPanel;
 	}
-	
+
 	public TokenTerminalPanel getTokenTerminalPanel() {
 		return this.tokenTerminalPanel;
 	}
-	
+
 	public OrderedHexResultTerminalPanel getOrderedHexResultTerminalPanel() {
 		return this.orderedHexResultTerminalPanel;
+	}
+
+	// --- Limpieza de terminales para nueva sesión ---
+	public void clearTerminal() {
+		if (terminalPanel != null) {
+			terminalPanel.reset();
+		}
+	}
+
+	public void clearTokenTerminal() {
+		if (tokenTerminalPanel != null) {
+			tokenTerminalPanel.reset();
+		}
+	}
+
+	public void clearDisassemblyTerminal() {
+		if (disassemblyTerminalPanel != null) {
+			disassemblyTerminalPanel.reset();
+		}
+	}
+
+	public void clearOrderedHexTerminal() {
+		if (orderedHexResultTerminalPanel != null) {
+			orderedHexResultTerminalPanel.reset();
+		}
+	}
+
+	public void clearAllTerminals() {
+		clearTerminal();
+		clearTokenTerminal();
+		clearDisassemblyTerminal();
+		clearOrderedHexTerminal();
 	}
 
 }

@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -54,13 +55,16 @@ public class TokenTerminalPanel extends JPanel {
 		{
 			String initialText = this.setInitialText();
 			this.txaTokenListResult.setText(initialText);
-			txaTokenListResult.setLocale(new Locale("es", "MX"));
-			txaTokenListResult.setForeground(new Color(0, 204, 0));
-			txaTokenListResult.setFont(new Font("Lucida Fax", Font.PLAIN, 12));
+			txaTokenListResult.setLocale(Locale.forLanguageTag("es-MX"));
+			Color accentPurple = new Color(187, 134, 252);
+			txaTokenListResult.setForeground(new Color(0xff, 0xe6, 0x6d)); // terminal.ansiYellow #ffe66d
+			txaTokenListResult.setFont(new Font("Consolas", Font.PLAIN, 13));
 			txaTokenListResult.setEditable(false);
 			txaTokenListResult.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-			txaTokenListResult.setCaretColor(Color.WHITE);
-			txaTokenListResult.setBackground(new Color(51, 51, 51));
+			txaTokenListResult.setCaretColor(accentPurple);
+			txaTokenListResult.setSelectionColor(accentPurple.darker());
+			txaTokenListResult.setBackground(new Color(0x0c, 0x0e, 0x14)); // #0c0e14
+			((DefaultCaret) txaTokenListResult.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 			scrollPane.setViewportView(txaTokenListResult);
 		}
 
@@ -77,6 +81,12 @@ public class TokenTerminalPanel extends JPanel {
 		//this.txaTokenListResult.setText(this.setInitialText());
 		//this.txaTokenListResult.append("\n");
 		this.txaTokenListResult.append(text);
+		this.txaTokenListResult.setCaretPosition(this.txaTokenListResult.getDocument().getLength());
+	}
+
+	public void reset() {
+		this.txaTokenListResult.setText(this.setInitialText());
+		this.txaTokenListResult.setCaretPosition(this.txaTokenListResult.getDocument().getLength());
 	}
 	
 	private final String setInitialText() {

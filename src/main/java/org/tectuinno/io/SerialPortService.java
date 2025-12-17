@@ -36,28 +36,33 @@ import com.fazecast.jSerialComm.SerialPort;
 
 public final class SerialPortService {
 
-	private SerialPortService() {
-		
-	}
-	
-	public static List<PortInfo> listAvailablePorts() {
+    private SerialPortService() {
+
+    }
+
+    public static List<PortInfo> listAvailablePorts() {
         SerialPort[] ports = SerialPort.getCommPorts();
         List<PortInfo> out = new ArrayList<>(ports.length);
         for (SerialPort p : ports) {
-            out.add(new PortInfo(p.getSystemPortName(), p.getDescriptivePortName()));
+            String desc = p.getDescriptivePortName();
+            // Ocultar puertos Bluetooth (e.g., "Serie estándar sobre el vínculo Bluetooth")
+            if (desc != null && desc.toLowerCase().contains("bluetooth")) {
+                continue;
+            }
+            out.add(new PortInfo(p.getSystemPortName(), desc));
         }
         return out;
     }
-	
-	public static void sendBytes(String systemPortName, int baud, byte[] data) throws IOException {
+
+    public static void sendBytes(String systemPortName, int baud, byte[] data) throws IOException {
         SerialPort port = SerialPort.getCommPort(systemPortName);
         port.setComPortParameters(baud, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
         port.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);
 
         if (!port.openPort()) {
-        	
+
             throw new IOException("No se pudo abrir el puerto: " + systemPortName);
-            
+
         }
         try {
             int wrote = port.writeBytes(data, data.length);
@@ -69,5 +74,5 @@ public final class SerialPortService {
             port.closePort();
         }
     }
-	
+
 }

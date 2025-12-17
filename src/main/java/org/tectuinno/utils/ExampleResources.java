@@ -40,8 +40,8 @@ public final class ExampleResources {
                 // Esto permite tratar los contenidos del JAR como un sistema de archivos
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap())) {
                     
-                    // Obtén la ruta dentro del JAR
-                    Path root = fileSystem.getPath(EXAMPLES_DIR);
+                    // Obtén la ruta dentro del JAR (sin duplicar el prefijo jar:file:...!)
+                    Path root = fileSystem.getPath(EXAMPLES_DIR.startsWith("/") ? EXAMPLES_DIR : "/" + EXAMPLES_DIR);
                     
                     try (Stream<Path> s = Files.list(root)) {
                         return s.filter(Files::isRegularFile)

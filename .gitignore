@@ -3,7 +3,7 @@
 .project
 .settings/
 bin/
-target/
+out/
 
 # Archivos generados por WindowBuilder
 *.wbp-component.xml

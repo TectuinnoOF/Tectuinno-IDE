@@ -117,6 +117,13 @@ public final class AsmSyntaxDictionary {
 	 */
 	public static final String COMMENTARY_PATTERN = "/\\*.*?\\*/";
 
+	// Immediatos: hex (0x...) o decimales con signo opcional
+	public static final String IMMEDIATE_PATTERN = "\\b(0[xX][0-9a-fA-F]+|-?\\d+)\\b";
+
+	// Identificadores/labels: palabras válidas (incluyendo referencias a labels sin
+	// dos puntos)
+	public static final String IDENTIFIER_PATTERN = "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b";
+
 	private AsmSyntaxDictionary() {
 		// this is an utility class, therefore prevent the instantiation whit a private
 		// constructor

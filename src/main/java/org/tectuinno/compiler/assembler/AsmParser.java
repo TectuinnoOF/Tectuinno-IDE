@@ -30,6 +30,8 @@ package org.tectuinno.compiler.assembler;
 
 import java.util.List;
 
+import java.util.ArrayList;
+
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.compiler.assembler.utils.TokenType;
 import org.tectuinno.view.component.ResultConsolePanel;
@@ -38,155 +40,162 @@ public class AsmParser {
 
 	private final List<Token> tokens;
 	private int position;
-    private int line;
-    private int column;
+	// Removed unused fields to satisfy strict compilation settings
 	private ResultConsolePanel consolePanel;
 	private static int errorCounter;
+	private final java.util.List<AnalysisError> errors;
 
 	public AsmParser(List<Token> tokens, int position) {
 		super();
 		this.tokens = tokens;
 		this.position = position;
-        this.line = 1;
-        this.column = 1;
+		// Removed unused line/column tracking initialization
+		this.errors = new ArrayList<>();
 	}
-	
+
 	public AsmParser(List<Token> tokens) {
 		super();
 		this.tokens = tokens;
 		this.position = 0;
 		errorCounter = 0;
+		this.errors = new ArrayList<>();
 	}
-	
+
 	private void error(Token token, String message) {
-		String errorMessage = "Error de sintaxis: "+ token + ": " + message + "\n\r";
+		String errorMessage = "Error de sintaxis: " + token + ": " + message + "\n\r";
+		errorCounter++;
+		this.errors.add(new AnalysisError(token.getLine(), token.getColumn(), errorMessage.trim(), AnalysisError.Severity.ERROR));
 		System.err.println(errorMessage);
-		this.consolePanel.getTerminalPanel().writteIn(errorMessage);
-		errorCounter ++;
+		if (this.consolePanel != null) {
+			this.consolePanel.getTerminalPanel().writteIn(errorMessage);
+		}
 		advance();
 	}
-	
+
 	private Token previous() {
 		return this.tokens.get(position - 1);
 	}
-	
+
 	private boolean isAtEnt() {
 		return position >= this.tokens.size();
 	}
-	
+
 	private Token advance() {
-        if (!isAtEnt())
-            position++;
-        return previous();
-    }
-	
+		if (!isAtEnt())
+			position++;
+		return previous();
+	}
+
 	private Token peek() {
 		return tokens.get(position);
 	}
-	
+
 	private boolean check(TokenType type) {
-		if(isAtEnt()) return false;
+		if (isAtEnt())
+			return false;
 		return peek().getType() == type;
 	}
-	
-	private boolean match(TokenType... types) {		
-		
-		for(TokenType type : types) {
-			if(check(type)) {
+
+	private boolean match(TokenType... types) {
+
+		for (TokenType type : types) {
+			if (check(type)) {
 				advance();
 				return true;
 			}
 		}
-		
+
 		return false;
-					
+
 	}
-	
+
 	private void parseArgument() {
-		
-		/*if(match(TokenType.REGISTER) || match(TokenType.IMMEDIATE)) return;*/
-		
-		//case when match with pattern i(reg)		
-		if(check(TokenType.IMMEDIATE)) {
-			
-			advance(); //rebace the immediate
-			
-			if(match(TokenType.LEFTPAREN)) {
-				
-				if(!match(TokenType.REGISTER)) {
+
+		/* if(match(TokenType.REGISTER) || match(TokenType.IMMEDIATE)) return; */
+
+		// case when match with pattern i(reg)
+		if (check(TokenType.IMMEDIATE)) {
+
+			advance(); // rebace the immediate
+
+			if (match(TokenType.LEFTPAREN)) {
+
+				if (!match(TokenType.REGISTER)) {
 					error(peek(), "Se esperaba un registro");
 					return;
 				}
-				
-				if(!match(TokenType.RIGHTPAREN)) {
+
+				if (!match(TokenType.RIGHTPAREN)) {
 					error(peek(), "Se esperaba ')'");
 					return;
 				}
 			}
-			
+
 			return;
 		}
-		
-		if(match(TokenType.REGISTER)) return;
-				
-	    if (match(TokenType.LEFTPAREN)) {
-	        if (!match(TokenType.REGISTER)) {
-	            error(peek(), "Se esperaba un registro dentro de paréntesis");
-	            return;
-	        }
-	        if (!match(TokenType.RIGHTPAREN)) {
-	            error(peek(), "Falta el paréntesis de cierre ')'");
-	            return;
-	        }
-	        return;
-	    }
-	    
-	    if(check(TokenType.UNKNOWN)){
-	    	advance();
-	    	return;
-	    }
-		
+
+		if (match(TokenType.REGISTER))
+			return;
+
+		if (match(TokenType.LEFTPAREN)) {
+			if (!match(TokenType.REGISTER)) {
+				error(peek(), "Se esperaba un registro dentro de paréntesis");
+				return;
+			}
+			if (!match(TokenType.RIGHTPAREN)) {
+				error(peek(), "Falta el paréntesis de cierre ')'");
+				return;
+			}
+			return;
+		}
+
+		if (check(TokenType.UNKNOWN)) {
+			advance();
+			return;
+		}
+
 		error(peek(), "Argumento inválido");
 	}
 
 	private void parseArguments() {
-		if(check(TokenType.REGISTER) || check(TokenType.IMMEDIATE) || check(TokenType.LEFTPAREN)) {
+		if (check(TokenType.REGISTER) || check(TokenType.IMMEDIATE) || check(TokenType.LEFTPAREN)) {
 			do {
 				parseArgument();
-			}while(match(TokenType.COMMA));
+			} while (match(TokenType.COMMA));
 		}
-		
-		if(check(TokenType.UNKNOWN)) {
+
+		if (check(TokenType.UNKNOWN)) {
 			advance();
 			return;
 		}
 	}
-	
+
 	private void parseInstruction() {
 		parseArguments();
 	}
-	
+
 	private void parseLines() {
-		
-		if(match(TokenType.COMMENT)) return;
-		
-		if(match(TokenType.LABEL)) {
-			if(check(TokenType.INSTRUCTION)) {
+
+		if (match(TokenType.COMMENT))
+			return;
+
+		if (match(TokenType.LABEL)) {
+			if (check(TokenType.INSTRUCTION)) {
 				parseInstruction();
 			}
 			return;
 		}
-		
-		if(match(TokenType.INSTRUCTION)) {
+
+		if (match(TokenType.INSTRUCTION)) {
 			parseArguments();
 			return;
 		}
-		
+
 		error(peek(), "Linea no válida");
-	}		
-	
+	}
+
 	private void parserFinishResults(long start, long finish) {
-		double time = (double) ((finish - start)/1000);
+		double time = (double) ((finish - start) / 1000);
 		String finishMessage = new StringBuilder()
 				.append("\n============== Analisis de sintaxis ============================\n")
 				.append("Tokens analizados: ").append(this.tokens.size())
@@ -194,22 +203,28 @@ public class AsmParser {
 				.append("\nTiempo: ").append(time)
 				.append("\n================================================================\n")
 				.toString();
-		this.consolePanel.getTerminalPanel().writteIn(finishMessage);
+		if (this.consolePanel != null) {
+			this.consolePanel.getTerminalPanel().writteIn(finishMessage);
+		}
 	}
-	
-	public boolean parseProgram() throws Exception{
+
+	public boolean parseProgram() throws Exception {
 		long start = System.currentTimeMillis();
-		while (!isAtEnt()) {			
-			parseLines();			
+		while (!isAtEnt()) {
+			parseLines();
 		}
 		long finish = System.currentTimeMillis();
-		
+
 		this.parserFinishResults(start, finish);
-		
+
 		return errorCounter <= 0;
-		
+
 	}
-		
+
+	public java.util.List<AnalysisError> getErrors() {
+		return java.util.List.copyOf(this.errors);
+	}
+
 	public int getPosition() {
 		return position;
 	}
@@ -221,11 +236,11 @@ public class AsmParser {
 	public List<Token> getTokens() {
 		return tokens;
 	}
-	
+
 	public void setResultConsolePanel(ResultConsolePanel consolePanel) {
 		this.consolePanel = consolePanel;
 	}
-	
+
 	public ResultConsolePanel getConsolePanel() {
 		return this.consolePanel;
 	}

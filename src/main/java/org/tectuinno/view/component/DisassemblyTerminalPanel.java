@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -91,13 +92,16 @@ public class DisassemblyTerminalPanel extends JPanel {
 			
 			String initialText = this.setInitialText();
 			txaDisassemblyResult.setText(initialText);
-			txaDisassemblyResult.setLocale(new Locale("es", "MX"));
-			txaDisassemblyResult.setForeground(new Color(0, 204, 0));
-			txaDisassemblyResult.setFont(new Font("Lucida Fax", Font.PLAIN, 12));
+			txaDisassemblyResult.setLocale(Locale.forLanguageTag("es-MX"));
+			Color accentPurple = new Color(187, 134, 252);
+			txaDisassemblyResult.setForeground(new Color(0xff, 0xe6, 0x6d)); // terminal.ansiYellow #ffe66d
+			txaDisassemblyResult.setFont(new Font("Consolas", Font.PLAIN, 13));
 			txaDisassemblyResult.setEditable(false);
 			txaDisassemblyResult.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-			txaDisassemblyResult.setCaretColor(Color.WHITE);
-			txaDisassemblyResult.setBackground(new Color(51, 51, 51));
+			txaDisassemblyResult.setCaretColor(accentPurple);
+			txaDisassemblyResult.setSelectionColor(accentPurple.darker());
+			txaDisassemblyResult.setBackground(new Color(0x0c, 0x0e, 0x14)); // #0c0e14
+			((DefaultCaret) txaDisassemblyResult.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 			scrollPane.setViewportView(txaDisassemblyResult);
 		}		
 		
@@ -110,10 +114,14 @@ public class DisassemblyTerminalPanel extends JPanel {
      * @param text the disassembly output to display
      */
 	public void writteIn(String text) {
-		this.txaDisassemblyResult.setText("");
-		this.txaDisassemblyResult.setText(this.setInitialText());
-		this.txaDisassemblyResult.append("\n");
+
 		this.txaDisassemblyResult.append(text);
+		this.txaDisassemblyResult.setCaretPosition(this.txaDisassemblyResult.getDocument().getLength());
+	}
+
+	public void reset() {
+		this.txaDisassemblyResult.setText(this.setInitialText());
+		this.txaDisassemblyResult.setCaretPosition(this.txaDisassemblyResult.getDocument().getLength());
 	}
 	
 	/**

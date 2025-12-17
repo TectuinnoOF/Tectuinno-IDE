@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.text.DefaultCaret;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -54,13 +55,16 @@ public class OrderedHexResultTerminalPanel extends JPanel {
 		{
 			String initialText = this.setInitialText();
 			txaOrderedHexResult.setText(initialText);
-			txaOrderedHexResult.setLocale(new Locale("es", "MX"));
-			txaOrderedHexResult.setForeground(new Color(0, 204, 0));
-			txaOrderedHexResult.setFont(new Font("Lucida Fax", Font.PLAIN, 12));
+			txaOrderedHexResult.setLocale(Locale.forLanguageTag("es-MX"));
+			Color accentPurple = new Color(187, 134, 252);
+			txaOrderedHexResult.setForeground(new Color(0xff, 0xe6, 0x6d)); // terminal.ansiYellow #ffe66d
+			txaOrderedHexResult.setFont(new Font("Consolas", Font.PLAIN, 13));
 			txaOrderedHexResult.setEditable(false);
 			txaOrderedHexResult.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-			txaOrderedHexResult.setCaretColor(Color.WHITE);
-			txaOrderedHexResult.setBackground(new Color(51, 51, 51));
+			txaOrderedHexResult.setCaretColor(accentPurple);
+			txaOrderedHexResult.setSelectionColor(accentPurple.darker());
+			txaOrderedHexResult.setBackground(new Color(0x0c, 0x0e, 0x14)); // #0c0e14
+			((DefaultCaret) txaOrderedHexResult.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 			scrollPane.setViewportView(txaOrderedHexResult);
 		}
 
@@ -72,6 +76,12 @@ public class OrderedHexResultTerminalPanel extends JPanel {
 		//this.txaTokenListResult.append("\n");
 		this.txaOrderedHexResult.append("\n=================================================================\n");
 		this.txaOrderedHexResult.append(text);
+		this.txaOrderedHexResult.setCaretPosition(this.txaOrderedHexResult.getDocument().getLength());
+	}
+
+	public void reset() {
+		this.txaOrderedHexResult.setText(this.setInitialText());
+		this.txaOrderedHexResult.setCaretPosition(this.txaOrderedHexResult.getDocument().getLength());
 	}
 	
 	private final String setInitialText() {

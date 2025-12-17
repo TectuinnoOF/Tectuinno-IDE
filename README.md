@@ -26,7 +26,7 @@ Contacto:
 
 ## Instalación
 
-El IDE puede ejecutarse en sistemas Windows, Linux o macOS con Java 17 o superior. Las instrucciones de instalación estarán disponibles en el [Wiki del repositorio](https://github.com/TectuinnoOF/Tectuinno-IDE/wiki).
+El IDE puede ejecutarse en sistemas Windows, Linux o macOS con Java 17 o superior. Las instrucciones de instalación estarán disponibles en el [Wiki del repositorio](https://github.com/tectuinno/tectuinno-ide/wiki).
 
 ## Créditos
 

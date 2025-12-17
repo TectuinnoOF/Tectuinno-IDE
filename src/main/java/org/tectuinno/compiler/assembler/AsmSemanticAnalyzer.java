@@ -9,14 +9,12 @@ import java.util.function.Predicate;
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.compiler.assembler.utils.TokenType;
 import org.tectuinno.view.component.ResultConsolePanel;
-
 import static org.tectuinno.compiler.assembler.utils.AsmSyntaxDictionary.*;
 
 /**
  * Semantic analyzer for Tectuinno RISC-V assembler.
  * <p>
- * This analyzer performs validations after the syntax analysis stage,
- * including:
+ * This analyzer performs validations after the syntax analysis stage, including:
  * <ul>
  * <li>Checking for valid instruction argument counts</li>
  * <li>Verifying the existence of label references</li>
@@ -33,7 +31,7 @@ public class AsmSemanticAnalyzer {
 
 	private final List<Token> tokens;
 	private Map<String, Token> declaredLabels;
-	private List<String> errors;
+	private List<AnalysisError> errors;
 	private int position;
 	private ResultConsolePanel consolePanel;
 	private static int errorCounter;
@@ -41,7 +39,7 @@ public class AsmSemanticAnalyzer {
 	public AsmSemanticAnalyzer(List<Token> tokens, ResultConsolePanel consolePanel) {
 		this.tokens = tokens;
 		this.declaredLabels = new HashMap<String, Token>();
-		this.errors = new ArrayList<String>();
+		this.errors = new ArrayList<AnalysisError>();
 		this.consolePanel = consolePanel;
 		this.position = 0;
 		errorCounter = 0;
@@ -49,23 +47,26 @@ public class AsmSemanticAnalyzer {
 
 	public AsmSemanticAnalyzer() {
 		this.declaredLabels = new HashMap<String, Token>();
-		this.errors = new ArrayList<String>();
+		this.errors = new ArrayList<AnalysisError>();
 		this.tokens = null;
 		this.position = 0;
 		errorCounter = 0;
 	}
 
-	private String errorArgs(Token instr, int expected, int recived) {
+	private AnalysisError errorArgs(Token instr, int expected, int recived) {
 		errorCounter++;
-		return new StringBuilder().append(">>ERROR DETECTADO EN: ").append(instr.getValue()).append(" | SE ESPERABA: ")
-				.append(expected).append(" ARGS | ").append(recived).append("FUERON RECIBIDOS... EN: ").append(instr)
-                .append(" <<<<<").toString();
+		String message = new StringBuilder().append(">>ERROR DETECTADO EN: ").append(instr.getValue())
+				.append(" | SE ESPERABA: ").append(expected).append(" ARGS | ").append(recived)
+				.append(" FUERON RECIBIDOS... EN: ").append(instr).append(" <<<<<").toString();
+		return new AnalysisError(instr.getLine(), instr.getColumn(), message, AnalysisError.Severity.ERROR);
 	}
 
-	private String errorArgs(Token instr, String message) {
+	private AnalysisError errorArgs(Token instr, String message) {
 		errorCounter++;
-		return new StringBuilder().append(">>ERROR DETECTADO: ").append(message).append(" EN ").
-                append(instr).append(" <<<<<").toString();
+		return new AnalysisError(instr.getLine(), instr.getColumn(),
+				new StringBuilder().append(">>ERROR DETECTADO: ").append(message).append(" EN ")
+						.append(instr).append(" <<<<<").toString(),
+				AnalysisError.Severity.ERROR);
 	}
 
 	private boolean isAtEnd() {
@@ -100,11 +101,10 @@ public class AsmSemanticAnalyzer {
 			return true;
 		}
 		return false;
-	}	
+	}
 
 	/**
-	 * Validates instruction semantic using logical arguments (no commas/parens).
-	 * Accepts declared labels as LABEL tokens
+	 * Validates instruction semantic using logical arguments (no commas/parens). Accepts declared labels as LABEL tokens
 	 * 
 	 * @param instr
 	 * @param args
@@ -149,7 +149,7 @@ public class AsmSemanticAnalyzer {
 			break;
 		case BEQ:
 			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isLbl.test(2)) {
-				errors.add(this.errorArgs(instr,"BEQ espera: rs1, rs2, etiqueta"));
+				errors.add(this.errorArgs(instr, "BEQ espera: rs1, rs2, etiqueta"));
 			}
 			break;
 		case JAL:
@@ -161,60 +161,61 @@ public class AsmSemanticAnalyzer {
 			break;
 		case JALR:
 			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isImm.test(2)) {
-                errors.add(errorArgs(instr, 3, n));
-            }
-            break;
+				errors.add(errorArgs(instr, 3, n));
+			}
+			break;
 		case CALL:
 			if (!(n == 1 && isLbl.test(0))) {
-                errors.add(errorArgs(instr,"CALL espera 1 etiqueta como argumento"));
-            }
-            break;
+				errors.add(errorArgs(instr, "CALL espera 1 etiqueta como argumento"));
+			}
+			break;
 		case RET:
 			if (n != 0) {
-                errors.add(errorArgs(instr,"Ret no espera ningún argumento"));
-            }
-            break;
+				errors.add(errorArgs(instr, "Ret no espera ningún argumento"));
+			}
+			break;
 		default:
-			errors.add(this.errorArgs(instr,name + " | Instrucción u objeto desconocido...."));
+			errors.add(this.errorArgs(instr, name + " | Instrucción u objeto desconocido...."));
 			break;
 		}
 
 	}
-	
-	
+
 	private void parseInstruction() {
 
 		Token instr = this.previous();
-		List<Token> args = this.colletArgumentTokens();		
+		List<Token> args = this.colletArgumentTokens();
 		List<Token> logicArgs = this.toLogicalArgs(args);
 		validateInstruction(instr, logicArgs);
 	}
-	
-	private List<Token> colletArgumentTokens(){
-		
+
+	private List<Token> colletArgumentTokens() {
+
 		List<Token> args = new ArrayList<Token>();
 		while (check(TokenType.REGISTER) || check(TokenType.IMMEDIATE) || check(TokenType.LEFTPAREN)
 				|| check(TokenType.UNKNOWN)) {
-			
+
 			if (check(TokenType.REGISTER) || check(TokenType.IMMEDIATE) || check(TokenType.UNKNOWN)) {
-	            args.add(advance());
-			}else if(match(TokenType.LEFTPAREN)) {
-				args.add(previous());				
-				if(check(TokenType.REGISTER)) args.add(advance());
-				if(match(TokenType.RIGHTPAREN)) args.add(previous());
-				
+				args.add(advance());
+			} else if (match(TokenType.LEFTPAREN)) {
+				args.add(previous());
+				if (check(TokenType.REGISTER))
+					args.add(advance());
+				if (match(TokenType.RIGHTPAREN))
+					args.add(previous());
+
 			}
-			
+
 			match(TokenType.COMMA);
-			
+
 		}
-		
+
 		return args;
 	}
-	
-	private List<Token> toLogicalArgs(List<Token> raw){
+
+	private List<Token> toLogicalArgs(List<Token> raw) {
 		List<Token> out = new ArrayList<Token>();
-		for(Token t: raw) {
+		for (Token t : raw) {
 			if (t.getType() == TokenType.COMMA || t.getType() == TokenType.LEFTPAREN
 					|| t.getType() == TokenType.RIGHTPAREN) {
 				continue;
@@ -223,7 +224,7 @@ public class AsmSemanticAnalyzer {
 		}
 		return out;
 	}
-	
+
 	private Token normalizeLabelToken(Token t) {
 		if (t.getType() == TokenType.UNKNOWN && declaredLabels.containsKey(t.getValue())) {
 			return new Token(TokenType.LABEL, t.getValue(), t.getPosition(), t.getLine(), t.getColumn());
@@ -233,7 +234,7 @@ public class AsmSemanticAnalyzer {
 
 	private void parseLine() {
 
-		Token current = peek();
+		// Removed unused local variable to satisfy strict compilation settings
 
 		if (match(TokenType.COMMENT))
 			return;
@@ -258,7 +259,7 @@ public class AsmSemanticAnalyzer {
 			if (token.getType() == TokenType.LABEL) {
 				String name = token.getValue().replace(":", "");
 				if (declaredLabels.containsKey(name)) {
-					errors.add(this.errorArgs(token,"Etiqueta duplicada...."));
+					errors.add(this.errorArgs(token, "Etiqueta duplicada...."));
 				} else {
 					declaredLabels.put(name, token);
 				}
@@ -275,7 +276,7 @@ public class AsmSemanticAnalyzer {
 
 		if (this.errors.size() >= 0) {
 			this.errors.stream().forEach(er -> {
-				consolePanel.getTerminalPanel().writteIn(er + "\n");
+				consolePanel.getTerminalPanel().writteIn(er.message() + "\n");
 			});
 		}
 
@@ -305,7 +306,7 @@ public class AsmSemanticAnalyzer {
 		long finish = System.currentTimeMillis();
 
 		this.analizerFinishResult(start, finish);
-		
+
 		return errorCounter <= 0;
 
 	}
@@ -318,12 +319,12 @@ public class AsmSemanticAnalyzer {
 		this.declaredLabels = declaredLabels;
 	}
 
-	public List<String> getErrors() {
-		return errors;
+	public List<AnalysisError> getErrors() {
+		return List.copyOf(errors);
 	}
 
-	public void setErrors(List<String> errors) {
-		this.errors = errors;
+	public void setErrors(List<AnalysisError> errors) {
+		this.errors = errors == null ? new ArrayList<>() : new ArrayList<>(errors);
 	}
 
 	public int getPosition() {

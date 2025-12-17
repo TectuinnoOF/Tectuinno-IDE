@@ -44,25 +44,34 @@ public class NewEditorWizardDialog extends JDialog {
 	/**
 	 * Launch the application.
 	 *
-	public static void main(String[] args) {
-		try {
-			NewEditorWizardDialog dialog = new NewEditorWizardDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}*/
+	 * public static void main(String[] args) {
+	 * try {
+	 * NewEditorWizardDialog dialog = new NewEditorWizardDialog();
+	 * dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+	 * dialog.setVisible(true);
+	 * } catch (Exception e) {
+	 * e.printStackTrace();
+	 * }
+	 * }
+	 */
 
 	/**
 	 * Create the dialog.
 	 */
 	public NewEditorWizardDialog(FileType fileType) {
-		
+
 		this.fileType = fileType;
-		
+
+		// Colorear barra de título con tema Andromeda
+		java.awt.Color andromedaBg2 = new java.awt.Color(0x0a, 0x0c, 0x12);
+		java.awt.Color andromedaBg = new java.awt.Color(0x0c, 0x0e, 0x14);
+		java.awt.Color yellowTitle = new java.awt.Color(0xff, 0xe6, 0x6d);
+		getRootPane().putClientProperty("JRootPane.titleBarBackground", andromedaBg2);
+		getRootPane().putClientProperty("JRootPane.titleBarForeground", yellowTitle);
+		getRootPane().putClientProperty("JRootPane.titleBarInactiveBackground", andromedaBg);
+
 		setResizable(false);
-		
+
 		setBounds(100, 100, 534, 244);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -108,7 +117,7 @@ public class NewEditorWizardDialog extends JDialog {
 				}
 			}
 		}
-		
+
 		{
 			buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -117,11 +126,11 @@ public class NewEditorWizardDialog extends JDialog {
 				okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						
+
 						dialogResult = DialogResult.OK;
 						setFileModel();
 						dispose();
-						
+
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -139,53 +148,51 @@ public class NewEditorWizardDialog extends JDialog {
 				buttonPane.add(cancelButton);
 			}
 		}
-		
+
 		this.pack();
 	}
-	
-	
+
 	public void setTittleHeader(FileType fileType) {
-		
-		switch (fileType){
-		
-		case ASSEMBLY_FILE: {
-			this.headerLabel.setText("Risc-V Assembly");
-			break;
+
+		switch (fileType) {
+
+			case ASSEMBLY_FILE: {
+				this.headerLabel.setText("Risc-V Assembly");
+				break;
+			}
+			case TEXT_FILE: {
+				this.headerLabel.setText("Documento de texto");
+				break;
+			}
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + fileType);
 		}
-		case TEXT_FILE: {
-			this.headerLabel.setText("Documento de texto");
-			break;
-		}
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + fileType);
-		}
-		
+
 	}
-	
+
 	private void closingDialog() {
 		this.dialogResult = DialogResult.ABORT;
 		this.dispose();
 	}
-	
+
 	public void setDialogResult(DialogResult result) {
 		this.dialogResult = result;
 	}
-	
+
 	public DialogResult getDialogResult() {
 		return this.dialogResult;
 	}
-	
+
 	public void setFileModel() {
-        // Need to idenitify the filetype here
-        if(txfFileName.getText().contains(".asm")){
-            this.fileModel = new FileModel(this.txfFileName.getText(), this.fileType);
-        }
-        else
-            this.fileModel = new FileModel(this.txfFileName.getText() + ".asm", this.fileType);
+		// Need to idenitify the filetype here
+		if (txfFileName.getText().contains(".asm")) {
+			this.fileModel = new FileModel(this.txfFileName.getText(), this.fileType);
+		} else
+			this.fileModel = new FileModel(this.txfFileName.getText() + ".asm", this.fileType);
 	}
-	
+
 	public FileModel getFileModel() {
 		return this.fileModel;
 	}
-	
+
 }

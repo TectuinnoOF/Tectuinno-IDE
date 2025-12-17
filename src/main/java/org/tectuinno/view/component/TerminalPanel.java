@@ -36,6 +36,7 @@ import java.awt.Font;
 import java.awt.Cursor;
 import java.util.Locale;
 import javax.swing.JScrollPane;
+import javax.swing.text.DefaultCaret;
 
 /**
  * Represents a single terminal panel within the Tectuinno IDE console system.
@@ -61,10 +62,11 @@ public class TerminalPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private final String firstTest = "\n" + "**********************************************************************\n"
-			+ "** Tectuinno Developer Console v1.0\n" + "** Copyright (c) 2025 Tectuinno Project\n"
-			+ "** Powered by RISC-V & Java Swing\n"
-			+ "**********************************************************************\n";
+	private final String firstTest = "\n" +
+			"##############################################################\n" +
+			"#  Tectuinno Developer Console v1.0                        #\n" +
+			"#  © 2025 Tectuinno Project — Powered by RISC-V & Java Swing #\n" +
+			"##############################################################\n";
 
 	private JTextArea txaConsoleTextResult;
 
@@ -76,19 +78,33 @@ public class TerminalPanel extends JPanel {
 
 		txaConsoleTextResult = new JTextArea();
 		txaConsoleTextResult.setText(firstTest);
-		txaConsoleTextResult.setLocale(new Locale("es", "MX"));
-		txaConsoleTextResult.setForeground(new Color(0, 204, 0));
-		txaConsoleTextResult.setFont(new Font("Lucida Fax", Font.PLAIN, 12));
+		txaConsoleTextResult.setLocale(Locale.forLanguageTag("es-MX"));
+		Color accentPurple = new Color(187, 134, 252);
+
+		txaConsoleTextResult.setForeground(new Color(0xff, 0xe6, 0x6d)); // terminal.ansiYellow #ffe66d
+		txaConsoleTextResult.setFont(new Font("Consolas", Font.PLAIN, 13)); // Fuente monoespaciada moderna
 		txaConsoleTextResult.setEditable(false);
 		txaConsoleTextResult.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-		txaConsoleTextResult.setCaretColor(Color.WHITE);
-		txaConsoleTextResult.setBackground(new Color(51, 51, 51));
+		txaConsoleTextResult.setCaretColor(accentPurple);
+		txaConsoleTextResult.setSelectionColor(accentPurple.darker());
+		txaConsoleTextResult.setBackground(new Color(0x0c, 0x0e, 0x14)); // #0c0e14 un poco más claro que editor
+        ((DefaultCaret) txaConsoleTextResult.getCaret()).setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+		// Encabezados con acentos (insertados en bienvenida)
+		txaConsoleTextResult.append("\n  » Listo para compilar y enviar tramas.\n");
 		scrollPane.setViewportView(txaConsoleTextResult);
 
 	}
 
 	public void writteIn(String text) {
 		this.txaConsoleTextResult.append("\n\r" + text);
+		this.txaConsoleTextResult.setCaretPosition(this.txaConsoleTextResult.getDocument().getLength());
+	}
+
+	public void reset() {
+		txaConsoleTextResult.setText(firstTest);
+		txaConsoleTextResult.append("\n  » Listo para compilar y enviar tramas.\n");
+		txaConsoleTextResult.setCaretPosition(txaConsoleTextResult.getDocument().getLength());
 	}
 
 }

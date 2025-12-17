@@ -29,16 +29,13 @@
 package org.tectuinno.io;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.function.IntConsumer;
 
 import org.tectuinno.exception.PayloadTooLargeException;
@@ -147,11 +144,7 @@ public class WifiProgrammer {
      */
     public void send(String host, int port, byte[] payload, int timeoutMs, IntConsumer onProgress) throws IOException, PayloadTooLargeException{
     	
-    	byte[] completeMessage = this.prepareMessage("TECTUINNO", payload);
-    	
-    	for(int i = 0; i<completeMessage.length; i++) {
-    		System.out.print(completeMessage[i]);
-    	}
+    	byte[] completeMessage = this.prepareMessage("Tectuinno", payload, this.checksum(payload));
     	
     	try(Socket s = new Socket()){
     		
@@ -182,24 +175,41 @@ public class WifiProgrammer {
      * </pre>
      * </p>
      *
-     * @param handShake the handshake string (usually {@code "TECTUINNO"})
+     * @param handShake the handshake string (usually {@code "Tectuinno"})
      * @param payload   the raw program data
+     * @param checksum  1-byte checksum of the payload
      * @return the full byte array ready for transmission
      * @throws PayloadTooLargeException if {@code payload.length > 65535}
      */
-    private byte[] prepareMessage(String handShake,byte[] payload) throws PayloadTooLargeException{
+    private byte[] prepareMessage(String handShake,byte[] payload, int checksum) throws PayloadTooLargeException{
     	
-    	if (payload.length > 0xFFFF) {
-            throw new PayloadTooLargeException(payload.length);
-        }
-
-        byte[] header = handShake.getBytes(StandardCharsets.US_ASCII);
-        byte[] frame = new byte[header.length + payload.length];
-
-        System.arraycopy(header, 0, frame, 0, header.length);
-        System.arraycopy(payload, 0, frame, header.length, payload.length);
-
-        return frame;
+    	if(payload.length > 0xFFFF) {
+    		throw new PayloadTooLargeException(payload.length);
+    	}
+    	
+    	//this pointer is needed to alocate the data in the final message array
+    	int position = 0;
+    	
+    	//Convert the first message in bytearray
+    	//byte[] byteHandShake = handShake.getBytes();
+    	
+    	//converting the size to a byte data
+        // Removed unused local variable to satisfy strict compilation settings
+    	
+    	//the new completed payload included the handshake message and the code
+    	byte[] completePayload = new byte[/*byteHandShake.length + 2 + */payload.length];
+    	
+    	//then, we concat the data in just one array
+    	//System.arraycopy(byteHandShake, 0, completePayload, position, byteHandShake.length);
+    	//position += byteHandShake.length;
+    	//completePayload[position++] = sizeHigh;
+    	//completePayload[position++] = sizeLow;    	    	
+    	System.arraycopy(payload, 0, completePayload, position, payload.length);
+    	//position += payload.length;
+    	//completePayload[position] = (byte) checksum;
+    	    	
+    	
+    	return completePayload;
     }
     
     /**

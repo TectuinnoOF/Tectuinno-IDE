@@ -58,7 +58,10 @@ public final class AsmEditorStyleName {
     public static final String TAG = "tag";
     
     /** Style name for inline comments. */
-    public static final String COMMENT = "comment";    
+    public static final String COMMENT = "comment";
+
+    /** Style name for immediates (hex/dec literals). */
+    public static final String IMMEDIATE = "immediate";    
 
     /**
      * Private constructor to prevent instantiation.
