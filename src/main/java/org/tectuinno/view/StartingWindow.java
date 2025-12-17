@@ -373,8 +373,8 @@ public class StartingWindow extends JFrame {
 		JMenuEdit.add(new JSeparator());
 
 		JMenuItem JMenuOptionFind = new JMenuItem("Buscar...");
-		// Atajo: Ctrl/Cmd + F
-		JMenuOptionFind.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F,
+		// Atajo: Ctrl/Cmd + B
+		JMenuOptionFind.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B,
 				java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
 		JMenuOptionFind.addActionListener(e -> {
 			AsmEditorInternalFrame frame = getActiveEditorFrame();
