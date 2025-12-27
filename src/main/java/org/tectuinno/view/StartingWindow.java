@@ -35,6 +35,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -93,6 +94,7 @@ import org.tectuinno.utils.ExampleResources;
 import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
 import org.tectuinno.view.assembler.AsmEditorPane;
+import org.tectuinno.view.component.FrAbout;
 import org.tectuinno.view.component.FrWiFiWizarDialog;
 import org.tectuinno.view.component.ResultConsolePanel;
 import org.tectuinno.view.component.ModernNotification;
@@ -167,6 +169,12 @@ public class StartingWindow extends JFrame {
 	private JSeparator separator_2;
 	private JMenuItem JMenuOptionGoToLine;
 	private JMenuItem JMenuOptionSelectAll;
+	private JMenu JMenuHelp;
+	private JMenuItem JMenuOptionAbout;
+	private JMenuItem JMenuOptionLicense;
+	private JMenu JMenuSourceRepository;
+	private JMenuItem JMenuOptionSourceCode;
+	private JMenuItem JMenuOptionWiki;
 	// private List<String> opennedEditors;
 
 	/**
@@ -383,6 +391,29 @@ public class StartingWindow extends JFrame {
 			}
 		});
 		JMenuEdit.add(JMenuOptionFind);
+		
+		JMenuHelp = new JMenu("Ayuda");
+		menuBar.add(JMenuHelp);
+		
+		JMenuOptionAbout = new JMenuItem("Acerca de...");
+		JMenuOptionAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openAboutForm();
+			}
+		});
+		JMenuHelp.add(JMenuOptionAbout);
+		
+		JMenuOptionLicense = new JMenuItem("Licencia");
+		JMenuHelp.add(JMenuOptionLicense);
+		
+		JMenuSourceRepository = new JMenu("Repositorio");
+		JMenuHelp.add(JMenuSourceRepository);
+		
+		JMenuOptionSourceCode = new JMenuItem("Código");
+		JMenuSourceRepository.add(JMenuOptionSourceCode);
+		
+		JMenuOptionWiki = new JMenuItem("Wiki Tectuinno IDE");
+		JMenuSourceRepository.add(JMenuOptionWiki);
 
 		// Opciones de tamaño de fuente desactivadas: se usa el zoom con Ctrl + rueda
 		/*
@@ -1378,4 +1409,24 @@ public class StartingWindow extends JFrame {
 	}
 
 	// Ajuste de tamaño de fuente se realiza solo via Ctrl + rueda en el editor
+	
+	private void openAboutForm() {
+		
+		JFrame parent = this;
+		
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					
+					FrAbout frame = new FrAbout();
+					frame.setLocationRelativeTo(parent);
+					frame.setVisible(true);
+					
+				}catch (Exception e) {
+					System.err.println(e.getMessage());
+					e.printStackTrace(System.err);
+				}
+			}
+		});
+	}
 }
