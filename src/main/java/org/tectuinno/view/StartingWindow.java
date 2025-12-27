@@ -95,6 +95,7 @@ import org.tectuinno.utils.FileType;
 import org.tectuinno.view.assembler.AsmEditorInternalFrame;
 import org.tectuinno.view.assembler.AsmEditorPane;
 import org.tectuinno.view.component.FrAbout;
+import org.tectuinno.view.component.FrLicenseInfo;
 import org.tectuinno.view.component.FrWiFiWizarDialog;
 import org.tectuinno.view.component.ResultConsolePanel;
 import org.tectuinno.view.component.ModernNotification;
@@ -404,6 +405,11 @@ public class StartingWindow extends JFrame {
 		JMenuHelp.add(JMenuOptionAbout);
 		
 		JMenuOptionLicense = new JMenuItem("Licencia");
+		JMenuOptionLicense.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				openLicenseInfoForm();
+			}
+		});
 		JMenuHelp.add(JMenuOptionLicense);
 		
 		JMenuSourceRepository = new JMenu("Repositorio");
@@ -1426,6 +1432,29 @@ public class StartingWindow extends JFrame {
 					System.err.println(e.getMessage());
 					e.printStackTrace(System.err);
 				}
+			}
+		});
+	}
+	
+	private void openLicenseInfoForm() {
+		JFrame parent = this;
+		
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				try {
+					
+					FrLicenseInfo frame = new FrLicenseInfo();
+					frame.setLocationRelativeTo(parent);
+					frame.setVisible(true);
+					
+				}catch (Exception e) {
+					e.printStackTrace(System.err);
+					System.err.println(e.getMessage());
+				}
+				
 			}
 		});
 	}
