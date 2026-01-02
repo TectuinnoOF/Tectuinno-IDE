@@ -1,7 +1,7 @@
 # Release v5 — Tectuinno IDE Mejorado
 
 ## Resumen
-Lanzamiento de características con interfaz mejorada, nueva funcionalidad de búsqueda, sistema de ayuda integrado y distribución compilada en JAR para facilitar el despliegue.
+Lanzamiento de características con interfaz mejorada, nueva funcionalidad de búsqueda y ventana de ayuda integrada.
 
 ## ✨ Novedades
 
@@ -48,7 +48,7 @@ java -jar Tectuinno-IDE.jar
 # Release v5 — Tectuinno IDE Enhanced
 
 ## Summary
-Major feature release with improved UI/UX, new search functionality, integrated help system, and compiled JAR distribution for easier deployment.
+Major feature release with improved UI/UX, new search functionality and help tab integrated.
 
 ## ✨ What's New
 
