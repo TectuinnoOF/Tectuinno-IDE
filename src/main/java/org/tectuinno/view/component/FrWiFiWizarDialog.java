@@ -256,7 +256,7 @@ public class FrWiFiWizarDialog extends JFrame {
 
 		final String host = this.txfIpHost.getText();
 		final int port = (Integer) this.jSpinSpPort.getValue();
-		this.consoleWritte("Provado conexión a: " + host + ":" + port + "...");
+		this.consoleWritte("Probando conexión a: " + host + ":" + port + "...");
 		// btnTestConnection.setEnabled(false);
 		// this.btnSend.setEnabled(false);
 
