@@ -29,6 +29,7 @@
 package org.tectuinno.compiler.assembler.encode;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.tectuinno.compiler.assembler.EncoderIrLine;
@@ -42,8 +43,7 @@ public final class FrameUtil {
 
         for (EncoderIrLine ln : encodedLines) {
             String hx = ln.hex(); // esperado: "0xXXXXXXXX" o "ERROR"
-            if (hx == null || "ERROR".equalsIgnoreCase(hx)) {
-                // puedes decidir si abortar o saltar; aquí saltamos
+            if (hx == null || "ERROR".equalsIgnoreCase(hx)) {               
                 continue;
             }
             // Más robusto con unsigned:
@@ -51,7 +51,16 @@ public final class FrameUtil {
             byte[] le = AsmEncoder.toLittleEndian(word);
             out.write(le, 0, le.length);
         }
-        return out.toByteArray();
+        
+        byte[] payload = out.toByteArray();
+        byte[] header = "TECTUINNO".getBytes(StandardCharsets.US_ASCII);
+        
+        byte[] frame = new byte[header.length + payload.length];
+        
+        System.arraycopy(header, 0, frame, 0, header.length);
+        System.arraycopy(payload, 0, frame, header.length, payload.length);
+        
+        return frame;
     }
 	
 	 public static String toHex(byte[] frame, boolean conEspacios) {

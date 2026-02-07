@@ -41,8 +41,11 @@ public final class SerialPortService {
     }
 
     public static List<PortInfo> listAvailablePorts() {
+    	
         SerialPort[] ports = SerialPort.getCommPorts();
+        
         List<PortInfo> out = new ArrayList<>(ports.length);
+        
         for (SerialPort p : ports) {
             String desc = p.getDescriptivePortName();
             // Ocultar puertos Bluetooth (e.g., "Serie estándar sobre el vínculo Bluetooth")

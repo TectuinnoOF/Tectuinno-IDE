@@ -46,6 +46,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Time;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.swing.DebugGraphics;
@@ -653,7 +655,11 @@ public class StartingWindow extends JFrame {
 	}
 
 	private void refreshComPortsAutoSelect() {
+		
+		System.out.println("COM:" + LocalDate.now() + " Leyendo puertos");
+		
 		List<PortInfo> current = SerialPortService.listAvailablePorts();
+		
 		boolean changed = portsChanged(lastPorts, current);
 		if (!changed) {
 			return;
