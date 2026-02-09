@@ -46,7 +46,7 @@ public final class FrameUtil {
             if (hx == null || "ERROR".equalsIgnoreCase(hx)) {               
                 continue;
             }
-            // Más robusto con unsigned:
+            
             int word = (int) Long.parseUnsignedLong(hx.substring(2), 16);
             byte[] le = AsmEncoder.toLittleEndian(word);
             out.write(le, 0, le.length);

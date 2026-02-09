@@ -88,6 +88,7 @@ import org.tectuinno.compiler.assembler.EncoderIrLine;
 import org.tectuinno.compiler.assembler.encode.FrameUtil;
 import org.tectuinno.compiler.assembler.utils.AsmListingFormatter;
 import org.tectuinno.compiler.assembler.utils.Token;
+import org.tectuinno.config.FlatlafManager;
 import org.tectuinno.App;
 import org.tectuinno.io.PortInfo;
 import org.tectuinno.io.SerialPortService;
@@ -656,7 +657,7 @@ public class StartingWindow extends JFrame {
 
 	private void refreshComPortsAutoSelect() {
 		
-		System.out.println("COM:" + LocalDate.now() + " Leyendo puertos");
+		//System.out.println("COM:" + LocalDate.now() + " Leyendo puertos");
 		
 		List<PortInfo> current = SerialPortService.listAvailablePorts();
 		
@@ -708,7 +709,7 @@ public class StartingWindow extends JFrame {
 			archivo = frame.getArchivoActual();
 			if (archivo == null) {
 				// Aplicar colores Andromeda a JFileChooser
-				App.configureFileChooserTheme();
+				FlatlafManager.configureFileChooserTheme();
 				JFileChooser guardado = new JFileChooser();
 				guardado.setDialogTitle("Guardar archivo");
 				guardado.setSelectedFile(new File(titulo));
@@ -751,7 +752,7 @@ public class StartingWindow extends JFrame {
 			String titulo = frame.getTitle();
 
 			// Siempre mostrar diálogo para elegir ubicación en "Guardar Como"
-			App.configureFileChooserTheme();
+			FlatlafManager.configureFileChooserTheme();
 			JFileChooser guardado = new JFileChooser();
 			guardado.setDialogTitle("Guardar Como...");
 			guardado.setSelectedFile(new File(titulo));
@@ -1174,7 +1175,7 @@ public class StartingWindow extends JFrame {
 		StringBuilder sb = new StringBuilder();
 
 		// Aplicar colores Andromeda a JFileChooser
-		App.configureFileChooserTheme();
+		FlatlafManager.configureFileChooserTheme();
 		JFileChooser fileChooser = new JFileChooser();
 
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Assembly", "asm");
@@ -1233,6 +1234,7 @@ public class StartingWindow extends JFrame {
 	 * Aplica color a la barra de título del JFileChooser cuando su diálogo se crea (se ejecuta de forma diferida para que el dialog ya exista).
 	 */
 	private void colorizeFileChooserWindowAsync(JFileChooser chooser) {
+		
 		chooser.addHierarchyListener(new java.awt.event.HierarchyListener() {
 			@Override
 			public void hierarchyChanged(java.awt.event.HierarchyEvent e) {
@@ -1240,7 +1242,7 @@ public class StartingWindow extends JFrame {
 						&& chooser.isShowing()) {
 					java.awt.Window w = javax.swing.SwingUtilities.getWindowAncestor(chooser);
 					if (w != null) {
-						App.colorizeFileChooserTitleBar(w);
+						FlatlafManager.colorizeFileChooserTitleBar(w);
 					}
 					applyFileChooserToolbarAccent(chooser);
 					chooser.removeHierarchyListener(this);
