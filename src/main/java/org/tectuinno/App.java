@@ -28,19 +28,17 @@
 
 package org.tectuinno;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import java.awt.Color;
 import java.awt.EventQueue;
-import javax.swing.UIManager;
-import javax.swing.border.LineBorder;
-
 import org.tectuinno.config.FlatlafManager;
+import org.tectuinno.io.LoggerInfoManager;
 import org.tectuinno.view.StartingWindow;
 
 public class App {
 
 	public static void main(String[] args) {
-
+		
+		LoggerInfoManager.writteInInfoLogTxt("Inicializando Tectuinno IDE");
+		
 		FlatlafManager.enableOnlySoftwareRendering();
 		FlatlafManager.setUpFlatlafLookAndFell();
 		FlatlafManager.setupBorderRadiusArcs();
@@ -48,18 +46,19 @@ public class App {
 		FlatlafManager.colorizeWarningDialogs();
 		FlatlafManager.colorizeJFileChooser();
 
-		EventQueue.invokeLater(
-				new Runnable() {
-					public void run() {
-						try {
-							StartingWindow frame = new StartingWindow();
-							frame.setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					LoggerInfoManager.writteInInfoLogTxt("Inicializando interfaz");
+					StartingWindow frame = new StartingWindow();
+					frame.setVisible(true);
+					LoggerInfoManager.writteInInfoLogTxt("Interzar iniciada");
+				} catch (Exception e) {
+					e.printStackTrace();
+					LoggerInfoManager.writteInErrorLogTxtr(e.getMessage(), e.fillInStackTrace());
+				}
+			}
+		});
 	}
 
-		
 }

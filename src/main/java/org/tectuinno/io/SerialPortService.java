@@ -58,6 +58,9 @@ public final class SerialPortService {
     }
 
     public static void sendBytes(String systemPortName, int baud, byte[] data) throws IOException {
+    	
+    	LoggerInfoManager.writteInInfoLogTxt("Preparando envio de trama a: " + systemPortName);
+    	
         SerialPort port = SerialPort.getCommPort(systemPortName);
         port.setComPortParameters(baud, 8, SerialPort.ONE_STOP_BIT, SerialPort.NO_PARITY);
         port.setComPortTimeouts(SerialPort.TIMEOUT_WRITE_BLOCKING, 0, 0);

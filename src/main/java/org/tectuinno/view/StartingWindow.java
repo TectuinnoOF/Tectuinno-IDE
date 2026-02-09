@@ -90,6 +90,7 @@ import org.tectuinno.compiler.assembler.utils.AsmListingFormatter;
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.config.FlatlafManager;
 import org.tectuinno.App;
+import org.tectuinno.io.LoggerInfoManager;
 import org.tectuinno.io.PortInfo;
 import org.tectuinno.io.SerialPortService;
 import org.tectuinno.utils.DialogResult;
@@ -452,7 +453,10 @@ public class StartingWindow extends JFrame {
 
 			btnAnalice.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-
+					
+					//informando en log
+					LoggerInfoManager.writteInInfoLogTxt("iniciando analicis lexico");
+					
 					final AsmEditorInternalFrame activeFrame = getActiveEditorFrame();
 					if (activeFrame != null) {
 						activeFrame.getAsmEditorPane().clearInlineErrors();
@@ -574,7 +578,8 @@ public class StartingWindow extends JFrame {
 		{
 			btnSearchComDevices.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					searchForComDevices();
+					LoggerInfoManager.writteInInfoLogTxt("Buscando puertos activos...");
+					searchForComDevices();					
 				}
 			});
 			compilerToolBar.add(btnSearchComDevices);
@@ -629,7 +634,9 @@ public class StartingWindow extends JFrame {
 
 		// Abrir automáticamente un editor temporal al iniciar (como Word)
 		try {
+			
 			openNewAsmEditor("Sin título.asm", "");
+			
 		} catch (Exception ex) {
 			// Si falla, no interrumpir el inicio
 			ex.printStackTrace(System.err);
@@ -860,12 +867,16 @@ public class StartingWindow extends JFrame {
 
 		new Thread(() -> {
 			try {
+				LoggerInfoManager.writteInInfoLogTxt("Intentando enviar nuevo programa");
 				SerialPortService.sendBytes(selected.systemName(), baud, preparedFrame);
 				consolePanel.getTerminalPanel().writteIn(">> Trama enviada a " + selected.systemName() + "\n");
+				LoggerInfoManager.writteInInfoLogTxt("Envio terminado");
 			} catch (Exception ex) {
 				consolePanel.getTerminalPanel()
 						.writteIn(">> Error enviando a " + selected.systemName() + ": " + ex.getMessage() + "\n");
 				ex.printStackTrace(System.err);
+				
+				LoggerInfoManager.writteInErrorLogTxtr("No se pudo completar el envio", ex.fillInStackTrace());
 			}
 		}, "uart-send-thread").start();
 
@@ -875,7 +886,7 @@ public class StartingWindow extends JFrame {
 
 		List<AnalysisError> semanticErrors = List.of();
 		try {
-
+			LoggerInfoManager.writteInInfoLogTxt("Comenzando analisis semantico");
 			AsmSemanticAnalyzer analizer = new AsmSemanticAnalyzer(tokens, this.consolePanel);
 			this.isSemanticCorrect = analizer.analize();
 			semanticErrors = analizer.getErrors();
@@ -888,10 +899,11 @@ public class StartingWindow extends JFrame {
 					this.editorTabs.setForegroundAt(idx, new Color(255, 184, 108));
 				}
 			}
-
+			LoggerInfoManager.writteInInfoLogTxt("Analisis semantico terminado");
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.consolePanel.getTerminalPanel().writteIn(">>> " + e.getMessage());
+			LoggerInfoManager.writteInErrorLogTxtr("ocurrio un error durante analisis semantico", e.fillInStackTrace());
 		}
 
 		return semanticErrors;
@@ -949,7 +961,7 @@ public class StartingWindow extends JFrame {
 
 		List<AnalysisError> syntaxErrors = List.of();
 		try {
-
+			LoggerInfoManager.writteInInfoLogTxt("Iniciando analisis semantico");
 			AsmParser parser = new AsmParser(tokens);
 			parser.setResultConsolePanel(consolePanel);
 			consolePanel.getTerminalPanel()
@@ -967,10 +979,13 @@ public class StartingWindow extends JFrame {
 					this.editorTabs.setForegroundAt(idx, new Color(255, 105, 97)); // rojo suave para sintaxis
 				}
 			}
+			
+			LoggerInfoManager.writteInInfoLogTxt("Analisis semantico terminado");
 
 		} catch (Exception er) {
 			er.printStackTrace(System.err);
 			this.consolePanel.getTerminalPanel().writteIn(">>> " + er.getMessage());
+			LoggerInfoManager.writteInErrorLogTxtr("Ocurrio un errro durante el analisis semantico", er.fillInStackTrace());
 		}
 
 		return syntaxErrors;
@@ -978,7 +993,7 @@ public class StartingWindow extends JFrame {
 	}
 
 	public List<Token> analizeCurrentLexer() {
-
+		
 		AsmLexer currentLexer = getCurrentLexer();
 		List<Token> tokens = currentLexer.tokenize();
 		return tokens;
@@ -1015,7 +1030,7 @@ public class StartingWindow extends JFrame {
 	public void openNewAsmEditor() {
 
 		try {
-
+			LoggerInfoManager.writteInWarnLogTxt("Abriendo un nuevo editor ASM");
 			// Open the editor wizard and the user fill the data
 			NewEditorWizardDialog dialog = this.openEditorWizard(FileType.ASSEMBLY_FILE);
 
@@ -1043,9 +1058,14 @@ public class StartingWindow extends JFrame {
 					createClosableTabComponent(dialog.getFileModel().getName(), asmInternalFrame));
 			this.editorTabs.setSelectedComponent(asmInternalFrame);
 			updateTabLabelColors();
-
+			
+			LoggerInfoManager.writteInInfoLogTxt("Se ha creado un nuevo editor: " + dialog.getFileModel().getName());
+			
 		} catch (Exception e) {
+			
 			e.printStackTrace();
+			LoggerInfoManager.writteInErrorLogTxtr("Ha ocurrido un error al intentar crear un nuevo editor", e.fillInStackTrace());
+			
 			return;
 		}
 
@@ -1172,6 +1192,8 @@ public class StartingWindow extends JFrame {
 
 	private void openAsmFile() {
 
+		LoggerInfoManager.writteInInfoLogTxt("Abriendo archivo .asm");
+		
 		StringBuilder sb = new StringBuilder();
 
 		// Aplicar colores Andromeda a JFileChooser
@@ -1221,11 +1243,14 @@ public class StartingWindow extends JFrame {
 				e.printStackTrace();
 
 				showErrorDialog("Ha ocurrido un error: " + e.getMessage());
+				
+				LoggerInfoManager.writteInErrorLogTxtr("Ha ocurrido un error al intentar abrir un archivo", e.fillInStackTrace());
 			}
 
 		} else {
 			// !JFileChooser.APPROVE_OPTION entonces...
 			showWarnDialog("Acción cancelada");
+			LoggerInfoManager.writteInWarnLogTxt("operacion cancelada por el usuario");
 		}
 
 	}
@@ -1345,7 +1370,7 @@ public class StartingWindow extends JFrame {
 	}
 
 	private void openWifiWizard() {
-
+		
 		if (this.preparedFrame.length <= 0) {
 			showErrorDialog("No hay datos para el envio");
 			return;

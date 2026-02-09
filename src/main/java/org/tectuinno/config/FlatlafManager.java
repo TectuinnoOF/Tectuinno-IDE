@@ -114,13 +114,14 @@ public class FlatlafManager {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Colorea la barra de título de un JFileChooser (o cualquier JDialog/JFrame). Se debe llamar después de que el diálogo esté visible.
+	 * Colorea la barra de título de un JFileChooser (o cualquier JDialog/JFrame).
+	 * Se debe llamar después de que el diálogo esté visible.
 	 */
 	public static void colorizeFileChooserTitleBar(java.awt.Window window) {
 		if (window == null)
-			return;		
+			return;
 
 		javax.swing.JRootPane rootPane = null;
 		if (window instanceof javax.swing.JFrame) {
@@ -138,13 +139,11 @@ public class FlatlafManager {
 			rootPane.putClientProperty("JRootPane.titleBarIconColor", ColorsPalet.yellowTitle);
 		}
 		try {
-			
+
 			window.setBackground(ColorsPalet.andromedaBg2);
-			
+
 		} catch (Exception ignored) {
-			
-			
-			
+
 		}
 	}
 
@@ -181,7 +180,7 @@ public class FlatlafManager {
 			UIManager.put("Spinner.buttonBackground", ColorsPalet.andromedaBg2);
 			UIManager.put("Spinner.buttonHoverBackground", ColorsPalet.andromedaHover);
 			UIManager.put("Spinner.buttonArrowColor", ColorsPalet.andromedaAccent);
-			
+
 			UIManager.put("Button.toolbar.hoverBackground", ColorsPalet.transparent);
 			UIManager.put("Button.toolbar.pressedBackground", ColorsPalet.transparent);
 			UIManager.put("Button.toolbar.selectedBackground", ColorsPalet.transparent);
@@ -191,11 +190,14 @@ public class FlatlafManager {
 
 			// Pestañas con colores exactos del tema Andromeda
 			UIManager.put("TabbedPane.selectedBackground", ColorsPalet.andromedaBg2); // tab.activeBackground #0e1019
-			UIManager.put("TabbedPane.selectedForeground", new Color(0xff, 0xe6, 0x6d)); // Amarillo para la pestaña activa
+			UIManager.put("TabbedPane.selectedForeground", new Color(0xff, 0xe6, 0x6d)); // Amarillo para la pestaña
+																							// activa
 			UIManager.put("TabbedPane.foreground", new Color(0x74, 0x6f, 0x77)); // tab.inactiveForeground #746f77
 			UIManager.put("TabbedPane.background", ColorsPalet.andromedaBg); // tab.inactiveBackground #0c0e14
-			// Área de pestañas ligeramente distinta para que se diferencie de las pestañas mismas
-			UIManager.put("TabbedPane.tabAreaBackground", ColorsPalet.andromedaBg); // un tono más claro que el fondo de editor
+			// Área de pestañas ligeramente distinta para que se diferencie de las pestañas
+			// mismas
+			UIManager.put("TabbedPane.tabAreaBackground", ColorsPalet.andromedaBg); // un tono más claro que el fondo de
+																					// editor
 			UIManager.put("TabbedPane.hoverColor", ColorsPalet.andromedaHover);
 			UIManager.put("TabbedPane.focusColor", ColorsPalet.andromedaAccent);
 			// Línea indicadora aún más delgada y en cyan
@@ -210,7 +212,7 @@ public class FlatlafManager {
 			UIManager.put("Button.foreground", ColorsPalet.andromedaAccent);
 			UIManager.put("MenuItem.foreground", ColorsPalet.andromedaAccent);
 			UIManager.put("MenuItem.selectionForeground", ColorsPalet.yellowTitle); // Hover amarillo en items
-			UIManager.put("Menu.foreground",ColorsPalet.andromedaAccent);
+			UIManager.put("Menu.foreground", ColorsPalet.andromedaAccent);
 			UIManager.put("Menu.selectionForeground", ColorsPalet.yellowTitle); // Hover amarillo en menús
 			UIManager.put("Menu.selectionBackground", ColorsPalet.andromedaHover); // Fondo hover en menús
 			UIManager.put("CheckBox.foreground", ColorsPalet.andromedaAccent);
@@ -219,8 +221,7 @@ public class FlatlafManager {
 			UIManager.put("Table.focusCellHighlightBorder", new LineBorder(ColorsPalet.andromedaAccent, 1, true));
 
 			// Botones de la barra de título (minimizar, maximizar, cerrar) en amarillo
-			UIManager.put(
-					"TitlePane.closeHoverBackground", new Color(0xc4, 0x2b, 0x1c)); // Rojo para cerrar hover
+			UIManager.put("TitlePane.closeHoverBackground", new Color(0xc4, 0x2b, 0x1c)); // Rojo para cerrar hover
 			UIManager.put("TitlePane.buttonHoverBackground", ColorsPalet.andromedaHover);
 			UIManager.put("TitlePane.buttonPressedBackground", new Color(0x50, 0x52, 0x5a));
 
@@ -230,29 +231,29 @@ public class FlatlafManager {
 		}
 
 	}
-	
+
 	public static void colorizeWarningDialogs() {
-		
+
 		try {
-			
+
 			// Diálogos de advertencia (JOptionPane)
 			UIManager.put("OptionPane.background", ColorsPalet.andromedaBg2);
 			UIManager.put("OptionPane.messageForeground", ColorsPalet.andromedaAccent);
 			UIManager.put("OptionPane.buttonBackground", ColorsPalet.andromedaBg2);
 			UIManager.put("Component.accentColor", ColorsPalet.andromedaAccent); // Morado Andromeda
-			
-		}catch (Exception e) {
-			
+
+		} catch (Exception e) {
+
 			e.printStackTrace(System.err);
-			
+
 		}
-		
+
 	}
-	
+
 	public static void colorizeJFileChooser() {
-		
+
 		try {
-			
+
 			UIManager.put("FileChooser.background", ColorsPalet.andromedaBg2);
 			UIManager.put("FileChooser.foreground", ColorsPalet.andromedaAccent);
 			UIManager.put("FileChooser.listViewBackground", ColorsPalet.andromedaBg2);
@@ -274,17 +275,18 @@ public class FlatlafManager {
 			UIManager.put("FileChooser.sidebarBackground", ColorsPalet.andromedaBg);
 			UIManager.put("FileChooser.sidebarSelectionBackground", ColorsPalet.andromedaBg);
 			UIManager.put("FileChooser.sidebarSelectionForeground", ColorsPalet.andromedaAccent);
-			UIManager.put("FileChooser.sidebarFocusCellHighlightBorder", new LineBorder(ColorsPalet.andromedaAccent, 1, true));
+			UIManager.put("FileChooser.sidebarFocusCellHighlightBorder",
+					new LineBorder(ColorsPalet.andromedaAccent, 1, true));
 			UIManager.put("FileChooser.lookInLabelForeground", ColorsPalet.yellowTitle);
 			UIManager.put("FileChooser.filesOfTypeLabelForeground", ColorsPalet.yellowTitle);
 			UIManager.put("FileChooser.toolbarButtonForeground", ColorsPalet.andromedaAccent);
 			UIManager.put("FileChooser.toolbarButtonHoverBackground", ColorsPalet.andromedaHover);
 			UIManager.put("FileChooser.toolbarButtonPressedBackground", ColorsPalet.andromedaHover);
-			
-		}catch (Exception e) {
-			
+
+		} catch (Exception e) {
+
 			e.printStackTrace(System.err);
 		}
-		
+
 	}
 }

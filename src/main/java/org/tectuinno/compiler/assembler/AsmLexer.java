@@ -352,7 +352,8 @@ public class AsmLexer {
 	 *
 	 * @return a list of tokens found in the source
 	 */
-	public List<Token> tokenize() {
+	public List<Token> tokenize() {				
+		
 		List<Token> tokens = new ArrayList<>();
 		
 		while (!isAtEnd()) {
