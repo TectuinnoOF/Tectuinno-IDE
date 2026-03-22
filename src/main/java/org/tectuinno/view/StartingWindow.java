@@ -632,30 +632,17 @@ public class StartingWindow extends JFrame {
 
 		this.builExamplesMenu();
 
-		// Abrir automáticamente un editor temporal al iniciar (como Word)
+		// Abrir automáticamente un editor temporal al iniciar
 		try {
 			
 			openNewAsmEditor("Sin título.asm", "");
 			
 		} catch (Exception ex) {
 			// Si falla, no interrumpir el inicio
-			ex.printStackTrace(System.err);
+			ex.printStackTrace(System.err);			
+			LoggerInfoManager.writteInErrorLogTxtr("Ha ocurrido un error al iniciar ventana principal", ex.fillInStackTrace());
 		}
 	}
-
-	/*
-	 * private boolean buildAll() {
-	 * 
-	 * List<Token> tokens = analizeCurrentLexer();
-	 * 
-	 * asmSyntaxParse(tokens);
-	 * 
-	 * if(!isSintaxCorrect) { JOptionPane.showMessageDialog(null, "Existen errores de sintaxis en el código", "Error", JOptionPane.ERROR_MESSAGE); return false; };
-	 * 
-	 * asmSemanticParse(tokens);
-	 * 
-	 * if(!isSemanticCorrect) { JOptionPane.showMessageDialog(null, "Existen errores de Semanticos en el código", "Error", JOptionPane.ERROR_MESSAGE); }; }
-	 */
 
 	private void searchForComDevices() {
 		// Escaneo inicial manual: delega en el refresco con auto-selección
@@ -705,15 +692,33 @@ public class StartingWindow extends JFrame {
 		return false;
 	}
 
-	public void saveCurrentFile() {
-
+	/**
+	 * <strong>Guarda el contenido del editor ensamblador actualmente activo</strong>
+	 * 
+	 * <p>Comportamiento:</p>
+	 * <ul>
+	 * <li>Si no existe un editor activo, muestra un diálogo de advertencia.</li>
+	 * <li>Si ocurre un {@link IOException}, muestra un diálogo de error.</li>
+	 * <li>Registra eventos informativos en {@link LoggerInfoManager}.</li>
+	 * </ul>
+	 * 
+	 * @implNote
+	 * Este método no maneja guardado incremental ni detección de cambios no guardados.
+	 * El archivo es sobrescrito completamente en cada invocación.
+	 */
+	public void saveCurrentFile() {		
+		
 		AsmEditorInternalFrame frame = getActiveEditorFrame();
 
+		LoggerInfoManager.writteInInfoLogTxt("Intentando guardar fichero actual");
+		
 		if (frame != null) {
+			
 			String contenido = frame.asmGetEditorText();
 			String titulo = frame.getTitle();
 			File archivo = new File(titulo);
 			archivo = frame.getArchivoActual();
+			
 			if (archivo == null) {
 				// Aplicar colores Andromeda a JFileChooser
 				FlatlafManager.configureFileChooserTheme();
@@ -733,6 +738,9 @@ public class StartingWindow extends JFrame {
 						this.editorTabs.setTitleAt(idx, archivo.getName());
 					}
 				}
+				
+				LoggerInfoManager.writteInInfoLogTxt("Asignando fichero seleccionado");
+				
 				frame.setArchivoActual(archivo);
 			}
 			try {
@@ -751,6 +759,23 @@ public class StartingWindow extends JFrame {
 		}
 	}
 
+	/**
+	 * {@summary Guarda el cntenido del editor activo solicitando siempre una nueva ubicación mediante un cuadro de dialogo}
+	 * 
+	 * <p> Comportamiento: </p>
+	 * <ul>
+	 *     <li>Si el usuario cancela el diálogo, se muestra una advertencia.</li>
+	 *     <li>Si no hay editor activo, se muestra una advertencia.</li>
+	 *     <li>Si ocurre un {@link IOException}, se muestra un diálogo de error.</li>
+	 * </ul>
+	 * 
+	 * @implNote
+	 * Este método no realiza validación de sobrescritura ni confirmación si el archivo ya existe.
+	 * Cualquier archivo seleccionado será sobrescrito sin advertencia adicional.
+	 *
+	 * @see saveCurrentFile()
+	 * 
+	 */
 	public void saveAsCurrentFile() {
 		AsmEditorInternalFrame frame = getActiveEditorFrame();
 
@@ -845,7 +870,53 @@ public class StartingWindow extends JFrame {
 		}
 		frame.getAsmEditorPane().requestFocusInWindow();
 	}
-
+	
+	/**
+	 * Envía el programa actualmente compilado al microcontrolador Tectuinno
+	 * mediante comunicación serie (UART).
+	 *
+	 * <p>Flujo general:</p>
+	 * <ul>
+	 *     <li>Obtiene la trama binaria preparada mediante {@code getPreparedFrame()}.</li>
+	 *     <li>Valida que existan datos a enviar.</li>
+	 *     <li>Verifica que exista un puerto seleccionado en el {@code JComboBox}.</li>
+	 *     <li>Obtiene el puerto correspondiente desde {@code lastPorts}.</li>
+	 *     <li>Inicia un hilo independiente para realizar el envío.</li>
+	 *     <li>Envía los datos usando {@link SerialPortService#sendBytes(String, int, byte[])}.</li>
+	 *     <li>Registra eventos en {@link LoggerInfoManager}.</li>
+	 * </ul>
+	 *
+	 * <p>Comportamiento:</p>
+	 * <ul>
+	 *     <li>Si no existen datos compilados, muestra mensaje en consola y termina.</li>
+	 *     <li>Si no hay puerto seleccionado, muestra advertencia y termina.</li>
+	 *     <li>El envío se ejecuta en un hilo separado ("uart-send-thread") para evitar
+	 *     bloquear el hilo de la interfaz gráfica (EDT).</li>
+	 *     <li>En caso de error, se muestra el mensaje en la consola y se registra en el log.</li>
+	 * </ul>
+	 *
+	 * <p>Configuración técnica:</p>
+	 * <table border="1">
+	 *     <tr><th>Parámetro</th><th>Valor</th></tr>
+	 *     <tr><td>Baudrate</td><td>115200</td></tr>
+	 *     <tr><td>Modo</td><td>8N1 (configurado en {@link SerialPortService})</td></tr>
+	 *     <tr><td>Hilo</td><td>uart-send-thread</td></tr>
+	 * </table>
+	 *
+	 * @implNote
+	 * Este método asume que la trama generada por {@code getPreparedFrame()}
+	 * ya se encuentra correctamente serializada y ordenada (little-endian).
+	 *
+	 * @implSpec
+	 * El envío se realiza de forma asíncrona mediante {@link Thread} para
+	 * preservar la responsividad de la interfaz Swing.
+	 *
+	 * @see SerialPortService
+	 * @see LoggerInfoManager
+	 * @see #getPreparedFrame()
+	 *
+	 * @since 1.2.1.1
+	 */
 	private void sendDataToMicroContoller() {
 
 		byte[] data = getPreparedFrame();
