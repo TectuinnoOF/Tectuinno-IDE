@@ -455,7 +455,7 @@ public class StartingWindow extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					
 					//informando en log
-					LoggerInfoManager.writteInInfoLogTxt("iniciando analicis lexico");
+					LoggerInfoManager.writteInInfoLogTxt("iniciando analisis lexico");
 					
 					final AsmEditorInternalFrame activeFrame = getActiveEditorFrame();
 					if (activeFrame != null) {

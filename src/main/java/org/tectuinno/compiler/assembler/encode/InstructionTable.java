@@ -31,38 +31,45 @@ package org.tectuinno.compiler.assembler.encode;
 import static org.tectuinno.compiler.assembler.utils.AsmSyntaxDictionary.*;
 import java.util.Map;
 
+
 final class InstructionTable {
-	
-	private InstructionTable() {}
-	
+
+	private InstructionTable() {
+	}
+
 	// funct7=0x20 is used by SUB, others 0x00
-    static final Map<String, InstructionDef> DEF = Map.ofEntries(
-        // R-type
-        Map.entry(ADD,  new InstructionDef(Format.R, 0x33, 0x0, 0x00)),
-        Map.entry(SUB,  new InstructionDef(Format.R, 0x33, 0x0, 0x20)),
-        Map.entry(SLT,  new InstructionDef(Format.R, 0x33, 0x2, 0x00)),
-        Map.entry(AND,  new InstructionDef(Format.R, 0x33, 0x7, 0x00)),
-        Map.entry(OR,   new InstructionDef(Format.R, 0x33, 0x6, 0x00)),
+	static final Map<String, InstructionDef> DEF = Map.ofEntries(
+			// R-type
+			Map.entry(ADD, new InstructionDef(Format.R, 0x33, 0x0, 0x00)),
+			Map.entry(SUB, new InstructionDef(Format.R, 0x33, 0x0, 0x20)),
+			Map.entry(SLL, new InstructionDef(Format.R, 0x33, 0x1, 0x00)),
+			Map.entry(SLT, new InstructionDef(Format.R, 0x33, 0x2, 0x00)),
+			Map.entry(XOR, new InstructionDef(Format.R, 0x33, 0x4, 0x00)),
+			Map.entry(SRL, new InstructionDef(Format.R, 0x33, 0x5, 0x00)),
+			Map.entry(SRA, new InstructionDef(Format.R, 0x33, 0x5, 0x20)),
+			Map.entry(AND, new InstructionDef(Format.R, 0x33, 0x7, 0x00)),
+			Map.entry(OR, new InstructionDef(Format.R, 0x33, 0x6, 0x00)),
 
-        // I-type
-        Map.entry(ADDI, new InstructionDef(Format.I, 0x13, 0x0, 0x00)),
-        Map.entry(ANDI, new InstructionDef(Format.I, 0x13, 0x7, 0x00)),
-        Map.entry(ORI,  new InstructionDef(Format.I, 0x13, 0x6, 0x00)),
-        Map.entry(JALR, new InstructionDef(Format.I, 0x67, 0x0, 0x00)), // por si lo invocas directo
-        Map.entry(LW,   new InstructionDef(Format.I, 0x03, 0x2, 0x00)),
-        Map.entry(SLTI, new InstructionDef(Format.I, 0x13, 0x2, 0x00)),
+			// I-type
+			Map.entry(ADDI, new InstructionDef(Format.I, 0x13, 0x0, 0x00)),
+			Map.entry(ANDI, new InstructionDef(Format.I, 0x13, 0x7, 0x00)),
+			Map.entry(ORI, new InstructionDef(Format.I, 0x13, 0x6, 0x00)),
+			Map.entry(JALR, new InstructionDef(Format.I, 0x67, 0x0, 0x00)), // en caso de ser invocado directamente
+			Map.entry(LW, new InstructionDef(Format.I, 0x03, 0x2, 0x00)),
+			Map.entry(SLTI, new InstructionDef(Format.I, 0x13, 0x2, 0x00)),
+			Map.entry(XORI, new InstructionDef(Format.I, 0x13, 0x4, 0x00)),
 
-        // S-type
-        Map.entry("sw",   new InstructionDef(Format.S, 0x23, 0x2, 0x00)),
+			// S-type
+			Map.entry(SW, new InstructionDef(Format.S, 0x23, 0x2, 0x00)),
 
-        // B-type
-        Map.entry(BEQ,  new InstructionDef(Format.B, 0x63, 0x0, 0x00)),
+			// B-type
+			Map.entry(BEQ, new InstructionDef(Format.B, 0x63, 0x0, 0x00)),
+			Map.entry(BLT, new InstructionDef(Format.B, 0x63, 0x4, 0x00)),
 
-        // U-type
-        Map.entry(LUI,  new InstructionDef(Format.U, 0x37, 0x0, 0x00)),
+			// U-type
+			Map.entry(LUI, new InstructionDef(Format.U, 0x37, 0x0, 0x00)),
 
-        // J-type
-        Map.entry(JAL,  new InstructionDef(Format.J, 0x6F, 0x0, 0x00))
-    );
+			// J-type
+			Map.entry(JAL, new InstructionDef(Format.J, 0x6F, 0x0, 0x00)));
 
 }

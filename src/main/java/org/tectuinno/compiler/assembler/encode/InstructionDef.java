@@ -28,7 +28,13 @@
 
 package org.tectuinno.compiler.assembler.encode;
 
-/** Static metadata for an instruction kind. */
+/**
+ * Static metadata for an instruction kind.
+ * @param format
+ * @param opcode
+ * @param funct3
+ * @param funct7
+ */
 public record InstructionDef(Format format, int opcode, int funct3, int funct7) {
 
 }

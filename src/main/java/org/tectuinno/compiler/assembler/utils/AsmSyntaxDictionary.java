@@ -67,6 +67,12 @@ public final class AsmSyntaxDictionary {
 	public static final String LUI = "lui";
 	public static final String CALL = "call";
 	public static final String RET = "ret";
+	public static final String XOR = "xor";
+	public static final String SLL = "sll";
+	public static final String SRL = "srl";
+	public static final String SRA = "sra";
+	public static final String BLT = "blt";
+	public static final String XORI = "xori";
 
 	/**
 	 * A list of supported base RISC-V instructions for the Tectuinno assembler.<br>
@@ -76,7 +82,13 @@ public final class AsmSyntaxDictionary {
 	 */
 	public static final String[] INSTRUCTIONS = { LW, ADDI, SLTI, ORI, ANDI, SW, ADD, SUB, SLT, OR, AND, BEQ, JAL, JALR,
 			LUI, CALL, // jal eq
-			RET // jalr eq
+			RET, // jalr eq
+			XOR,
+			SLL,
+			SRL,
+			SRA,
+			BLT,
+			XORI
 	};
 
 	public static final Set<String> INSTRUCTIONS_SET = Set.of(INSTRUCTIONS);

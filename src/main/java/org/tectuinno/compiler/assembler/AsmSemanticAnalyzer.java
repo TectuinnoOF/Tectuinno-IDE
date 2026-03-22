@@ -123,6 +123,7 @@ public class AsmSemanticAnalyzer {
 		case SLTI:
 		case ORI:
 		case ANDI:
+		case XORI:
 			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isImm.test(2)) {
 				errors.add(this.errorArgs(instr, 3, n));
 			}
@@ -130,8 +131,12 @@ public class AsmSemanticAnalyzer {
 		case ADD:
 		case SUB:
 		case SLT:
+		case SLL:
+		case SRL:
+		case SRA:
 		case OR:
 		case AND:
+		case XOR:
 			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isReg.test(2)) {
 				errors.add(this.errorArgs(instr, 3, n));
 			}
@@ -147,6 +152,7 @@ public class AsmSemanticAnalyzer {
 				errors.add(this.errorArgs(instr, 3, n));
 			}
 			break;
+		case BLT:
 		case BEQ:
 			if (n != 3 || !isReg.test(0) || !isReg.test(1) || !isLbl.test(2)) {
 				errors.add(this.errorArgs(instr, "BEQ espera: rs1, rs2, etiqueta"));
