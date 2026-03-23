@@ -83,6 +83,18 @@ public enum TokenType {
      * Represents a right parenthesis {@code )}, used in memory address expressions.
      */
     RIGHTPAREN,
+    
+    /**
+     * Represents a assembler directive
+     */
+    DIRECTIVE,
+    
+    /**
+     * Represents a String
+     */
+    STRING,
+    
+    CHAR,
 
     /**
      * Represents any unrecognized or invalid token.

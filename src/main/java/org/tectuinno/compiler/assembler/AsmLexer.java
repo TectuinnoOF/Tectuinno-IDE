@@ -70,8 +70,8 @@ public class AsmLexer {
 
 	private final String source;
 	private int position;
-    private int line;
-    private int column;
+	private int line;
+	private int column;
 
 	/**
 	 * Constructs the lexer for the given source code.
@@ -82,81 +82,66 @@ public class AsmLexer {
 	public AsmLexer(String source) {
 		this.source = source;
 		this.position = 0;
-        this.line = 1;
-        this.column = 1;
+		this.line = 1;
+		this.column = 1;
 	}
 
 	/*
 	 * Extracts a numeric token from the source code, starting at the current
-	 * position.
-	 * <p>
-	 * This method supports both decimal and hexadecimal formats:
-	 * </p>
-	 * <ul>
-	 * <li>Hexadecimal numbers must start with the prefix {@code 0x} and may contain
-	 * digits from {@code 0-9} and letters {@code A-F/a-f}.</li>
-	 * <li>Decimal numbers consist only of digits {@code 0-9}.</li>
-	 * </ul>
+	 * position. <p> This method supports both decimal and hexadecimal formats: </p>
+	 * <ul> <li>Hexadecimal numbers must start with the prefix {@code 0x} and may
+	 * contain digits from {@code 0-9} and letters {@code A-F/a-f}.</li> <li>Decimal
+	 * numbers consist only of digits {@code 0-9}.</li> </ul>
 	 *
 	 * @return a {@link Token} of type {@link TokenType#IMMEDIATE} representing the
-	 *         parsed numeric value.
+	 * parsed numeric value.
 	 *
-		private Token readNumber() {
-			int start = position;
-	
-			if (!isAtEnd() && peek() == '0' && peekNext() == 'x') {
-				advance(); // 0 /*Reading hex values as inmediate
-				advance(); // x
-	
-				while (!isAtEnd() && isHexDigit(peek())) {
-					advance();
-				}
-	
-				String hexValue = source.substring(start, position);
-				return new Token(TokenType.IMMEDIATE, hexValue, start);
-			}
-	
-			/**
-			 * lopp to reading a normal Number, immediate value for registers in teha asm
-			 * code
-			 *
-			while (!isAtEnd() && Character.isDigit(peek())) {
+	 * private Token readNumber() { int start = position;
+	 * 
+	 * if (!isAtEnd() && peek() == '0' && peekNext() == 'x') { advance(); // 0
+	 * /*Reading hex values as inmediate advance(); // x
+	 * 
+	 * while (!isAtEnd() && isHexDigit(peek())) { advance(); }
+	 * 
+	 * String hexValue = source.substring(start, position); return new
+	 * Token(TokenType.IMMEDIATE, hexValue, start); }
+	 * 
+	 * /** lopp to reading a normal Number, immediate value for registers in teha
+	 * asm code
+	 *
+	 * while (!isAtEnd() && Character.isDigit(peek())) { advance(); } String value =
+	 * source.substring(start, position); return new Token(TokenType.IMMEDIATE,
+	 * value, start); }
+	 */
+
+	/** Lee inmediatos decimales y hex con signo: -123, +8, -0xFF, 0x10 */
+	private Token readNumberSigned() {
+		int start = position;
+		int startline = line;
+		int startcolumn = column;
+
+		// signo opcional
+		if (!isAtEnd() && (peek() == '+' || peek() == '-')) {
+			advance();
+		}
+
+		// hexa (0x... o -0x...)
+		if (!isAtEnd() && peek() == '0' && (peekNext() == 'x' || peekNext() == 'X')) {
+			advance(); // '0'
+			advance(); // 'x'/'X'
+			while (!isAtEnd() && isHexDigit(peek())) {
 				advance();
 			}
 			String value = source.substring(start, position);
-			return new Token(TokenType.IMMEDIATE, value, start);
+			return new Token(TokenType.IMMEDIATE, value, start, startline, startcolumn);
 		}
-	*/
-	
-	
-	/** Lee inmediatos decimales y hex con signo: -123, +8, -0xFF, 0x10 */
-	private Token readNumberSigned() {
-	    int start = position;
-        int startline = line;
-        int startcolumn = column;
 
-	    // signo opcional
-	    if (!isAtEnd() && (peek() == '+' || peek() == '-')) {
-	        advance();
-	    }
-
-	    // hexa (0x... o -0x...)
-	    if (!isAtEnd() && peek() == '0' && (peekNext() == 'x' || peekNext() == 'X')) {
-	        advance(); // '0'
-	        advance(); // 'x'/'X'
-	        while (!isAtEnd() && isHexDigit(peek())) {
-	            advance();
-	        }
-	        String value = source.substring(start, position);
-	        return new Token(TokenType.IMMEDIATE, value, start,startline,startcolumn);
-	    }
-
-	    // decimal
-	    while (!isAtEnd() && Character.isDigit(peek())) {
-	        advance();
-	    }
-	    String value = source.substring(start, position);
-	    return new Token(TokenType.IMMEDIATE, value, start,startline,startcolumn);
+		// decimal
+		while (!isAtEnd() && Character.isDigit(peek())) {
+			advance();
+		}
+		String value = source.substring(start, position);
+		return new Token(TokenType.IMMEDIATE, value, start, startline, startcolumn);
 	}
 
 	/**
@@ -176,15 +161,17 @@ public class AsmLexer {
 	private boolean isHexDigit(char c) {
 		return Character.isDigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 	}
-	
+
 	/**
-	 * Checks whether a given string matches any of the supported assembler instruction mnemonics.
+	 * Checks whether a given string matches any of the supported assembler
+	 * instruction mnemonics.
 	 * <p>
-	 * The method compares the provided string against the list of valid instructions
-	 * defined in {@link AsmSyntaxDictionary#INSTRUCTIONS}.
+	 * The method compares the provided string against the list of valid
+	 * instructions defined in {@link AsmSyntaxDictionary#INSTRUCTIONS}.
 	 *
 	 * @param value the string to check
-	 * @return {@code true} if the string is a recognized instruction; {@code false} otherwise
+	 * @return {@code true} if the string is a recognized instruction; {@code false}
+	 *         otherwise
 	 */
 	private boolean isInstruction(String value) {
 		for (String instr : AsmSyntaxDictionary.INSTRUCTIONS) {
@@ -194,15 +181,16 @@ public class AsmLexer {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks whether a given string matches any of the defined register names.
 	 * <p>
-	 * The method compares the provided string against the list of registers
-	 * defined in {@link AsmSyntaxDictionary#REGISTERS}.
+	 * The method compares the provided string against the list of registers defined
+	 * in {@link AsmSyntaxDictionary#REGISTERS}.
 	 *
 	 * @param value the string to check
-	 * @return {@code true} if the string is a valid register name; {@code false} otherwise
+	 * @return {@code true} if the string is a valid register name; {@code false}
+	 *         otherwise
 	 */
 	private boolean isRegister(String value) {
 		for (String reg : AsmSyntaxDictionary.REGISTERS) {
@@ -212,69 +200,76 @@ public class AsmLexer {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks whether the lexer has reached the end of the source code.
 	 *
-	 * @return {@code true} if all characters have been processed; {@code false} otherwise
+	 * @return {@code true} if all characters have been processed; {@code false}
+	 *         otherwise
 	 */
 	private boolean isAtEnd() {
 		return position >= source.length();
 	}
-	
+
 	/**
 	 * Returns the current character in the source without advancing the position.
 	 *
 	 * @return the current character being analyzed
 	 * @throws StringIndexOutOfBoundsException if called when at the end of input
 	 */
-	private char peek() throws IndexOutOfBoundsException{
+	private char peek() throws IndexOutOfBoundsException {
 		return source.charAt(position);
 	}
-	
+
 	private char peekAhead(int k) {
-	    int idx = position + k;
-	    if (idx >= source.length()) return '\0';
-	    return source.charAt(idx);
+		int idx = position + k;
+		if (idx >= source.length())
+			return '\0';
+		return source.charAt(idx);
 	}
-	
+
 	private boolean isStartOfSignedNumber() {
-	    if (isAtEnd()) return false;
-	    char c0 = peek();
-	    if (c0 != '+' && c0 != '-') return false;
-	    char c1 = peekAhead(1);
-	    if (Character.isDigit(c1)) return true;         // "-1", "+7"
-	    if (c1 == '0') {
-	        char c2 = peekAhead(2);
-	        // Soportamos hexa con signo: -0x..., +0x...
-	        return (c2 == 'x' || c2 == 'X' || Character.isDigit(c2));
-	    }
-	    return false;
+		if (isAtEnd())
+			return false;
+		char c0 = peek();
+		if (c0 != '+' && c0 != '-')
+			return false;
+		char c1 = peekAhead(1);
+		if (Character.isDigit(c1))
+			return true; // "-1", "+7"
+		if (c1 == '0') {
+			char c2 = peekAhead(2);
+			// Soportamos hexa con signo: -0x..., +0x...
+			return (c2 == 'x' || c2 == 'X' || Character.isDigit(c2));
+		}
+		return false;
 	}
-	
+
 	/**
 	 * Returns the next character in the source without advancing the position.
 	 *
-	 * @return the next character, or {@code '\0'} if there is no next character (end of source)
+	 * @return the next character, or {@code '\0'} if there is no next character
+	 *         (end of source)
 	 */
 	private char peekNext() {
 		if (position + 1 >= source.length())
 			return '\0';
 		return source.charAt(position + 1);
 	}
-	
+
 	/**
 	 * Advances the current position by one character.
 	 * <p>
 	 * This should be used after successfully reading or consuming a character.
 	 */
 	private void advance() {
-        char c = source.charAt(position);
-        if(c == '\n'){
-            line++;
-            column = 1;
-        }else column++;
-        position++;
+		char c = source.charAt(position);
+		if (c == '\n') {
+			line++;
+			column = 1;
+		} else
+			column++;
+		position++;
 	}
 
 	/**
@@ -282,18 +277,23 @@ public class AsmLexer {
 	 * <p>
 	 * This method handles three possible scenarios:
 	 * <ul>
-	 *   <li><b>Labels</b>: Identifiers followed by a colon ':' (e.g., {@code start:})</li>
-	 *   <li><b>Instructions</b>: Mnemonics defined in {@link AsmSyntaxDictionary#INSTRUCTIONS}</li>
-	 *   <li><b>Registers</b>: Names like {@code x0}, {@code x1}, etc., defined in {@link AsmSyntaxDictionary#REGISTERS}</li>
-	 *   <li><b>Unknown</b>: Any other identifier not matching the previous categories</li>
+	 * <li><b>Labels</b>: Identifiers followed by a colon ':' (e.g.,
+	 * {@code start:})</li>
+	 * <li><b>Instructions</b>: Mnemonics defined in
+	 * {@link AsmSyntaxDictionary#INSTRUCTIONS}</li>
+	 * <li><b>Registers</b>: Names like {@code x0}, {@code x1}, etc., defined in
+	 * {@link AsmSyntaxDictionary#REGISTERS}</li>
+	 * <li><b>Unknown</b>: Any other identifier not matching the previous
+	 * categories</li>
 	 * </ul>
 	 *
-	 * @return a {@link Token} representing the identified element, including its type and position in the source
+	 * @return a {@link Token} representing the identified element, including its
+	 *         type and position in the source
 	 */
 	private Token readIdentifierOrInstruction() {
 		int start = position;
-        int startline = line;
-        int startcolumn = column;
+		int startline = line;
+		int startcolumn = column;
 		while (!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_')) {
 			advance();
 		}
@@ -316,20 +316,22 @@ public class AsmLexer {
 			return new Token(TokenType.UNKNOWN, value, start, startline, startcolumn);
 		}
 	}
-	
+
 	/**
 	 * Reads a multi-line comment from the source code.
 	 * <p>
-	 * Comments in this assembler language start with {@code /*} and end with {@code *&#47;}.
-	 * The lexer advances through the characters until the closing sequence is found.
-	 * If the end of the source is reached before the closing, the comment is returned as-is.
+	 * Comments in this assembler language start with {@code /*} and end with
+	 * {@code *&#47;}. The lexer advances through the characters until the closing
+	 * sequence is found. If the end of the source is reached before the closing,
+	 * the comment is returned as-is.
 	 *
-	 * @return a {@link Token} of type {@link TokenType#COMMENT} representing the full comment block
+	 * @return a {@link Token} of type {@link TokenType#COMMENT} representing the
+	 *         full comment block
 	 */
 	private Token readComment() {
 		int start = position;
-        int startline = line;
-        int startcolumn = column;
+		int startline = line;
+		int startcolumn = column;
 		advance(); // '/'
 		advance(); // '*'
 		while (!isAtEnd() && !(peek() == '*' && peekNext() == '/')) {
@@ -342,7 +344,82 @@ public class AsmLexer {
 		String value = source.substring(start, position);
 		return new Token(TokenType.COMMENT, value, start, startline, startcolumn);
 	}
+	
+	/**
+	 * Tokenizes the source code into a list of {@link Token}
+	 * 
+	 * @return a list of tokens found in the source
+	 */
+	private Token readDirective() {
+		
+		advance(); //.
+		
+		int start = position;
+		int startline = line;
+		int startcolumn = column;
+		
+		while(!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_')) {
+			advance();
+		}
+		
+		String value = source.substring(start,position);
+		
+		if(AsmSyntaxDictionary.DIRECTIVES_SET.contains(value)){
+			return new Token(TokenType.DIRECTIVE,value,start,startline,startcolumn);
+		}
+		
+		return new Token(TokenType.UNKNOWN, value, start, startline, startcolumn);
+	}
+	
+	private Token readStringLiteral() {
+	    int start = position;
+	    int startLine = line;
+	    int startColumn = column;
 
+	    advance(); // consume opening quote
+
+	    StringBuilder sb = new StringBuilder();
+
+	    while (!isAtEnd() && peek() != '"') {
+	        // versión simple: sin escapes por ahora
+	        sb.append(peek());
+	        advance();
+	    }
+
+	    if (isAtEnd()) {
+	        return new Token(TokenType.UNKNOWN, source.substring(start, position), start, startLine, startColumn);
+	    }
+
+	    advance(); // consume closing quote
+
+	    return new Token(TokenType.STRING, sb.toString(), start, startLine, startColumn);
+	}
+
+	private Token readCharLiteral() {
+		
+		int start = position;
+	    int startLine = line;
+	    int startColumn = column;
+
+	    advance(); // consume opening single quote '
+
+	    if (isAtEnd()) {
+	        return new Token(TokenType.UNKNOWN, source.substring(start, position), start, startLine, startColumn);
+	    }
+
+	    char ch = peek(); // consume the character inside quotes
+	    advance();
+
+	    if (isAtEnd() || peek() != '\'') {
+	        return new Token(TokenType.UNKNOWN, source.substring(start, position), start, startLine, startColumn);
+	    }
+
+	    advance(); // consume closing single quote '
+
+	    return new Token(TokenType.CHAR, String.valueOf(ch), start, startLine, startColumn);
+	}
+	
+	
 	/**
 	 * Tokenizes the source code into a list of {@link Token}.
 	 *
@@ -352,72 +429,91 @@ public class AsmLexer {
 	 *
 	 * @return a list of tokens found in the source
 	 */
-	public List<Token> tokenize() {				
-		
-		List<Token> tokens = new ArrayList<>();
-		
-		while (!isAtEnd()) {
-		    char current = peek();
+	public List<Token> tokenize() {
 
-		    if (Character.isWhitespace(current)) {
-		        advance();
-		    } else if (current == '/') {
-		        if (peekNext() == '*') {
-		            tokens.add(readComment());
-		        } else {
-		            tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position,line,column));
-		            advance();
-		        }
-		    } else if (current == '+' || current == '-') {
-		        // número con signo
-		        if (isStartOfSignedNumber()) {
-		            tokens.add(readNumberSigned());
-		        } else {
-		            // si algún día admites operadores, cámbialo; por ahora desconocido
-		            tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position,line,column));
-		            advance();
-		        }
-		    } else if (Character.isDigit(current)) {
-		        // número sin signo (0x... o decimal)
-		        tokens.add(readNumberSigned());
-		    } else if (Character.isLetter(current) || current == '_') {
-		        tokens.add(readIdentifierOrInstruction());
-		    } else if (current == ',') {
-		        tokens.add(new Token(TokenType.COMMA, ",", position,line,column));
-		        advance();
-		    } else if (current == ':') {
-		        tokens.add(new Token(TokenType.COLON, ":", position,line,column));
-		        advance();
-		    } else if (current == '(') {
-		        tokens.add(new Token(TokenType.LEFTPAREN, "(", position,line,column));
-		        advance();
-		    } else if (current == ')') {
-		        tokens.add(new Token(TokenType.RIGHTPAREN, ")", position,line,column));
-		        advance();
-		    } else {
-		        tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position,line,column));
-		        advance();
-		    }
+		List<Token> tokens = new ArrayList<>();
+
+		while (!isAtEnd()) {
+			char current = peek();
+
+			if (Character.isWhitespace(current)) {
+				
+				advance();
+				
+			} else if (current == '/') {
+				
+				if (peekNext() == '*') {
+					
+					tokens.add(readComment());
+					
+				} else {
+					
+					tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position, line, column));
+					advance();
+					
+				}
+			} else if (current == '+' || current == '-') {
+				
+				// número con signo
+				if (isStartOfSignedNumber()) {
+					
+					tokens.add(readNumberSigned());
+					
+				} else {
+					
+					// si algún día admites operadores, cámbialo; por ahora desconocido
+					tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position, line, column));
+					advance();
+					
+				}
+			} else if (Character.isDigit(current)) {
+				
+				// número sin signo (0x... o decimal)
+				tokens.add(readNumberSigned());
+				
+			} else if(current == '"') {
+				
+				tokens.add(this.readStringLiteral());
+				
+			}else if(current == '\'') {
+				
+				tokens.add(readCharLiteral());
+				
+			} else if(current == '.') {
+				
+				tokens.add(readDirective());
+				
+			} else if (Character.isLetter(current) || current == '_') {
+				
+				tokens.add(readIdentifierOrInstruction());
+				
+			} else if (current == ',') {
+				
+				tokens.add(new Token(TokenType.COMMA, ",", position, line, column));
+				advance();
+				
+			} else if (current == ':') {
+				
+				tokens.add(new Token(TokenType.COLON, ":", position, line, column));
+				advance();
+				
+			} else if (current == '(') {
+				
+				tokens.add(new Token(TokenType.LEFTPAREN, "(", position, line, column));
+				advance();
+				
+			} else if (current == ')') {
+				
+				tokens.add(new Token(TokenType.RIGHTPAREN, ")", position, line, column));
+				advance();
+				
+			} else {
+				
+				tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current), position, line, column));
+				advance();
+				
+			}
 		}
-		
-		/*
-		 * while (!isAtEnd()) { char current = peek();
-		 * 
-		 * if (Character.isWhitespace(current)) { advance(); // Ignore spaces and
-		 * newlines } else if (current == '/') { if (peekNext() == '*') {
-		 * tokens.add(readComment()); } else { tokens.add(new Token(TokenType.UNKNOWN,
-		 * String.valueOf(current), position)); advance(); } } else if
-		 * (Character.isLetter(current) || current == '_') {
-		 * tokens.add(readIdentifierOrInstruction()); } else if
-		 * (Character.isDigit(current)) { tokens.add(readNumberSigned()); } else if
-		 * (current == ',') { tokens.add(new Token(TokenType.COMMA, ",", position));
-		 * advance(); } else if (current == ':') { tokens.add(new Token(TokenType.COLON,
-		 * ":", position)); advance(); } else if (current == '(') { tokens.add(new
-		 * Token(TokenType.LEFTPAREN, "(", position)); advance(); } else if (current ==
-		 * ')') { tokens.add(new Token(TokenType.RIGHTPAREN, ")", position)); advance();
-		 * } else { tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(current),
-		 * position)); advance(); } }
-		 */
 
 		return tokens;
 	}

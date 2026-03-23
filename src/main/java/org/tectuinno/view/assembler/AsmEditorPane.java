@@ -71,6 +71,7 @@ public class AsmEditorPane extends JTextPane {
 	private final Style defaultStyle;
 	private final Style tagStyle;
 	private final Style commentStyle;
+	private final Style directiveStyle;
 	private List<AnalysisError> inlineErrors = List.of();
 	private final List<Object> inlineErrorHighlights = new ArrayList<>();
 	private static final Color ERROR_LINE_FILL = new Color(255, 105, 97, 35);
@@ -92,6 +93,8 @@ public class AsmEditorPane extends JTextPane {
 		this.defaultStyle = this.addStyle(AsmEditorStyleName.DEFAULT, null);
 		this.tagStyle = this.addStyle(AsmEditorStyleName.TAG, null);
 		this.commentStyle = this.addStyle(AsmEditorStyleName.COMMENT, null);
+		this.directiveStyle = this.addStyle(AsmEditorStyleName.DIRECTIVE, null);
+		
 
 		this.setStyleConstantsInEditor();
 		this.installCtrlWheelZoom();
@@ -109,6 +112,7 @@ public class AsmEditorPane extends JTextPane {
 		StyleConstants.setForeground(this.defaultStyle, new Color(229, 233, 240)); // Blanco suave
 		StyleConstants.setForeground(this.tagStyle, new Color(0xff, 0x8a, 0xd6)); // Rosa más brillante para labels
 		StyleConstants.setForeground(this.commentStyle, new Color(127, 132, 150)); // Gris comentarios
+		StyleConstants.setForeground(this.directiveStyle, new Color(13,189,4));
 
 		// Colores exactos del tema Andromeda - editor más oscuro
 		this.setBackground(new Color(0x0a, 0x0c, 0x12)); // Más oscuro que terminal
@@ -191,6 +195,7 @@ public class AsmEditorPane extends JTextPane {
 		// sobrescriben
 		this.highlightPatternReplace(AsmSyntaxDictionary.IDENTIFIER_PATTERN, this.tagStyle); // Labels genéricos:
 																								// "inicio"
+		this.highlightPattern(AsmSyntaxDictionary.DIRECTIVES_PATTERN, this.directiveStyle); //Directivas de ensamblador
 		this.highlightPattern(AsmSyntaxDictionary.TAGS_PATTERN, this.tagStyle); // Declaraciones: "inicio:"
 		this.highlightPattern(AsmSyntaxDictionary.INSTRUCTION_PATTERN, this.keyWordStyle); // Instrucciones
 		this.highlightPattern(AsmSyntaxDictionary.REGISTER_PATTERN, this.registerStyle); // Registros

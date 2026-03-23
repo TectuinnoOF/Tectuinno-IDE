@@ -50,6 +50,7 @@ import java.util.Set;
  */
 public final class AsmSyntaxDictionary {
 
+	//Constantes estáticas para representar los registros
 	public static final String LW = "lw";
 	public static final String ADDI = "addi";
 	public static final String SLTI = "slti";
@@ -73,6 +74,16 @@ public final class AsmSyntaxDictionary {
 	public static final String SRA = "sra";
 	public static final String BLT = "blt";
 	public static final String XORI = "xori";
+	
+	//Constantes estáticas usadas para representar directivas de ensamblador
+	public static final String SECTION = "section";
+	public static final String DATA = "data";
+	public static final String GLOBAL = "global";
+	public static final String TEXT = "text";
+	public static final String WORD = "word";
+	public static final String BYTE = "byte";
+	public static final String HALF = "half";
+	public static final String ASCIZ = "asciz";
 
 	/**
 	 * A list of supported base RISC-V instructions for the Tectuinno assembler.<br>
@@ -90,7 +101,13 @@ public final class AsmSyntaxDictionary {
 			BLT,
 			XORI
 	};
+	
+	public static final String[] DIRECTIVES = {
+		    SECTION, DATA, GLOBAL, TEXT, WORD, BYTE, HALF, ASCIZ
+	};
 
+	public static final Set<String> DIRECTIVES_SET = Set.of(DIRECTIVES);
+	
 	public static final Set<String> INSTRUCTIONS_SET = Set.of(INSTRUCTIONS);
 
 	/**
@@ -115,7 +132,9 @@ public final class AsmSyntaxDictionary {
 	 * Matches x0 to x31 as full words.
 	 */
 	public static final String REGISTER_PATTERN = "\\b(" + String.join("|", REGISTERS) + ")\\b";
-
+	
+	public static final String DIRECTIVES_PATTERN = "\\.(" + String.join("|", DIRECTIVES) + ")\\b";
+	
 	/**
 	 * Regular expression pattern for matching label declarations in assembly.
 	 * 

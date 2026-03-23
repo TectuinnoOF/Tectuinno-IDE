@@ -62,6 +62,8 @@ public final class AsmEditorStyleName {
 
     /** Style name for immediates (hex/dec literals). */
     public static final String IMMEDIATE = "immediate";    
+    
+    public static final String DIRECTIVE = "directive";
 
     /**
      * Private constructor to prevent instantiation.

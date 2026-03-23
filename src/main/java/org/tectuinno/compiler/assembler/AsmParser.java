@@ -32,6 +32,7 @@ import java.util.List;
 
 import java.util.ArrayList;
 
+import org.tectuinno.compiler.assembler.utils.AsmSyntaxDictionary;
 import org.tectuinno.compiler.assembler.utils.Token;
 import org.tectuinno.compiler.assembler.utils.TokenType;
 import org.tectuinno.view.component.ResultConsolePanel;
@@ -168,16 +169,169 @@ public class AsmParser {
 			advance();
 			return;
 		}
-	}
+	}		
 
 	private void parseInstruction() {
 		parseArguments();
 	}
+	
+	/**
+	 * Parses the operand of the {@code .global} directive.
+	 *
+	 * <p>Expected syntax:</p>
+	 * <pre>
+	 * .global symbol
+	 * </pre>
+	 *
+	 * <p>At this stage, the parser only validates that a valid symbol token exists
+	 * after the directive. Symbol existence and visibility rules belong to the
+	 * semantic analysis phase.</p>
+	 *
+	 * @param directive the directive token being parsed
+	 */
+	private void parseGlobalDirectiveArgument(Token directive) {
+		
+	    if (isAtEnt()) {
+	        error(directive, "Expected symbol after " + directive.getValue());
+	        return;
+	    }
 
+	    if (check(TokenType.UNKNOWN) || check(TokenType.LABEL)) {
+	        advance();
+	        return;
+	    }
+
+	    error(peek(), "Expected symbol after " + directive.getValue());
+	    
+	}
+	
+	/**
+	 * Parses the operand of the {@code .section} directive.
+	 *
+	 * <p>Expected syntax:</p>
+	 * <pre>
+	 * .section .text
+	 * .section .data
+	 * </pre>
+	 *
+	 * <p>This method validates only that a directive token follows {@code .section}.
+	 * The semantic analyzer should later decide whether the section name is allowed.</p>
+	 *
+	 * @param directive the directive token being parsed
+	 */
+	private void parseSectionDirectiveArgument(Token directive) {
+	    if (isAtEnt()) {
+	        error(directive, "Expected section name after " + directive.getValue());
+	        return;
+	    }
+
+	    if (check(TokenType.DIRECTIVE)) {
+	        advance();
+	        return;
+	    }
+
+	    error(peek(), "Expected section name after " + directive.getValue());
+	}
+	
+	/**
+	 * Parses the argument list of a data definition directive such as
+	 * {@code .word}, {@code .byte}, or {@code .half}.
+	 *
+	 * <p>Expected syntax:</p>
+	 * <pre>
+	 * .word 10
+	 * .word 1, 2, 3
+	 * .byte 0x10, 0x20
+	 * .half 100
+	 * </pre>
+	 *
+	 * <p>Only immediate values are accepted at this stage.</p>
+	 *
+	 * @param directive the directive token being parsed
+	 */
+	private void parseDataDirectiveArguments(Token directive) {
+	    if (!match(TokenType.IMMEDIATE, TokenType.CHAR)) {
+	        error(peek(), "Expected immediate value after " + directive.getValue());
+	        return;
+	    }
+
+	    while (match(TokenType.COMMA)) {
+	        if (!match(TokenType.IMMEDIATE,TokenType.CHAR)) {
+	            error(peek(), "Expected immediate or char value after comma in " + directive.getValue());
+	            return;
+	        }
+	    }
+	}
+	
+	/**
+	 * Parses the argument of the {@code .asciz} directive.
+	 *
+	 * <p>Expected syntax:</p>
+	 * <pre>
+	 * .asciz "Hello"
+	 * </pre>
+	 *
+	 * <p>The lexer must already provide the string literal as a {@link TokenType#STRING}
+	 * token. String encoding and null-termination are responsibilities of later phases.</p>
+	 *
+	 * @param directive the directive token being parsed
+	 */
+	private void parseAscizDirectiveArgument(Token directive) {
+	    if (!match(TokenType.STRING)) {
+	        error(peek(), "Expected string literal after " + directive.getValue());
+	    }
+	}
+	
+	/**
+	 * Parses an assembler directive and validates its syntactic structure.
+	 *
+	 * @implNote
+	 * This method performs only syntactic validation. Semantic validation
+	 * (such as section validity or value ranges) must be handled later.
+	 */
+	private void parseDirective() {
+	    Token directive = previous();
+	    String value = directive.getValue();
+
+	    switch (value) {
+
+	        case AsmSyntaxDictionary.TEXT:
+	        case AsmSyntaxDictionary.DATA:
+	            // No arguments
+	            return;
+
+	        case AsmSyntaxDictionary.GLOBAL:
+	            parseGlobalDirectiveArgument(directive);
+	            return;
+
+	        case AsmSyntaxDictionary.SECTION:
+	            parseSectionDirectiveArgument(directive);
+	            return;
+
+	        case AsmSyntaxDictionary.WORD:
+	        case AsmSyntaxDictionary.BYTE:
+	        case AsmSyntaxDictionary.HALF:
+	            parseDataDirectiveArguments(directive);
+	            return;
+
+	        case AsmSyntaxDictionary.ASCIZ:
+	            parseAscizDirectiveArgument(directive);
+	            return;
+
+	        default:
+	            error(directive, "Unsupported directive: " + value);
+	    }
+	}
+	
 	private void parseLines() {
 
 		if (match(TokenType.COMMENT))
 			return;
+		
+		if (match(TokenType.DIRECTIVE)) {
+	        parseDirective();
+	        return;
+	    }
 
 		if (match(TokenType.LABEL)) {
 			if (check(TokenType.INSTRUCTION)) {
