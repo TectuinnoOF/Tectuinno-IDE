@@ -30,73 +30,38 @@ package org.tectuinno.compiler.assembler;
 
 import java.util.List;
 
+import org.tectuinno.compiler.assembler.utils.IrKind;
 import org.tectuinno.compiler.assembler.utils.Token;
 
 /**
- * Represents an intermediate representation (IR) of a single assembled line.
- * <p>
- * This record stores:
+ * Represents a single intermediate representation (IR) line
+ * produced during the assembler pipeline.
+ *
+ * <p>An IR line stores the logical information required by later stages
+ * such as semantic analysis, symbol resolution, second pass conversion,
+ * and final encoding.</p>
+ *
+ * <p>Each line belongs to a specific {@link IrKind}:</p>
  * <ul>
- *     <li>The program counter (address) of the instruction</li>
- *     <li>An optional label associated with this line</li>
- *     <li>The instruction mnemonic</li>
- *     <li>The list of arguments as {@link Token} objects</li>
- *     <li>The original text of the source line</li>
+ *     <li>{@link IrKind#INSTRUCTION} for executable instructions</li>
+ *     <li>{@link IrKind#DATA} for data definition directives</li>
+ *     <li>{@link IrKind#DIRECTIVE} for control directives</li>
  * </ul>
  *
- * <h2>Usage example:</h2>
- * <pre>{@code
- * List<Token> args = List.of(new Token("x1"), new Token("x2"));
- * IrLine line = new IrLine(0x004, "LOOP", "ADD", args, "ADD x1, x2");
- * 
- * System.out.println("Mnemonic: " + line.mnemonic());
- * System.out.println("PC: " + line.pc());
- * }</pre>
+ * @param pc the logical address associated with the line
+ * @param labelOpt optional label attached to this line; may be {@code null}
+ * @param kind the logical category of this IR line
+ * @param mnemonic the mnemonic or directive name associated with the line
+ * @param args the raw argument tokens associated with the line
+ * @param originalText the original source line reconstructed for display or diagnostics
  *
- * <h2>Field descriptions:</h2>
- * <table border="1">
- *   <caption>IrLine Fields</caption>
- *   <tr>
- *     <th>Field</th>
- *     <th>Type</th>
- *     <th>Description</th>
- *   </tr>
- *   <tr>
- *     <td>{@link #pc()}</td>
- *     <td>{@code int}</td>
- *     <td>The program counter (address) of the instruction in memory</td>
- *   </tr>
- *   <tr>
- *     <td>{@link #labelOpt()}</td>
- *     <td>{@code String}</td>
- *     <td>Optional label name; may be {@code null} if no label is present</td>
- *   </tr>
- *   <tr>
- *     <td>{@link #mnemonic()}</td>
- *     <td>{@code String}</td>
- *     <td>The instruction mnemonic (e.g., ADD, SUB, JMP)</td>
- *   </tr>
- *   <tr>
- *     <td>{@link #args()}</td>
- *     <td>{@code List<Token>}</td>
- *     <td>Arguments (operands) for the instruction, represented as tokens</td>
- *   </tr>
- *   <tr>
- *     <td>{@link #originalText()}</td>
- *     <td>{@code String}</td>
- *     <td>The exact source line as written by the user</td>
- *   </tr>
- * </table>
+ * @author Pablo
+ * @version 1.1
+ * @since 1.2.1.1
  *
- * @param pc           the program counter (address) of the instruction
- * @param labelOpt     optional label name (may be {@code null} or empty if not present)
- * @param mnemonic     the instruction mnemonic
- * @param args         the list of instruction arguments as {@link Token} objects
- * @param originalText the original text of the source line
- *
- * @since 2025-08-14
- * @version 1.0
+ * @see IrKind
  * @see Token
  */
-public record IrLine(int pc, String labelOpt, String mnemonic, List<Token> args, String originalText) {
+public record IrLine(int pc, String labelOpt, IrKind kind,String mnemonic, List<Token> args, String originalText) {
+	
 }

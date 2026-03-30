@@ -996,7 +996,7 @@ public class StartingWindow extends JFrame {
 		}
 
 		// First Pass: Symbol table + IRLines
-		AsmFirstPass firstPass = new AsmFirstPass(this.tokens, 0);
+		AsmFirstPass firstPass = new AsmFirstPass(this.tokens);
 		AsmFirstPass.Result result = firstPass.run();
 
 		/*
@@ -1004,7 +1004,7 @@ public class StartingWindow extends JFrame {
 		 */
 
 		// Wroking on the second pass
-		AsmSecondPass second = new AsmSecondPass(result.lines, result.symbols.asMap());
+		AsmSecondPass second = new AsmSecondPass(result.lines(), result.symbols().asMap());
 		AsmSecondPass.Result encRes = second.run();
 
 		this.encodedIrLineResult = encRes.encoded();
