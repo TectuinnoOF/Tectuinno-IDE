@@ -33,43 +33,53 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.tectuinno.compiler.assembler.EncoderIrLine;
+import org.tectuinno.compiler.assembler.utils.IrKind;
 
 public final class FrameUtil {
 	
-	private FrameUtil() {}
-	
-	public static byte[] buildLittleEndianFrame(List<EncoderIrLine> encodedLines) {
-        ByteArrayOutputStream out = new ByteArrayOutputStream(encodedLines.size() * 4);
+	private FrameUtil() {
+	}
 
-        for (EncoderIrLine ln : encodedLines) {
-            String hx = ln.hex(); // esperado: "0xXXXXXXXX" o "ERROR"
-            if (hx == null || "ERROR".equalsIgnoreCase(hx)) {               
-                continue;
-            }
-            
-            int word = (int) Long.parseUnsignedLong(hx.substring(2), 16);
-            byte[] le = AsmEncoder.toLittleEndian(word);
-            out.write(le, 0, le.length);
-        }
-        
-        byte[] payload = out.toByteArray();
-        byte[] header = "TECTUINNO".getBytes(StandardCharsets.US_ASCII);
-        
-        byte[] frame = new byte[header.length + payload.length];
-        
-        System.arraycopy(header, 0, frame, 0, header.length);
-        System.arraycopy(payload, 0, frame, header.length, payload.length);
-        
-        return frame;
-    }
-	
-	 public static String toHex(byte[] frame, boolean conEspacios) {
-	        StringBuilder sb = new StringBuilder(frame.length * (conEspacios ? 3 : 2));
-	        for (int i = 0; i < frame.length; i++) {
-	            sb.append(String.format("%02X", frame[i] & 0xFF));
-	            if (conEspacios && i + 1 < frame.length) sb.append(' ');
-	        }
-	        return sb.toString();
-	    }
+	public static byte[] buildLittleEndianFrame(List<EncoderIrLine> encodedLines) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+		for (EncoderIrLine ln : encodedLines) {
+		
+			if (ln.kind() == IrKind.DIRECTIVE) {
+				continue;
+			}
+
+			byte[] bytes = ln.bytes();
+
+			if (bytes == null || bytes.length == 0) {
+				continue;
+			}
+
+			out.write(bytes, 0, bytes.length);
+		}
+
+		byte[] payload = out.toByteArray();
+		byte[] header = "TECTUINNO".getBytes(StandardCharsets.US_ASCII);
+
+		byte[] frame = new byte[header.length + payload.length];
+
+		System.arraycopy(header, 0, frame, 0, header.length);
+		System.arraycopy(payload, 0, frame, header.length, payload.length);
+
+		return frame;
+	}
+
+	public static String toHex(byte[] frame, boolean conEspacios) {
+		StringBuilder sb = new StringBuilder(frame.length * (conEspacios ? 3 : 2));
+
+		for (int i = 0; i < frame.length; i++) {
+			sb.append(String.format("%02X", frame[i] & 0xFF));
+			if (conEspacios && i + 1 < frame.length) {
+				sb.append(' ');
+			}
+		}
+
+		return sb.toString();
+	}
 	
 }
